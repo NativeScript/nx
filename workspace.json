@@ -58,7 +58,7 @@
           "builder": "@nrwl/nx-plugin:e2e",
           "options": {
             "target": "nx:build",
-            "npmPackageName": "@nx-plugin/nx",
+            "npmPackageName": "@nativescript/nx",
             "pluginOutputPath": "dist/packages/nx",
             "jestConfig": "e2e/nx-e2e/jest.config.js"
           }

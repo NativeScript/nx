@@ -1,0 +1,1 @@
+/// <reference path="<%= pathOffset %>node_modules/@nativescript/types/index.d.ts" />

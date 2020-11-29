@@ -1,5 +1,5 @@
 {
-  "npmScope": "nx-plugin",
+  "npmScope": "nativescript",
   "affected": {
     "defaultBase": "master"
   },

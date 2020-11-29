@@ -24,7 +24,7 @@ describe('Command Runner Builder', () => {
 
   it('can run', async () => {
     // A "run" can have multiple outputs, and contains progress information.
-    const run = await architect.scheduleBuilder('@nx-plugin/nx:build', options);
+    const run = await architect.scheduleBuilder('@nativescript/nx:build', options);
     // The "result" member (of type BuilderOutput) is the next output.
     const output = await run.result;
 

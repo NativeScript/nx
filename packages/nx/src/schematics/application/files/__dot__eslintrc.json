@@ -1,0 +1,1 @@
+{ "extends": "<%= pathOffset %>.eslintrc.json", "ignorePatterns": ["!**/*", "references.d.ts", "node_modules/**/*", "hooks/**/*", "platforms/**/*"], "rules": {} }

@@ -1,12 +1,31 @@
 {
-  "$schema": "../../node_modules/@angular-devkit/schematics/collection-schema.json",
-  "name": "nx",
-  "version": "0.0.1",
+  "name": "NativeScript Nx",
+  "version": "0.1",
   "schematics": {
-    "nx": {
-      "factory": "./src/schematics/nx/schematic",
-      "schema": "./src/schematics/nx/schema.json",
-      "description": "nx schematic"
+    "init": {
+      "factory": "./src/schematics/init/init",
+      "schema": "./src/schematics/init/schema.json",
+      "description": "Initialize @nativescript/nx",
+      "aliases": ["ng-add"],
+      "hidden": true
+    },
+    "application": {
+      "factory": "./src/schematics/application/application",
+      "schema": "./src/schematics/application/schema.json",
+      "description": "Create an application",
+      "aliases": ["app"]
+    },
+    "library": {
+      "factory": "./src/schematics/library/library",
+      "schema": "./src/schematics/library/schema.json",
+      "description": "Create a library",
+      "aliases": ["lib"]
+    },
+    "app-resources": {
+      "factory": "./src/schematics/app-resources/app-resources",
+      "schema": "./src/schematics/app-resources/schema.json",
+      "description": "Create app resources for NativeScript app.",
+      "hidden": true
     }
   }
 }

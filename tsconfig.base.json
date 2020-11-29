@@ -16,7 +16,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "nx-plugin/nx": ["packages/nx/src/index.ts"]
+      "@nativescript/nx": ["packages/nx/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

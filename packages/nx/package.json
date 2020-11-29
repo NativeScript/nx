@@ -1,7 +1,40 @@
 {
-  "name": "@nx-plugin/nx",
-  "version": "0.0.1",
+  "name": "@nativescript/nx",
+  "version": "1.0.0-rc.0",
+  "description": "NativeScript Plugin for Nx",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nativescript/nx.git"
+  },
+  "keywords": [
+    "Monorepo",
+    "NativeScript",
+    "Mobile",
+    "iOS",
+    "Android"
+  ],
   "main": "src/index.js",
+  "types": "src/index.d.ts",
+  "builders": "./builders.json",
   "schematics": "./collection.json",
-  "builders": "./builders.json"
+  "author": "NativeScript TSC",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/nativescript/nx/issues"
+  },
+  "homepage": "https://nativescript.org/nx",
+  "ng-update": {
+    "requirements": {},
+    "migrations": "./migrations.json"
+  },
+  "peerDependencies": {
+    "@nrwl/workspace": "*"
+  },
+  "dependencies": {
+    "metro-resolver": "~0.58.0",
+    "fs-extra": "~9.0.0",
+    "ignore": "^5.0.4",
+    "node-fetch": "~2.6.1",
+    "strip-json-comments": "~3.1.1"
+  }
 }
