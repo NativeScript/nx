@@ -9,3 +9,5 @@ export const nodeSassVersion = '^4.14.0';
 // Frontend frameworks
 export const nsAngularVersion = '~11.0.0';
 export const nsNgToolsVersion = '~11.0.0';
+export const nsRxjs = '~6.5.5';
+export const nsZonejs = '^0.10.2"';
