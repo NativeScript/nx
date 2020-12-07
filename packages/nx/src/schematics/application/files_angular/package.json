@@ -25,8 +25,9 @@
   },
   "devDependencies": {
     "@angular/compiler-cli": "file:<%= pathOffset %>node_modules/@angular/compiler-cli",
-    "@ngtools/webpack": "file:<%= pathOffset %>node_modules/@ngtools/webpack",
+    "@nativescript/types": "file:<%= pathOffset %>node_modules/@nativescript/types",
     "@nativescript/webpack": "<%= nsWebpackVersion %>",
+    "@ngtools/webpack": "file:<%= pathOffset %>node_modules/@ngtools/webpack",
     "typescript": "file:<%= pathOffset %>node_modules/typescript"
   }
 }
