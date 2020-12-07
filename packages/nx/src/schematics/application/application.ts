@@ -25,7 +25,7 @@ export default function (options: Schema) {
         },
         { interactive: false }
       )(tree, context),
-    addAngularDependencies(),
+    (tree: Tree, context: SchematicContext) => (['angular'].includes(options.framework) ? addAngularDependencies() : noop()),
     PluginHelpers.updateRootDeps(options),
     // PluginHelpers.updatePrettierIgnore(),
     PluginHelpers.addPackageInstallTask(options),
