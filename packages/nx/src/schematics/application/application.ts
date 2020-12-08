@@ -1,7 +1,6 @@
 import { apply, branchAndMerge, chain, externalSchematic, mergeWith, move, noop, Rule, SchematicContext, SchematicsException, template, Tree, url } from '@angular-devkit/schematics';
-import { addDepsToPackageJson } from '@nrwl/workspace';
 import { getAppName, getDefaultTemplateOptions, getFrontendFramework, getPrefix, missingArgument, PluginHelpers, prerun, updateNxProjects, updatePackageScripts, updateWorkspace } from '../../utils';
-import { nsAngularVersion, nsRxjs, nsWebpackVersion, nsZonejs } from '../../utils/versions';
+import { nsWebpackVersion } from '../../utils/versions';
 import { Schema } from './schema';
 
 export default function (options: Schema) {
@@ -25,7 +24,6 @@ export default function (options: Schema) {
         },
         { interactive: false }
       )(tree, context),
-    (tree: Tree, context: SchematicContext) => (['angular'].includes(options.framework) ? addAngularDependencies() : noop()),
     PluginHelpers.updateRootDeps(options),
     // PluginHelpers.updatePrettierIgnore(),
     PluginHelpers.addPackageInstallTask(options),
@@ -116,25 +114,6 @@ export default function (options: Schema) {
       return updateNxProjects(tree, projects);
     },
   ]);
-}
-
-export function addAngularDependencies(): Rule {
-  return addDepsToPackageJson(
-    {
-      '@angular/animations': nsAngularVersion,
-      '@angular/common': nsAngularVersion,
-      '@angular/compiler': nsAngularVersion,
-      '@angular/core': nsAngularVersion,
-      '@angular/forms': nsAngularVersion,
-      '@angular/platform-browser': nsAngularVersion,
-      '@angular/platform-browser-dynamic': nsAngularVersion,
-      '@angular/router': nsAngularVersion,
-      '@nativescript/angular': nsAngularVersion,
-      rxjs: nsRxjs,
-      'zone.js': nsZonejs,
-    },
-    {}
-  );
 }
 
 function addAppFiles(options: Schema, appName: string, extra: string = ''): Rule {
