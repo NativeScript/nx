@@ -1,9 +1,9 @@
 import { Tree } from '@angular-devkit/schematics';
 import { UnitTestTree } from '@angular-devkit/schematics/testing';
-import { createEmptyWorkspace } from '@nrwl/workspace/testing';
-import * as stripJsonComments from 'strip-json-comments';
 import { NxJson, readJsonInTree } from '@nrwl/workspace';
+import { createEmptyWorkspace } from '@nrwl/workspace/testing';
 import { runSchematic } from '../../utils/testing';
+import { nsAngularVersion, nsRxjs, nsZonejs } from '../../utils/versions';
 
 describe('app', () => {
   let appTree: Tree;
@@ -31,6 +31,40 @@ describe('app', () => {
         },
       },
     });
+  });
+
+  it('should add angular dependencies when framework is angular', async () => {
+    const tree = await runSchematic('app', { name: 'myApp', framework: 'angular', groupByName: true }, appTree);
+    const packageJson = readJsonInTree(tree, `package.json`);
+
+    expect(packageJson['dependencies']['@angular/animations']).toEqual(nsAngularVersion);
+    expect(packageJson['dependencies']['@angular/common']).toEqual(nsAngularVersion);
+    expect(packageJson['dependencies']['@angular/compiler']).toEqual(nsAngularVersion);
+    expect(packageJson['dependencies']['@angular/core']).toEqual(nsAngularVersion);
+    expect(packageJson['dependencies']['@angular/forms']).toEqual(nsAngularVersion);
+    expect(packageJson['dependencies']['@angular/platform-browser']).toEqual(nsAngularVersion);
+    expect(packageJson['dependencies']['@angular/platform-browser-dynamic']).toEqual(nsAngularVersion);
+    expect(packageJson['dependencies']['@angular/router']).toEqual(nsAngularVersion);
+    expect(packageJson['dependencies']['rxjs']).toEqual(nsRxjs);
+    expect(packageJson['dependencies']['zone.js']).toEqual(nsZonejs);
+    expect(packageJson['dependencies']['@nativescript/angular']).toEqual(nsAngularVersion);
+  });
+
+  it('should not add angular dependencies when framework is not angular', async () => {
+    const tree = await runSchematic('app', { name: 'myApp', framework: '', groupByName: true }, appTree);
+    const packageJson = readJsonInTree(tree, `package.json`);
+
+    expect(packageJson['dependencies']['@angular/animations']).toBeFalsy();
+    expect(packageJson['dependencies']['@angular/common']).toBeFalsy();
+    expect(packageJson['dependencies']['@angular/compiler']).toBeFalsy();
+    expect(packageJson['dependencies']['@angular/core']).toBeFalsy();
+    expect(packageJson['dependencies']['@angular/forms']).toBeFalsy();
+    expect(packageJson['dependencies']['@angular/platform-browser']).toBeFalsy();
+    expect(packageJson['dependencies']['@angular/platform-browser-dynamic']).toBeFalsy();
+    expect(packageJson['dependencies']['@angular/router']).toBeFalsy();
+    expect(packageJson['dependencies']['rxjs']).toBeFalsy();
+    expect(packageJson['dependencies']['zone.js']).toBeFalsy();
+    expect(packageJson['dependencies']['@nativescript/angular']).toBeFalsy();
   });
 
   it('should generate files', async () => {
@@ -85,17 +119,6 @@ describe('app', () => {
     expect(tree.exists(`${appPath}/src/features/home/home.module.ts`)).toBeTruthy();
 
     checkFiles(tree, appPath, '../../../');
-  });
-
-  it('Angular groupByName: should generate files', async () => {
-    const tree = await runSchematic('app', { name: 'myApp', framework: 'angular', groupByName: true }, appTree);
-    const appPath = 'apps/my-app-nativescript';
-    checkAngularFiles(tree, appPath);
-
-    expect(tree.exists(`${appPath}/src/app.routing.ts`)).toBeTruthy();
-    expect(tree.exists(`${appPath}/src/features/home/home.module.ts`)).toBeTruthy();
-
-    checkFiles(tree, appPath, '../../');
   });
 });
 
