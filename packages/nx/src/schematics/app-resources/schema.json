@@ -14,5 +14,7 @@
       "default": "App_Resources"
     }
   },
-  "required": ["path"]
+  "required": [
+    "path"
+  ]
 }
