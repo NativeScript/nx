@@ -16,7 +16,7 @@
 
 
 - [Getting started](#getting-started)
-  - [Create a new Nx workspace:](#create-a-new-nx-workspace)
+  - [Create a new Nx workspace](#create-a-new-nx-workspace)
   - [Install NativeScript plugin](#install-nativescript-plugin)
   - [Create an app](#create-an-app)
     - [`--framework [angular]`](#--framework-angular)
@@ -31,7 +31,7 @@
 
 ## Getting started
 
-### Create a new Nx workspace:
+### Create a new Nx workspace
 
 ```sh
 npx create-nx-workspace --cli=nx --preset=empty
@@ -63,7 +63,11 @@ The NativeScript Nx plugin will prefix apps by default to help distinguish them 
 
 #### `--framework [angular]`
 
-By default a "vanilla" NativeScript app will be generated using xml view files. Use this option to create a specific frontend framework integration app.
+Use this option to create a specific frontend framework integration app.
+
+By default a "vanilla" NativeScript app will be generated using xml view files. 
+
+This setting will be saved with plugin settings the first time it's used to automatically choose this frontend framework integration for subsequent usages and with other generators without having to specify the flag again.
 
 #### `--groupByName`
 
