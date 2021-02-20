@@ -1,23 +1,11 @@
-import { chain, Rule } from '@angular-devkit/schematics';
-import {
-  addDepsToPackageJson,
-  addPackageWithInit,
-  updateWorkspace,
-} from '@nrwl/workspace';
-import { Schema } from './schema';
-import {
-  nsCoreVersion,
-  nsThemeVersion,
-  nxVersion,
-} from '../../utils/versions';
 import { JsonObject } from '@angular-devkit/core';
+import { chain, Rule } from '@angular-devkit/schematics';
+import { addDepsToPackageJson, addPackageWithInit, updateWorkspace } from '@nrwl/workspace';
+import { nsCoreVersion, nsThemeVersion } from '../../utils/versions';
+import { Schema } from './schema';
 
 export default function (schema: Schema) {
-  return chain([
-    setWorkspaceDefaults(),
-    addPackageWithInit('@nrwl/jest'),
-    addDependencies(),
-  ]);
+  return chain([setWorkspaceDefaults(), addPackageWithInit('@nrwl/jest'), addDependencies()]);
 }
 
 export function addDependencies(): Rule {
@@ -26,20 +14,19 @@ export function addDependencies(): Rule {
       '@nativescript/core': nsCoreVersion,
       '@nativescript/theme': nsThemeVersion,
     },
-    {}
+    {
+      '@nativescript/types': nsCoreVersion,
+    }
   );
 }
 
 function setWorkspaceDefaults(): Rule {
   return updateWorkspace((workspace) => {
     workspace.extensions.cli = workspace.extensions.cli || {};
-    const defaultCollection: string =
-      workspace.extensions.cli &&
-      ((workspace.extensions.cli as JsonObject).defaultCollection as string);
+    const defaultCollection: string = workspace.extensions.cli && ((workspace.extensions.cli as JsonObject).defaultCollection as string);
 
     if (!defaultCollection) {
-      (workspace.extensions.cli as JsonObject).defaultCollection =
-        '@nativescript/nx';
+      (workspace.extensions.cli as JsonObject).defaultCollection = '@nativescript/nx';
     }
   });
 }
