@@ -1,54 +1,28 @@
-import {
-  Tree,
-  noop,
-  branchAndMerge,
-  mergeWith,
-  apply,
-  url,
-  template,
-  move,
-  SchematicContext,
-  Rule,
-  externalSchematic,
-  SchematicsException,
-} from '@angular-devkit/schematics';
-import {
-  NodePackageInstallTask,
-  RunSchematicTask,
-} from '@angular-devkit/schematics/tasks';
-import { createSourceFile, ScriptTarget } from 'typescript';
+import { apply, branchAndMerge, externalSchematic, mergeWith, move, noop, Rule, SchematicContext, SchematicsException, template, Tree, url } from '@angular-devkit/schematics';
+import { NodePackageInstallTask, RunSchematicTask } from '@angular-devkit/schematics/tasks';
 import { toFileName } from '@nrwl/workspace';
-import { insert, addGlobal } from './ast';
-import {
-  FrameworkTypes,
-  PlatformTypes,
-  sanitizeCommaDelimitedArg,
-  IPluginSettings,
-  getPrefix,
-  getGroupByName,
-  getFrontendFramework,
-  supportedFrameworks,
-  supportedPlatforms,
-  getJsonFromFile,
-  updateJsonFile,
-  updateFile,
-  getNxWorkspaceConfig,
-  supportedSandboxPlatforms,
-  getDefaultTemplateOptions,
-  stringUtils,
-  isXplatWorkspace,
-  packageSettingKeys,
-} from './general';
+import { createSourceFile, ScriptTarget } from 'typescript';
+import { addGlobal, insert } from './ast';
 import { generateOptionError, unsupportedFrameworkError } from './errors';
 import {
-  nodeSassVersion,
-  nsAngularVersion,
-  nsCoreVersion,
-  nsNxPluginVersion,
-  nsThemeVersion,
-  nsNgToolsVersion,
-  nxVersion,
-} from './versions';
+  FrameworkTypes,
+  getDefaultTemplateOptions,
+  getFrontendFramework,
+  getGroupByName,
+  getJsonFromFile,
+  getPrefix,
+  IPluginSettings,
+  isXplatWorkspace,
+  packageSettingKeys,
+  PlatformTypes,
+  sanitizeCommaDelimitedArg,
+  stringUtils,
+  supportedFrameworks,
+  supportedPlatforms,
+  supportedSandboxPlatforms,
+  updateJsonFile,
+} from './general';
+import { nodeSassVersion, nsAngularVersion, nsCoreVersion, nsNgToolsVersion, nsNxPluginVersion, nsRxjs, nsThemeVersion, nsZonejs } from './versions';
 
 export namespace PluginHelpers {
   export interface Schema {
@@ -108,15 +82,10 @@ export namespace PluginHelpers {
     // will support comma delimited list of frameworks to generate support for
     // most common to generate 1 at a time but we will allow multiple
     // always default framework choice to first in list when multiple
-    return <Array<FrameworkTypes>>(
-      (<unknown>sanitizeCommaDelimitedArg(frameworkArgument))
-    );
+    return <Array<FrameworkTypes>>(<unknown>sanitizeCommaDelimitedArg(frameworkArgument));
   }
 
-  export function getFrameworkChoice(
-    frameworkArgument: string,
-    frameworks?: Array<FrameworkTypes>
-  ) {
+  export function getFrameworkChoice(frameworkArgument: string, frameworks?: Array<FrameworkTypes>) {
     frameworks = frameworks || getFrameworksFromOptions(frameworkArgument);
     return frameworks.length ? frameworks[0] : null;
   }
@@ -129,18 +98,28 @@ export namespace PluginHelpers {
         case 'angular':
           frameworkDependencies['@nativescript/angular'] = nsAngularVersion;
           frameworkDevDependencies['@ngtools/webpack'] = nsNgToolsVersion;
+          frameworkDependencies['@angular/animations'] = nsAngularVersion;
+          frameworkDependencies['@angular/common'] = nsAngularVersion;
+          frameworkDependencies['@angular/compiler'] = nsAngularVersion;
+          frameworkDependencies['@angular/core'] = nsAngularVersion;
+          frameworkDependencies['@angular/forms'] = nsAngularVersion;
+          frameworkDependencies['@angular/platform-browser'] = nsAngularVersion;
+          frameworkDependencies['@angular/platform-browser-dynamic'] = nsAngularVersion;
+          frameworkDependencies['@angular/router'] = nsAngularVersion;
+          frameworkDependencies['rxjs'] = nsRxjs;
+          frameworkDependencies['zone.js'] = nsZonejs;
           break;
       }
       return PluginHelpers.updatePackageForWorkspace(options, {
         dependencies: {
           '@nativescript/core': nsCoreVersion,
           'nativescript-theme-core': nsThemeVersion,
-          ...frameworkDependencies
+          ...frameworkDependencies,
         },
         devDependencies: {
           'node-sass': nodeSassVersion,
           '@nativescript/types': nsCoreVersion,
-          ...frameworkDevDependencies
+          ...frameworkDevDependencies,
         },
       })(tree, context);
     };
@@ -165,10 +144,7 @@ export namespace PluginHelpers {
 
   export function getUpdatedPluginSettings(options: Schema) {
     const frameworks = getFrameworksFromOptions(options.framework);
-    const frameworkChoice = PluginHelpers.getFrameworkChoice(
-      options.framework,
-      frameworks
-    );
+    const frameworkChoice = PluginHelpers.getFrameworkChoice(options.framework, frameworks);
     const pluginSettings: IPluginSettings = {
       prefix: getPrefix(),
     };
@@ -192,9 +168,7 @@ export namespace PluginHelpers {
    */
   export function getPlatformName(name: string, platform: PlatformTypes) {
     const nameSanitized = toFileName(name);
-    return getGroupByName()
-      ? `${nameSanitized}-${platform}`
-      : `${platform}-${nameSanitized}`;
+    return getGroupByName() ? `${nameSanitized}-${platform}` : `${platform}-${nameSanitized}`;
   }
 
   /**
@@ -204,10 +178,7 @@ export namespace PluginHelpers {
    * @param platform
    * @param framework
    */
-  export function getLibFoldername(
-    platform: PlatformTypes,
-    framework?: FrameworkTypes
-  ) {
+  export function getLibFoldername(platform: PlatformTypes, framework?: FrameworkTypes) {
     const frontendFramework = getFrontendFramework();
     // console.log('getLibFoldername frontendFramework:', frontendFramework);
     // console.log('framework:', framework);
@@ -221,11 +192,7 @@ export namespace PluginHelpers {
     return `${platform}${frameworkSuffix}`;
   }
 
-  export function getExternalChainsForGenerator(
-    options: Schema,
-    generator: string,
-    packagesToRunXplat: Array<string>
-  ) {
+  export function getExternalChainsForGenerator(options: Schema, generator: string, packagesToRunXplat: Array<string>) {
     let generatorSettings: IPluginGeneratorOptions;
     let isApp = false;
     switch (generator) {
@@ -238,9 +205,7 @@ export namespace PluginHelpers {
       default:
         isApp = ['application', 'app'].includes(generator);
         generatorSettings = {
-          platforms: <Array<PlatformTypes>>(
-            (<unknown>sanitizeCommaDelimitedArg('nativescript'))
-          ),
+          platforms: <Array<PlatformTypes>>(<unknown>sanitizeCommaDelimitedArg('nativescript')),
         };
         break;
     }
@@ -291,17 +256,12 @@ export namespace PluginHelpers {
         }
       } else {
         externalChains.push((tree: Tree, context: SchematicContext) => {
-          const installPackageTask = context.addTask(
-            new NodePackageInstallTask()
-          );
+          const installPackageTask = context.addTask(new NodePackageInstallTask());
 
           // console.log('devDependencies:', devDependencies);
           // console.log('packagesToRunXplat:', packagesToRunXplat);
           for (const packageName of packagesToRunXplat) {
-            context.addTask(
-              new RunSchematicTask(packageName, generator, options),
-              [installPackageTask]
-            );
+            context.addTask(new RunSchematicTask(packageName, generator, options), [installPackageTask]);
           }
         });
       }
@@ -309,15 +269,9 @@ export namespace PluginHelpers {
     return externalChains;
   }
 
-  export function getExternalChainsForApplication(
-    options: Schema,
-    generator: string,
-    packagesToRun: Array<string>
-  ) {
+  export function getExternalChainsForApplication(options: Schema, generator: string, packagesToRun: Array<string>) {
     let generatorSettings: IPluginGeneratorOptions = {
-      platforms: <Array<PlatformTypes>>(
-        (<unknown>sanitizeCommaDelimitedArg('nativescript'))
-      ),
+      platforms: <Array<PlatformTypes>>(<unknown>sanitizeCommaDelimitedArg('nativescript')),
     };
     const platforms = generatorSettings.platforms;
     const externalChains = [];
@@ -339,10 +293,7 @@ export namespace PluginHelpers {
       if (packagesToRun.length) {
         for (const packageName of packagesToRun) {
           const nxPlatform = <PlatformTypes>packageName.replace('@nrwl/', '');
-          const { name, directory } = getAppNamingConvention(
-            options,
-            nxPlatform
-          );
+          const { name, directory } = getAppNamingConvention(options, nxPlatform);
 
           externalChains.push(
             externalSchematic(
@@ -362,24 +313,17 @@ export namespace PluginHelpers {
       }
     } else {
       if (targetPlatforms) {
-        externalChains.push(
-          externalSchematic('@nativescript/nx', 'app-generate', options)
-        );
+        externalChains.push(externalSchematic('@nativescript/nx', 'app-generate', options));
       }
       if (packagesToRun.length) {
         externalChains.push((tree: Tree, context: SchematicContext) => {
-          const installPackageTask = context.addTask(
-            new NodePackageInstallTask()
-          );
+          const installPackageTask = context.addTask(new NodePackageInstallTask());
 
           // console.log('devDependencies:', devDependencies);
           // console.log('packagesToRunXplat:', packagesToRunXplat);
           for (const packageName of packagesToRun) {
             const nxPlatform = <PlatformTypes>packageName.replace('@nrwl/', '');
-            const { name, directory } = getAppNamingConvention(
-              options,
-              nxPlatform
-            );
+            const { name, directory } = getAppNamingConvention(options, nxPlatform);
             context.addTask(
               new RunSchematicTask(packageName, generator, {
                 ...options,
@@ -395,10 +339,7 @@ export namespace PluginHelpers {
     return externalChains;
   }
 
-  export function applyAppNamingConvention(
-    options: any,
-    platform: PlatformTypes
-  ): Rule {
+  export function applyAppNamingConvention(options: any, platform: PlatformTypes): Rule {
     return (tree: Tree, context: SchematicContext) => {
       const { name, directory } = getAppNamingConvention(options, platform);
       options.name = name;
@@ -409,18 +350,12 @@ export namespace PluginHelpers {
     };
   }
 
-  export function getAppNamingConvention(
-    options: any,
-    platform: PlatformTypes
-  ) {
+  export function getAppNamingConvention(options: any, platform: PlatformTypes) {
     let name = '';
     let directory = '';
     if (options.directory) {
       directory = toFileName(options.directory);
-      if (
-        directory === platform &&
-        supportedPlatforms.includes(<PlatformTypes>directory)
-      ) {
+      if (directory === platform && supportedPlatforms.includes(<PlatformTypes>directory)) {
         name = toFileName(options.name);
       } else {
         name = getPlatformName(options.name, platform);
@@ -459,7 +394,6 @@ export namespace PluginHelpers {
           };
           return updateJsonFile(tree, packagePath, packageJson);
         } else if (updates) {
-          
           // update root dependencies for the generated support
           packageJson = {
             ...packageJson,
@@ -575,9 +509,7 @@ export namespace PluginComponentHelpers {
     isTesting?: boolean;
   }
 
-  export function prepare(
-    options: Schema
-  ): PluginHelpers.IPluginGeneratorOptions {
+  export function prepare(options: Schema): PluginHelpers.IPluginGeneratorOptions {
     if (!options.name) {
       throw new Error(generateOptionError('component'));
     }
@@ -604,16 +536,10 @@ export namespace PluginComponentHelpers {
         const projectParts = name.split('-');
         const platPrefix = projectParts[0];
         const platSuffix = projectParts.pop();
-        if (
-          supportedPlatforms.includes(platPrefix) &&
-          !platforms.includes(platPrefix)
-        ) {
+        if (supportedPlatforms.includes(platPrefix) && !platforms.includes(platPrefix)) {
           // if project name is prefixed with supported platform and not already added
           platforms.push(platPrefix);
-        } else if (
-          supportedPlatforms.includes(platSuffix) &&
-          !platforms.includes(platSuffix)
-        ) {
+        } else if (supportedPlatforms.includes(platSuffix) && !platforms.includes(platSuffix)) {
           platforms.push(platSuffix);
         }
       }
@@ -671,13 +597,9 @@ export namespace PluginFeatureHelpers {
     isTesting?: boolean;
   }
 
-  export function prepare(
-    options: Schema
-  ): PluginHelpers.IPluginGeneratorOptions {
+  export function prepare(options: Schema): PluginHelpers.IPluginGeneratorOptions {
     if (!options.name) {
-      throw new SchematicsException(
-        `You did not specify the name of the feature you'd like to generate. For example: nx g @nativescript/nx:feature my-feature`
-      );
+      throw new SchematicsException(`You did not specify the name of the feature you'd like to generate. For example: nx g @nativescript/nx:feature my-feature`);
     }
     const featureName = options.name.toLowerCase();
     let projects = options.projects;
@@ -701,9 +623,7 @@ export namespace PluginFeatureHelpers {
             if (supportedSandboxPlatforms.includes(p)) {
               projectSandboxNames.push(`${p}-sandbox`);
             } else {
-              throw new SchematicsException(
-                `The --adjustSandbox flag supports the following at the moment: ${supportedSandboxPlatforms}`
-              );
+              throw new SchematicsException(`The --adjustSandbox flag supports the following at the moment: ${supportedSandboxPlatforms}`);
             }
           }
           projects = projectSandboxNames.join(',');
@@ -711,9 +631,7 @@ export namespace PluginFeatureHelpers {
       }
     }
     if (options.routing && !options.onlyProject) {
-      throw new SchematicsException(
-        `When generating a feature with the --routing option, please also specify --onlyProject. Support for shared code routing is under development.`
-      );
+      throw new SchematicsException(`When generating a feature with the --routing option, please also specify --onlyProject. Support for shared code routing is under development.`);
     }
 
     if (projects) {
@@ -727,16 +645,10 @@ export namespace PluginFeatureHelpers {
         const projectParts = projectName.split('-');
         const platPrefix = <PlatformTypes>projectParts[0];
         const platSuffix = <PlatformTypes>projectParts.pop();
-        if (
-          supportedPlatforms.includes(platPrefix) &&
-          !platforms.includes(platPrefix)
-        ) {
+        if (supportedPlatforms.includes(platPrefix) && !platforms.includes(platPrefix)) {
           // if project name is prefixed with supported platform and not already added
           platforms.push(platPrefix);
-        } else if (
-          supportedPlatforms.includes(platSuffix) &&
-          !platforms.includes(platSuffix)
-        ) {
+        } else if (supportedPlatforms.includes(platSuffix) && !platforms.includes(platSuffix)) {
           // if project name is suffixed with supported platform and not already added
           platforms.push(platSuffix);
         }
@@ -754,13 +666,7 @@ export namespace PluginFeatureHelpers {
     return { featureName, projectNames, platforms };
   }
 
-  export function addFiles(
-    options: Schema,
-    target: string = '',
-    projectName: string = '',
-    extra: string = '',
-    framework?: FrameworkTypes
-  ) {
+  export function addFiles(options: Schema, target: string = '', projectName: string = '', extra: string = '', framework?: FrameworkTypes) {
     let moveTo: string;
     if (target) {
       moveTo = getMoveTo(options, target, projectName, framework);
@@ -775,57 +681,28 @@ export namespace PluginFeatureHelpers {
     // console.log('target:', target);
     // console.log('addFiles moveTo:', moveTo);
     // console.log('add files from:', `${workingDirectory}/${extra}_files`);
-    return branchAndMerge(
-      mergeWith(
-        apply(url(`./${extra}_files`), [
-          template(getTemplateOptions(options, target, framework)),
-          move(moveTo),
-        ])
-      )
-    );
+    return branchAndMerge(mergeWith(apply(url(`./${extra}_files`), [template(getTemplateOptions(options, target, framework)), move(moveTo)])));
   }
 
-  export function adjustBarrelIndex(
-    options: Schema,
-    indexFilePath: string
-  ): Rule {
+  export function adjustBarrelIndex(options: Schema, indexFilePath: string): Rule {
     return (tree: Tree) => {
       // console.log('adjustBarrelIndex indexFilePath:', indexFilePath);
       // console.log('tree.exists(indexFilePath):', tree.exists(indexFilePath));
       const indexSource = tree.read(indexFilePath)!.toString('utf-8');
-      const indexSourceFile = createSourceFile(
-        indexFilePath,
-        indexSource,
-        ScriptTarget.Latest,
-        true
-      );
+      const indexSourceFile = createSourceFile(indexFilePath, indexSource, ScriptTarget.Latest, true);
 
-      insert(tree, indexFilePath, [
-        ...addGlobal(
-          indexSourceFile,
-          indexFilePath,
-          `export * from './${options.name.toLowerCase()}';`,
-          true
-        ),
-      ]);
+      insert(tree, indexFilePath, [...addGlobal(indexSourceFile, indexFilePath, `export * from './${options.name.toLowerCase()}';`, true)]);
       return tree;
     };
   }
 
-  export function getTemplateOptions(
-    options: Schema,
-    platform: string,
-    framework?: FrameworkTypes
-  ) {
+  export function getTemplateOptions(options: Schema, platform: string, framework?: FrameworkTypes) {
     const nameParts = options.name.split('-');
     let endingDashName = nameParts[0];
     if (nameParts.length > 1) {
       endingDashName = stringUtils.capitalize(nameParts[nameParts.length - 1]);
     }
-    const libFolderName = PluginHelpers.getLibFoldername(
-      <PlatformTypes>platform,
-      framework
-    );
+    const libFolderName = PluginHelpers.getLibFoldername(<PlatformTypes>platform, framework);
     return {
       ...(options as any),
       ...getDefaultTemplateOptions(),
@@ -835,22 +712,12 @@ export namespace PluginFeatureHelpers {
     };
   }
 
-  export function getMoveTo(
-    options: Schema,
-    platform: string,
-    projectName?: string,
-    framework?: FrameworkTypes
-  ) {
+  export function getMoveTo(options: Schema, platform: string, projectName?: string, framework?: FrameworkTypes) {
     // console.log('getMoveTo framework:', framework);
-    const libFolderName = PluginHelpers.getLibFoldername(
-      <PlatformTypes>platform,
-      framework
-    );
+    const libFolderName = PluginHelpers.getLibFoldername(<PlatformTypes>platform, framework);
     // console.log('getMoveTo libFolderName:', libFolderName);
     const featureName = options.name.toLowerCase();
-    let moveTo = `libs/${
-      isXplatWorkspace() ? 'xplat/' : ''
-    }${libFolderName}/features/${featureName}`;
+    let moveTo = `libs/${isXplatWorkspace() ? 'xplat/' : ''}${libFolderName}/features/${featureName}`;
     if (projectName) {
       let appDir = ['web', 'web-angular'].includes(libFolderName) ? '/app' : '';
       moveTo = `apps/${projectName}/src${appDir}/features/${featureName}`;

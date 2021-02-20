@@ -1,64 +1,26 @@
-import {
-  apply,
-  chain,
-  Tree,
-  Rule,
-  url,
-  move,
-  template,
-  mergeWith,
-  branchAndMerge,
-  SchematicContext,
-  SchematicsException,
-  schematic,
-  noop,
-  externalSchematic,
-} from '@angular-devkit/schematics';
-import {
-  prerun,
-  missingArgument,
-  PluginHelpers,
-  updatePackageScripts,
-  getPrefix,
-  updateWorkspace,
-  updateNxProjects,
-  getAppName,
-  getDefaultTemplateOptions,
-  getFrontendFramework,
-} from '../../utils';
+import { apply, branchAndMerge, chain, externalSchematic, mergeWith, move, noop, Rule, SchematicContext, SchematicsException, template, Tree, url } from '@angular-devkit/schematics';
+import { getAppName, getDefaultTemplateOptions, getFrontendFramework, getPrefix, missingArgument, PluginHelpers, prerun, updateNxProjects, updatePackageScripts, updateWorkspace } from '../../utils';
 import { nsWebpackVersion } from '../../utils/versions';
 import { Schema } from './schema';
 
 export default function (options: Schema) {
   if (!options.name) {
-    throw new SchematicsException(
-      missingArgument(
-        'name',
-        'Provide a name for your NativeScript app.',
-        'nx g @nativescript/nx:app name'
-      )
-    );
+    throw new SchematicsException(missingArgument('name', 'Provide a name for your NativeScript app.', 'nx g @nativescript/nx:app name'));
   }
 
   return chain([
     prerun(options, true),
     PluginHelpers.applyAppNamingConvention(options, 'nativescript'),
-    (tree: Tree, context: SchematicContext) =>
-      addAppFiles(options, options.name),
+    (tree: Tree, context: SchematicContext) => addAppFiles(options, options.name),
     // add extra files per options
-    (tree: Tree, context: SchematicContext) =>
-      options.routing && ['angular'].includes(options.framework)
-        ? addAppFiles(options, options.name, 'routing')
-        : noop(),
+    (tree: Tree, context: SchematicContext) => (options.routing && ['angular'].includes(options.framework) ? addAppFiles(options, options.name, 'routing') : noop()),
     // add app resources
     (tree: Tree, context: SchematicContext) =>
       externalSchematic(
         '@nativescript/nx',
         'app-resources',
         {
-          path: `apps/${options.directory ? options.directory + '/' : ''}${
-            options.name
-          }`,
+          path: `apps/${options.directory ? options.directory + '/' : ''}${options.name}`,
         },
         { interactive: false }
       )(tree, context),
@@ -67,9 +29,7 @@ export default function (options: Schema) {
     PluginHelpers.addPackageInstallTask(options),
     (tree: Tree) => {
       const scripts = {};
-      scripts[
-        `clean`
-      ] = `npx rimraf hooks node_modules package-lock.json && npm i`;
+      scripts[`clean`] = `npx rimraf hooks node_modules package-lock.json && npm i`;
       return updatePackageScripts(tree, scripts);
     },
     (tree: Tree, context: SchematicContext) => {
@@ -106,9 +66,7 @@ export default function (options: Schema) {
           ios: {
             builder: '@nrwl/workspace:run-commands',
             options: {
-              commands: [
-                `ns debug ios --no-hmr --env.configuration={args.configuration} --env.projectName=${options.name}`,
-              ],
+              commands: [`ns debug ios --no-hmr --env.configuration={args.configuration} --env.projectName=${options.name}`],
               cwd: appPath,
               parallel: false,
             },
@@ -116,9 +74,7 @@ export default function (options: Schema) {
           android: {
             builder: '@nrwl/workspace:run-commands',
             options: {
-              commands: [
-                `ns debug android --no-hmr --env.configuration={args.configuration} --env.projectName=${options.name}`,
-              ],
+              commands: [`ns debug android --no-hmr --env.configuration={args.configuration} --env.projectName=${options.name}`],
               cwd: appPath,
               parallel: false,
             },
@@ -173,7 +129,7 @@ function addAppFiles(options: Schema, appName: string, extra: string = ''): Rule
           appname,
           pathOffset: directory ? '../../../' : '../../',
           libFolderName: PluginHelpers.getLibFoldername('nativescript'),
-          nsWebpackVersion
+          nsWebpackVersion,
         }),
         move(`apps/${directory}${appName}`),
       ])
