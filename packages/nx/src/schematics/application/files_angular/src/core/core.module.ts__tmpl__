@@ -1,5 +1,5 @@
 import { NgModule, Optional, SkipSelf } from '@angular/core';
-import { NativeScriptModule, NativeScriptHttpClientModule } from '@nativescript/angular';
+import { NativeScriptHttpClientModule, NativeScriptModule, throwIfAlreadyLoaded } from '@nativescript/angular';
 
 @NgModule({
   imports: [NativeScriptModule, NativeScriptHttpClientModule]
