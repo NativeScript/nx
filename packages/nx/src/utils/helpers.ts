@@ -22,7 +22,7 @@ import {
   supportedSandboxPlatforms,
   updateJsonFile,
 } from './general';
-import { nodeSassVersion, nsAngularVersion, nsCoreVersion, nsNgToolsVersion, nsNxPluginVersion, nsRxjs, nsThemeVersion, nsZonejs } from './versions';
+import { sassVersion, nsAngularVersion, nsCoreVersion, nsNgToolsVersion, nsNxPluginVersion, nsRxjs, nsThemeVersion, nsZonejs } from './versions';
 
 export namespace PluginHelpers {
   export interface Schema {
@@ -117,7 +117,7 @@ export namespace PluginHelpers {
           ...frameworkDependencies,
         },
         devDependencies: {
-          'node-sass': nodeSassVersion,
+          'sass': sassVersion,
           '@nativescript/types': nsCoreVersion,
           ...frameworkDevDependencies,
         },
