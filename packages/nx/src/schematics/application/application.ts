@@ -1,5 +1,6 @@
 import { apply, branchAndMerge, chain, externalSchematic, mergeWith, move, noop, Rule, SchematicContext, SchematicsException, template, Tree, url } from '@angular-devkit/schematics';
-import { getAppName, getDefaultTemplateOptions, getFrontendFramework, getPrefix, missingArgument, PluginHelpers, prerun, updateNxProjects, updatePackageScripts, updateWorkspace } from '../../utils';
+import { updateWorkspace } from '@nrwl/workspace';
+import { getAppName, getDefaultTemplateOptions, getFrontendFramework, getPrefix, missingArgument, PluginHelpers, prerun, updateNxProjects, updatePackageScripts } from '../../utils';
 import { nsWebpackVersion } from '../../utils/versions';
 import { Schema } from './schema';
 
@@ -55,56 +56,58 @@ export default function (options: Schema) {
           };
           break;
       }
-      const projects = {};
-      projects[`${options.name}`] = {
-        root: `${appPath}/`,
-        sourceRoot: `${appPath}/src`,
-        projectType: 'application',
-        prefix: getPrefix(),
-        architect: {
-          ...frontendFrameworkConfig,
-          ios: {
-            builder: '@nrwl/workspace:run-commands',
-            options: {
-              commands: [`ns debug ios --no-hmr --env.configuration={args.configuration} --env.projectName=${options.name}`],
-              cwd: appPath,
-              parallel: false,
+      return updateWorkspace((workspace) => {
+        workspace.projects.add({
+          name: `${options.name}`,
+          root: `${appPath}/`,
+          sourceRoot: `${appPath}/src`,
+          projectType: 'application',
+          prefix: getPrefix(),
+          targets: {
+            ...frontendFrameworkConfig,
+            ios: {
+              builder: '@nrwl/workspace:run-commands',
+              options: {
+                command: `ns debug ios --no-hmr --env.projectName=${options.name}`,
+                cwd: appPath,
+              },
+            },
+            android: {
+              builder: '@nrwl/workspace:run-commands',
+              options: {
+                command: `ns debug android --no-hmr --env.projectName=${options.name}`,
+                cwd: appPath,
+              },
+            },
+            clean: {
+              builder: '@nrwl/workspace:run-commands',
+              options: {
+                commands: ['ns clean', 'npm i', 'npx rimraf package-lock.json'],
+                cwd: appPath,
+                parallel: false,
+              },
+            },
+            lint: {
+              builder: '@nrwl/linter:eslint',
+              options: {
+                lintFilePatterns: [
+                  `${appPath}/**/*.ts`,
+                  `${appPath}/src/**/*.html`,
+                ],
+              },
+            },
+            test: {
+              builder: '@nrwl/jest:jest',
+              options: {
+                jestConfig: `${appPath}/jest.config.js`,
+                tsConfig: `${appPath}/tsconfig.spec.json`,
+                passWithNoTests: true,
+                setupFile: `${appPath}/src/test-setup.ts`,
+              },
             },
           },
-          android: {
-            builder: '@nrwl/workspace:run-commands',
-            options: {
-              commands: [`ns debug android --no-hmr --env.configuration={args.configuration} --env.projectName=${options.name}`],
-              cwd: appPath,
-              parallel: false,
-            },
-          },
-          clean: {
-            builder: '@nrwl/workspace:run-commands',
-            options: {
-              commands: ['ns clean', 'npm i', 'npx rimraf package-lock.json'],
-              cwd: appPath,
-              parallel: false,
-            },
-          },
-          lint: {
-            builder: '@nrwl/linter:eslint',
-            options: {
-              lintFilePatterns: [`${appPath}/**/*.ts`],
-            },
-          },
-          test: {
-            builder: '@nrwl/jest:jest',
-            options: {
-              jestConfig: `${appPath}/jest.config.js`,
-              tsConfig: `${appPath}/tsconfig.spec.json`,
-              passWithNoTests: true,
-              setupFile: `${appPath}/src/test-setup.ts`,
-            },
-          },
-        },
-      };
-      return updateWorkspace({ projects })(tree, <any>context);
+        });
+      });
     },
     (tree: Tree) => {
       const projects = {};
