@@ -28,11 +28,6 @@ export default function (options: Schema) {
     PluginHelpers.updateRootDeps(options),
     // PluginHelpers.updatePrettierIgnore(),
     PluginHelpers.addPackageInstallTask(options),
-    (tree: Tree) => {
-      const scripts = {};
-      scripts[`clean`] = `npx rimraf hooks node_modules package-lock.json && npm i`;
-      return updatePackageScripts(tree, scripts);
-    },
     (tree: Tree, context: SchematicContext) => {
       const directory = options.directory ? `${options.directory}/` : '';
       const appPath = `apps/${directory}${options.name}`;

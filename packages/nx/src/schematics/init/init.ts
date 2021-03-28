@@ -1,7 +1,7 @@
 import { JsonObject } from '@angular-devkit/core';
 import { chain, Rule } from '@angular-devkit/schematics';
 import { addDepsToPackageJson, addPackageWithInit, updateWorkspace } from '@nrwl/workspace';
-import { nsCoreVersion, nsThemeVersion } from '../../utils/versions';
+import { nsCoreVersion, nsTypesVersion, nsThemeVersion } from '../../utils/versions';
 import { Schema } from './schema';
 
 export default function (schema: Schema) {
@@ -15,7 +15,7 @@ export function addDependencies(): Rule {
       '@nativescript/theme': nsThemeVersion,
     },
     {
-      '@nativescript/types': nsCoreVersion,
+      '@nativescript/types': nsTypesVersion,
     }
   );
 }

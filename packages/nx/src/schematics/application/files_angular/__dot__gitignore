@@ -32,14 +32,9 @@ npm-debug.log
 
 # app
 !*.d.ts
-!src/assets/fontawesome.min.css
 /report/
 .nsbuildinfo
 /temp/
-/src/tns_modules/
-
-# app uses platform specific scss which can inadvertently get renamed which will cause problems
-app/app.scss
 
 package-lock.json
 !tools/**
