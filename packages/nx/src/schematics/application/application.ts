@@ -1,7 +1,7 @@
 import { apply, branchAndMerge, chain, externalSchematic, mergeWith, move, noop, Rule, SchematicContext, SchematicsException, template, Tree, url } from '@angular-devkit/schematics';
 import { updateWorkspace } from '@nrwl/workspace';
 import { getAppName, getDefaultTemplateOptions, getFrontendFramework, getPrefix, missingArgument, PluginHelpers, prerun, updateNxProjects, updatePackageScripts } from '../../utils';
-import { nsWebpackVersion } from '../../utils/versions';
+import { nsWebpackVersion, nsNgToolsVersion } from '../../utils/versions';
 import { Schema } from './schema';
 
 export default function (options: Schema) {
@@ -35,10 +35,17 @@ export default function (options: Schema) {
       switch (options.framework) {
         case 'angular':
           frontendFrameworkConfig = {
-            default: {
-              builder: '@nrwl/workspace:run-commands',
+            build: {
+              builder: '@nativescript/nx:build',
+              options: {
+                noHmr: true,
+                production: true,
+                uglify: true,
+                release: true,
+                forDevice: true,
+              },
               configurations: {
-                production: {
+                prod: {
                   fileReplacements: [
                     {
                       replace: `${appPath}/src/environments/environment.ts`,
@@ -61,34 +68,37 @@ export default function (options: Schema) {
           targets: {
             ...frontendFrameworkConfig,
             ios: {
-              builder: '@nrwl/workspace:run-commands',
+              builder: '@nativescript/nx:build',
               options: {
-                command: `ns debug ios --no-hmr --env.projectName=${options.name}`,
-                cwd: appPath,
+                platform: 'ios',
+              },
+              configurations: {
+                prod: {
+                  combineWithConfig: 'build:prod',
+                },
               },
             },
             android: {
-              builder: '@nrwl/workspace:run-commands',
+              builder: '@nativescript/nx:build',
               options: {
-                command: `ns debug android --no-hmr --env.projectName=${options.name}`,
-                cwd: appPath,
+                platform: 'ios',
+              },
+              configurations: {
+                prod: {
+                  combineWithConfig: 'build:prod',
+                },
               },
             },
             clean: {
-              builder: '@nrwl/workspace:run-commands',
+              builder: '@nativescript/nx:build',
               options: {
-                commands: ['ns clean', 'npm i', 'npx rimraf package-lock.json'],
-                cwd: appPath,
-                parallel: false,
+                clean: true,
               },
             },
             lint: {
               builder: '@nrwl/linter:eslint',
               options: {
-                lintFilePatterns: [
-                  `${appPath}/**/*.ts`,
-                  `${appPath}/src/**/*.html`,
-                ],
+                lintFilePatterns: [`${appPath}/**/*.ts`, `${appPath}/src/**/*.html`],
               },
             },
             test: {
@@ -128,6 +138,7 @@ function addAppFiles(options: Schema, appName: string, extra: string = ''): Rule
           pathOffset: directory ? '../../../' : '../../',
           libFolderName: PluginHelpers.getLibFoldername('nativescript'),
           nsWebpackVersion,
+          nsNgToolsVersion,
         }),
         move(`apps/${directory}${appName}`),
       ])

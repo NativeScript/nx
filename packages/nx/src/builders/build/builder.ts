@@ -6,43 +6,45 @@ export function runBuilder(options: BuildBuilderSchema, context: ExecutorContext
   return new Promise((resolve, reject) => {
     // console.log('context.projectName:', context.projectName);
     const projectCwd = context.workspace.projects[context.projectName].root;
-    console.log('projectCwd:', projectCwd);
-    console.log('context.targetName:', context.targetName);
-    console.log('context.configurationName:', context.configurationName);
-    console.log('context.target.options:', context.target.options);
-    const configOptions = context.target.configurations[context.configurationName];
-    console.log('configOptions:', configOptions)
-    const fileReplacements = [];
+    // console.log('projectCwd:', projectCwd);
+    // console.log('context.targetName:', context.targetName);
+    // console.log('context.configurationName:', context.configurationName);
+    // console.log('context.target.options:', context.target.options);
+    const fileReplacements: Array<string> = [];
+    let configOptions;
+    if (context.target.configurations) {
+      configOptions = context.target.configurations[context.configurationName];
+      // console.log('configOptions:', configOptions)
 
-    if (configOptions) {
-      if (configOptions.fileReplacements) {
-        for (const r of configOptions.fileReplacements) {
-          fileReplacements.push(r);
+      if (configOptions) {
+        if (configOptions.fileReplacements) {
+          for (const r of configOptions.fileReplacements) {
+            fileReplacements.push(`${r.replace}:${r.with}`);
+          }
         }
-      }
-      if (configOptions.combineWithConfig) {
-        const configParts = configOptions.combineWithConfig.split(':');
-        const combineWithTargetName = configParts[0];
-        const combineWithTarget = context.workspace.projects[context.projectName].targets[combineWithTargetName];
-        if (combineWithTarget && combineWithTarget.configurations) {
-          if (configParts.length > 1) {
-            const configName = configParts[1];
-            const combineWithTargetConfig = combineWithTarget.configurations[configName];
-            // TODO: combine configOptions with combineWithConfigOptions
-            if (combineWithTargetConfig) {
-              if (combineWithTargetConfig.fileReplacements) {
-                for (const r of combineWithTargetConfig.fileReplacements) {
-                  fileReplacements.push(r);
+        if (configOptions.combineWithConfig) {
+          const configParts = configOptions.combineWithConfig.split(':');
+          const combineWithTargetName = configParts[0];
+          const combineWithTarget = context.workspace.projects[context.projectName].targets[combineWithTargetName];
+          if (combineWithTarget && combineWithTarget.configurations) {
+            if (configParts.length > 1) {
+              const configName = configParts[1];
+              const combineWithTargetConfig = combineWithTarget.configurations[configName];
+              // TODO: combine configOptions with combineWithConfigOptions
+              if (combineWithTargetConfig) {
+                if (combineWithTargetConfig.fileReplacements) {
+                  for (const r of combineWithTargetConfig.fileReplacements) {
+                    fileReplacements.push(`${r.replace}:${r.with}`);
+                  }
                 }
               }
             }
+          } else {
+            console.warn(`Warning: No configurations will be combined. "${combineWithTargetName}" was not found for project name: "${context.projectName}"`);
           }
-        } else {
-          console.warn(`Warning: No combining of configurations will occur. "${combineWithTargetName}" was not found for project name: "${context.projectName}"`);
         }
       }
     }
-    
 
     const nsOptions = [];
     if (options.clean) {
@@ -79,8 +81,11 @@ export function runBuilder(options: BuildBuilderSchema, context: ExecutorContext
       if (options.release) {
         nsOptions.push('--release');
       }
-      // TODO: pass fileReplacements as --env.fileReplacements=JSON.stringify(fileReplacements)
-      // add support to accept JSON string that could be parsed in webpack.config
+      if (fileReplacements.length) {
+        // console.log('fileReplacements:', fileReplacements);
+        nsOptions.push('--env.replace');
+        nsOptions.push(fileReplacements.join(','));
+      }
     }
     const child = childProcess.spawn('ns', nsOptions, {
       cwd: projectCwd,

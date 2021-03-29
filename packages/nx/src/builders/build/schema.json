@@ -15,7 +15,8 @@
     },
     "device": {
       "type": "string",
-      "description": "Device identifier to run app on."
+      "description": "Device identifier to run app on.",
+      "alias": "d"
     },
     "emulator": {
       "type": "boolean",
@@ -53,5 +54,5 @@
       "description": "Do a full project clean"
     }
   },
-  "required": ["platform"]
+  "required": []
 }
