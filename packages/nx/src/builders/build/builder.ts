@@ -91,12 +91,6 @@ export function runBuilder(options: BuildBuilderSchema, context: ExecutorContext
       cwd: projectCwd,
       stdio: 'inherit'
     });
-    child.stdout.on('data', (data) => {
-      console.log(data.toString());
-    });
-    child.stderr.on('data', (data) => {
-      console.log(data.toString());
-    });
     child.on('close', (code) => {
       console.log(`Done.`);
       resolve({ success: code === 0 });
