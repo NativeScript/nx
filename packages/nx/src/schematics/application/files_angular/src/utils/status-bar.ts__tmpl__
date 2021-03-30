@@ -1,0 +1,31 @@
+import { Application, Color, Device, isIOS, Frame, View, Page } from '@nativescript/core';
+
+export function setStatusBarColor(color: 'light' | 'dark', tintColor?: string /* android only */, view?: Page) {
+  if (isIOS) {
+    UIApplication.sharedApplication.setStatusBarStyleAnimated(color === 'light' ? UIStatusBarStyle.LightContent : UIStatusBarStyle.DarkContent, false);
+  } else {
+    const sdkVersion = parseInt(Device.sdkVersion);
+    if (sdkVersion >= 21) {
+      // api level 21+ can programmatically change the status bar
+      const activity: android.app.Activity = Application.android.foregroundActivity || Application.android.startActivity;
+      activity.getWindow().clearFlags(android.view.WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+      activity.getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+      activity.getWindow().setStatusBarColor(new Color('#97d9e9').android);
+      console.log('Device.sdkVersion:', Device.sdkVersion)
+      // if (sdkVersion >= 30) {
+      //   // console.log('view.android:', view.android);
+      //   // console.log('view.android.windowInsetsController:', view.android.windowInsetsController);
+      //   // view.android.windowInsetsController.setSystemBarsAppearance((<any>android.view).WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS);
+      //   // api level 30+ uses WindowInsetsController 
+      //   // https://developer.android.com/reference/android/view/WindowInsetsController
+      //   // (<any>activity.getWindow()).setSystemBarsAppearance((<any>android.view).WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS);
+      // } else 
+      
+      if (sdkVersion >= 23) {
+        // api level 23+ can programmatically change the text color of the status bar
+        // see here: https://developer.android.com/reference/android/view/View#SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+        activity.getWindow().getDecorView().setSystemUiVisibility((<any>android.view.View).SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+      }
+    }
+  }
+}

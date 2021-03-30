@@ -19,7 +19,7 @@ export function runBuilder(options: BuildBuilderSchema, context: ExecutorContext
       if (configOptions) {
         if (configOptions.fileReplacements) {
           for (const r of configOptions.fileReplacements) {
-            fileReplacements.push(`${r.replace}:${r.with}`);
+            fileReplacements.push(`${r.replace.replace(projectCwd, './')}:${r.with.replace(projectCwd, './')}`);
           }
         }
         if (configOptions.combineWithConfig) {
@@ -34,7 +34,7 @@ export function runBuilder(options: BuildBuilderSchema, context: ExecutorContext
               if (combineWithTargetConfig) {
                 if (combineWithTargetConfig.fileReplacements) {
                   for (const r of combineWithTargetConfig.fileReplacements) {
-                    fileReplacements.push(`${r.replace}:${r.with}`);
+                    fileReplacements.push(`${r.replace.replace(projectCwd, './')}:${r.with.replace(projectCwd, './')}`);
                   }
                 }
               }
@@ -89,6 +89,7 @@ export function runBuilder(options: BuildBuilderSchema, context: ExecutorContext
     }
     const child = childProcess.spawn('ns', nsOptions, {
       cwd: projectCwd,
+      stdio: 'inherit'
     });
     child.stdout.on('data', (data) => {
       console.log(data.toString());

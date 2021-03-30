@@ -23,6 +23,7 @@
     - [`--groupByName`](#--groupbyname)
     - [Develop on simulators and devices](#develop-on-simulators-and-devices)
     - [Configuration options](#configuration-options)
+    - [Clean](#clean)
 - [Create NativeScript library](#create-nativescript-library)
   - [`--groupByName`](#--groupbyname-1)
 
@@ -62,9 +63,9 @@ The NativeScript Nx plugin will prefix apps by default to help distinguish them 
 
 #### `--framework [angular]`
 
-Use this option to create a specific frontend framework integration app.
+You will be prompted to choose a framework when this flag is ommitted.
 
-By default a "vanilla" NativeScript app will be generated using xml view files. 
+Use this option to explicitly choose a specific frontend framework integration app.
 
 This setting will be saved with plugin settings the first time it's used to automatically choose this frontend framework integration for subsequent usages and with other generators without having to specify the flag again.
 
@@ -218,6 +219,14 @@ npx nx run <app-name>:android:prod
 
 ```sh
 npx nx run <app-name>:ios:prod
+```
+
+#### Clean
+
+It can be helpful to clean the app at times. This will clear out old dependencies plus iOS/Android platform files to give your app a nice reset.
+
+```sh
+npx nx run <app-name>:clean
 ```
 
 ## Create NativeScript library

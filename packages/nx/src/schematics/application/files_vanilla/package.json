@@ -7,7 +7,7 @@
     "postinstall": "node ./tools/postinstall.js"
   },
   "dependencies": {
-    "@nativescript/core": "file:<%= pathOffset %>node_modules/@nativescript/core",
+    "@nativescript/core": "<%= nsCoreVersion %>",
     "nativescript-theme-core": "file:<%= pathOffset %>node_modules/nativescript-theme-core"
   },
   "devDependencies": {

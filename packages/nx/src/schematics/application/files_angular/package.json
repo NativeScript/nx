@@ -4,8 +4,6 @@
   "license": "SEE LICENSE IN <your-license-filename>",
   "version": "0.0.0",
   "scripts": {
-    "build.ios": "ns build ios --env.uglify --env.production --release",
-    "build.android": "ns build android --env.uglify --env.production --release",
     "postinstall": "node ./tools/postinstall.js"
   },
   "dependencies": {
@@ -18,7 +16,7 @@
     "@angular/platform-browser-dynamic": "file:<%= pathOffset %>node_modules/@angular/platform-browser-dynamic",
     "@angular/router": "file:<%= pathOffset %>node_modules/@angular/router",
     "@nativescript/angular": "file:<%= pathOffset %>node_modules/@nativescript/angular",
-    "@nativescript/core": "file:<%= pathOffset %>node_modules/@nativescript/core",
+    "@nativescript/core": "<%= nsCoreVersion %>",
     "nativescript-theme-core": "file:<%= pathOffset %>node_modules/nativescript-theme-core",
     "rxjs": "file:<%= pathOffset %>node_modules/rxjs",
     "zone.js": "file:<%= pathOffset %>node_modules/zone.js"
