@@ -1,6 +1,6 @@
-import { Application, Color, Device, isIOS, Frame, View, Page } from '@nativescript/core';
+import { Application, Color, Device, isIOS } from '@nativescript/core';
 
-export function setStatusBarColor(color: 'light' | 'dark', tintColor?: string /* android only */, view?: Page) {
+export function setStatusBarColor(color: 'light' | 'dark', tintColor?: string /* android only */) {
   if (isIOS) {
     // ios status-bar background color is set via the .action-bar class
     UIApplication.sharedApplication.setStatusBarStyleAnimated(color === 'light' ? UIStatusBarStyle.LightContent : UIStatusBarStyle.DarkContent, false);
@@ -13,22 +13,7 @@ export function setStatusBarColor(color: 'light' | 'dark', tintColor?: string /*
       activity.getWindow().clearFlags(android.view.WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
       activity.getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
       activity.getWindow().setStatusBarColor(new Color(tintColor).android);
-      console.log('Device.sdkVersion:', Device.sdkVersion)
-      if (sdkVersion >= 30) {
-        console.log('view:', view);
-        if (view) {
-          console.log('view.android:', view.android);
-          if (view.android) {
-             console.log('view.android.windowInsetsController:', view.android.windowInsetsController);
-
-          }
-        }
-        
-      //   // view.android.windowInsetsController.setSystemBarsAppearance((<any>android.view).WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS);
-      //   // api level 30+ uses WindowInsetsController 
-      //   // https://developer.android.com/reference/android/view/WindowInsetsController
-      //   // (<any>activity.getWindow()).setSystemBarsAppearance((<any>android.view).WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS);
-      } else if (sdkVersion >= 23) {
+      if (sdkVersion >= 23) {
         // api level 23+ can programmatically change the text color of the status bar
         // see here: https://developer.android.com/reference/android/view/View#SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
         activity.getWindow().getDecorView().setSystemUiVisibility((<any>android.view.View).SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);

@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { Page } from '@nativescript/core';
 import { setStatusBarColor } from '../../../utils';
 
 @Component({
@@ -8,11 +7,8 @@ import { setStatusBarColor } from '../../../utils';
   templateUrl: './home.component.html'
 })
 export class HomeComponent {
-  constructor(private page: Page) {
-
-  }
 
   ngOnInit() {
-    setStatusBarColor('dark', '#97d9e9', this.page);
+    setStatusBarColor('dark', '#97d9e9');
   }
 }
