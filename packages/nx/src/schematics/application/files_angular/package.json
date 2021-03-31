@@ -8,14 +8,14 @@
     "ngcc": "ngcc --tsconfig tsconfig.app.json --properties es2015 module main --first-only"
   },
   "dependencies": {
-    "@angular/animations": "file:<%= pathOffset %>node_modules/@angular/animations",
-    "@angular/common": "file:<%= pathOffset %>node_modules/@angular/common",
-    "@angular/compiler": "file:<%= pathOffset %>node_modules/@angular/compiler",
-    "@angular/core": "file:<%= pathOffset %>node_modules/@angular/core",
-    "@angular/forms": "file:<%= pathOffset %>node_modules/@angular/forms",
-    "@angular/platform-browser": "file:<%= pathOffset %>node_modules/@angular/platform-browser",
-    "@angular/platform-browser-dynamic": "file:<%= pathOffset %>node_modules/@angular/platform-browser-dynamic",
-    "@angular/router": "file:<%= pathOffset %>node_modules/@angular/router",
+    "@angular/animations": "<%= angularVersion %>",
+    "@angular/common": "<%= angularVersion %>",
+    "@angular/compiler": "<%= angularVersion %>",
+    "@angular/core": "<%= angularVersion %>",
+    "@angular/forms": "<%= angularVersion %>",
+    "@angular/platform-browser": "<%= angularVersion %>",
+    "@angular/platform-browser-dynamic": "<%= angularVersion %>",
+    "@angular/router": "<%= angularVersion %>",
     "@nativescript/angular": "<%= nsAngularVersion %>",
     "@nativescript/core": "<%= nsCoreVersion %>",
     "nativescript-theme-core": "file:<%= pathOffset %>node_modules/nativescript-theme-core",
@@ -23,10 +23,10 @@
     "zone.js": "file:<%= pathOffset %>node_modules/zone.js"
   },
   "devDependencies": {
-    "@angular/compiler-cli": "file:<%= pathOffset %>node_modules/@angular/compiler-cli",
+    "@angular/compiler-cli": "<%= angularVersion %>",
     "@nativescript/types": "file:<%= pathOffset %>node_modules/@nativescript/types",
     "@nativescript/webpack": "<%= nsWebpackVersion %>",
-    "@ngtools/webpack": "<%= nsNgToolsVersion %>",
+    "@ngtools/webpack": "<%= angularVersion %>",
     "typescript": "file:<%= pathOffset %>node_modules/typescript"
   }
 }
