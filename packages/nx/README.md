@@ -9,8 +9,6 @@
 
 </div>
 
-**NOTE**: Under development right now. Not recommended to use yet.
-
 ## Table of Contents
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
@@ -23,9 +21,9 @@
   - [Create an app](#create-an-app)
     - [`--framework [angular]`](#--framework-angular)
     - [`--groupByName`](#--groupbyname)
-  - [Develop on simulators and devices](#develop-on-simulators-and-devices)
-  - [Release build](#release-build)
-  - [Test/lint the app](#testlint-the-app)
+    - [Develop on simulators and devices](#develop-on-simulators-and-devices)
+    - [Configuration options](#configuration-options)
+    - [Clean](#clean)
 - [Create NativeScript library](#create-nativescript-library)
   - [`--groupByName`](#--groupbyname-1)
 
@@ -65,9 +63,9 @@ The NativeScript Nx plugin will prefix apps by default to help distinguish them 
 
 #### `--framework [angular]`
 
-Use this option to create a specific frontend framework integration app.
+You will be prompted to choose a framework when this flag is ommitted.
 
-By default a "vanilla" NativeScript app will be generated using xml view files. 
+Use this option to explicitly choose a specific frontend framework integration app.
 
 This setting will be saved with plugin settings the first time it's used to automatically choose this frontend framework integration for subsequent usages and with other generators without having to specify the flag again.
 
@@ -85,7 +83,7 @@ This will generate:
 apps/<app-name>-nativescript
 ```
 
-### Develop on simulators and devices
+#### Develop on simulators and devices
 
 **Android:**
 
@@ -99,26 +97,136 @@ npx nx run <app-name>:android
 npx nx run <app-name>:ios
 ```
 
-### Release build
+#### Configuration options
+
+A custom builder is provided via `@nativescript/nx:build` with the following options:
+
+```
+"debug": {
+  "type": "boolean",
+  "default": true,
+  "description": "Use 'ns debug' instead of 'ns run'. Defaults to true"
+},
+"device": {
+  "type": "string",
+  "description": "Device identifier to run app on.",
+  "alias": "d"
+},
+"emulator": {
+  "type": "boolean",
+  "default": false,
+  "description": "Explicitly run with an emulator or simulator"
+},
+"noHmr": {
+  "type": "boolean",
+  "default": false,
+  "description": "Disable HMR"
+},
+"uglify": {
+  "type": "boolean",
+  "default": false,
+  "description": "Enable uglify during the webpack build"
+},
+"release": {
+  "type": "boolean",
+  "default": false,
+  "description": "Enable release mode during build using the --release flag"
+},
+"forDevice": {
+  "type": "boolean",
+  "default": false,
+  "description": "Build in device mode using the --for-device flag"
+},
+"production": {
+  "type": "boolean",
+  "default": false,
+  "description": "Build in production mode using the --env.production flag"
+}
+```
+
+The options follow the [NativeScript command line options]().
+
+Here's an example app config:
+
+```
+"nativescript-mobile": {
+  "projectType": "application",
+  "root": "apps/nativescript-mobile/",
+  "sourceRoot": "apps/nativescript-mobile/src",
+  "prefix": "",
+  "targets": {
+    "build": {
+      "builder": "@nativescript/nx:build",
+      "options": {
+        "noHmr": true,
+        "production": true,
+        "uglify": true,
+        "release": true,
+        "forDevice": true
+      },
+      "configurations": {
+        "prod": {
+          "fileReplacements": [
+            {
+              "replace": "apps/nativescript-mobile/src/environments/environment.ts",
+              "with": "apps/nativescript-mobile/src/environments/environment.prod.ts"
+            }
+          ]
+        }
+      }
+    },
+    "ios": {
+      "builder": "@nativescript/nx:build",
+      "options": {
+        "platform": "ios"
+      },
+      "configurations": {
+        "prod": {
+          "combineWithConfig": "build:prod"
+        }
+      }
+    },
+    "android": {
+      "builder": "@nativescript/nx:build",
+      "options": {
+        "platform": "android"
+      },
+      "configurations": {
+        "prod": {
+          "combineWithConfig": "build:prod"
+        }
+      }
+    },
+    "clean": {
+      "builder": "@nativescript/nx:build",
+      "options": {
+        "clean": true
+      }
+    }
+  }
+}
+```
+
+Build with an environment configuration enabled (for example, with `prod`):
 
 **Android:**
 
 ```sh
-npx nx run <app-name>:android:build
+npx nx run <app-name>:android:prod
 ```
 
 **iOS:** (Mac only)
 
 ```sh
-npx nx run <app-name>:ios:build
+npx nx run <app-name>:ios:prod
 ```
 
+#### Clean
 
-### Test/lint the app
+It can be helpful to clean the app at times. This will clear out old dependencies plus iOS/Android platform files to give your app a nice reset.
 
 ```sh
-npx nx run <app-name>:test
-npx nx run <app-name>:lint
+npx nx run <app-name>:clean
 ```
 
 ## Create NativeScript library

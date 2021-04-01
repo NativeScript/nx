@@ -1,8 +1,58 @@
 {
   "$schema": "http://json-schema.org/schema",
-  "title": "Build builder",
+  "title": "NativeScript builder",
   "description": "",
   "type": "object",
-  "properties": {},
+  "properties": {
+    "platform": {
+      "type": "string",
+      "description": "Platform to run on"
+    },
+    "debug": {
+      "type": "boolean",
+      "default": true,
+      "description": "Use 'ns debug' instead of 'ns run'. Defaults to true"
+    },
+    "device": {
+      "type": "string",
+      "description": "Device identifier to run app on.",
+      "alias": "d"
+    },
+    "emulator": {
+      "type": "boolean",
+      "default": false,
+      "description": "Explicitly run with an emulator or simulator"
+    },
+    "noHmr": {
+      "type": "boolean",
+      "default": false,
+      "description": "Disable HMR"
+    },
+    "uglify": {
+      "type": "boolean",
+      "default": false,
+      "description": "Enable uglify during the webpack build"
+    },
+    "release": {
+      "type": "boolean",
+      "default": false,
+      "description": "Enable release mode during build using the --release flag"
+    },
+    "forDevice": {
+      "type": "boolean",
+      "default": false,
+      "description": "Build in device mode using the --for-device flag"
+    },
+    "production": {
+      "type": "boolean",
+      "default": false,
+      "description": "Build in production mode using the --env.production flag"
+    },
+    "clean": {
+      "type": "boolean",
+      "default": false,
+      "description": "Do a full project clean"
+    }
+  },
   "required": []
 }

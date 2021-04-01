@@ -20,6 +20,13 @@ describe('lib', () => {
       const workspaceJson = readJsonInTree(tree, '/workspace.json');
       const libName = `nativescript-my-lib`;
 
+      expect(tree.exists(`libs/${libName}/tsconfig.json`)).toBeTruthy();
+      expect(tree.exists(`libs/${libName}/references.d.ts`)).toBeTruthy();
+
+      const tsconfig = readJsonInTree(tree, `libs/${libName}/tsconfig.json`);
+      expect(tsconfig.files).toEqual(['./references.d.ts']);
+      expect(tsconfig.include).toEqual(['**/*.ts']);
+
       expect(workspaceJson.projects[libName].root).toEqual(`libs/${libName}`);
       expect(workspaceJson.projects[libName].architect.build).toBeUndefined();
       expect(workspaceJson.projects[libName].architect.lint).toEqual({
@@ -46,11 +53,7 @@ describe('lib', () => {
     });
 
     it('should update nx.json', async () => {
-      const tree = await runSchematic(
-        'lib',
-        { name: 'myLib', tags: 'one,two' },
-        appTree
-      );
+      const tree = await runSchematic('lib', { name: 'myLib', tags: 'one,two' }, appTree);
       const libName = `nativescript-my-lib`;
       const nxJson = readJsonInTree<NxJson>(tree, '/nx.json');
       expect(nxJson.projects).toEqual({
@@ -64,26 +67,19 @@ describe('lib', () => {
       const tree = await runSchematic('lib', { name: 'myLib' }, appTree);
       const libName = `nativescript-my-lib`;
       const tsconfigJson = readJsonInTree(tree, '/tsconfig.base.json');
-      expect(tsconfigJson.compilerOptions.paths[`@proj/${libName}`]).toEqual([
-        `libs/${libName}/src/index.ts`,
-      ]);
+      expect(tsconfigJson.compilerOptions.paths[`@proj/${libName}`]).toEqual([`libs/${libName}/src/index.ts`]);
     });
 
     it('should update root tsconfig.json (no existing path mappings)', async () => {
-      const updatedTree: any = updateJsonInTree(
-        'tsconfig.base.json',
-        (json) => {
-          json.compilerOptions.paths = undefined;
-          return json;
-        }
-      )(appTree, null);
+      const updatedTree: any = updateJsonInTree('tsconfig.base.json', (json) => {
+        json.compilerOptions.paths = undefined;
+        return json;
+      })(appTree, null);
 
       const tree = await runSchematic('lib', { name: 'myLib' }, updatedTree);
       const libName = `nativescript-my-lib`;
       const tsconfigJson = readJsonInTree(tree, '/tsconfig.base.json');
-      expect(tsconfigJson.compilerOptions.paths[`@proj/${libName}`]).toEqual([
-        `libs/${libName}/src/index.ts`,
-      ]);
+      expect(tsconfigJson.compilerOptions.paths[`@proj/${libName}`]).toEqual([`libs/${libName}/src/index.ts`]);
     });
   });
 });

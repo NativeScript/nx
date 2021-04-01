@@ -22,7 +22,7 @@ import {
   supportedSandboxPlatforms,
   updateJsonFile,
 } from './general';
-import { sassVersion, nsAngularVersion, nsCoreVersion, nsNgToolsVersion, nsNxPluginVersion, nsRxjs, nsThemeVersion, nsZonejs } from './versions';
+import { sassVersion, angularVersion, nsAngularVersion, nsTypesVersion, nsCoreVersion, nsNgToolsVersion, nsNxPluginVersion, nsRxjs, nsThemeVersion, nsZonejs } from './versions';
 
 export namespace PluginHelpers {
   export interface Schema {
@@ -96,18 +96,22 @@ export namespace PluginHelpers {
       const frameworkDevDependencies: any = {};
       switch (options.framework) {
         case 'angular':
+          // dep
           frameworkDependencies['@nativescript/angular'] = nsAngularVersion;
-          frameworkDevDependencies['@ngtools/webpack'] = nsNgToolsVersion;
-          frameworkDependencies['@angular/animations'] = nsAngularVersion;
-          frameworkDependencies['@angular/common'] = nsAngularVersion;
-          frameworkDependencies['@angular/compiler'] = nsAngularVersion;
-          frameworkDependencies['@angular/core'] = nsAngularVersion;
-          frameworkDependencies['@angular/forms'] = nsAngularVersion;
-          frameworkDependencies['@angular/platform-browser'] = nsAngularVersion;
-          frameworkDependencies['@angular/platform-browser-dynamic'] = nsAngularVersion;
-          frameworkDependencies['@angular/router'] = nsAngularVersion;
+          frameworkDependencies['@angular/animations'] = angularVersion;
+          frameworkDependencies['@angular/common'] = angularVersion;
+          frameworkDependencies['@angular/compiler'] = angularVersion;
+          frameworkDependencies['@angular/core'] = angularVersion;
+          frameworkDependencies['@angular/forms'] = angularVersion;
+          frameworkDependencies['@angular/platform-browser'] = angularVersion;
+          frameworkDependencies['@angular/platform-browser-dynamic'] = angularVersion;
+          frameworkDependencies['@angular/router'] = angularVersion;
           frameworkDependencies['rxjs'] = nsRxjs;
           frameworkDependencies['zone.js'] = nsZonejs;
+
+          // devDep
+          frameworkDevDependencies['@angular/compiler-cli'] = angularVersion;
+          frameworkDevDependencies['@ngtools/webpack'] = nsNgToolsVersion;
           break;
       }
       return PluginHelpers.updatePackageForWorkspace(options, {
@@ -118,7 +122,7 @@ export namespace PluginHelpers {
         },
         devDependencies: {
           'sass': sassVersion,
-          '@nativescript/types': nsCoreVersion,
+          '@nativescript/types': nsTypesVersion,
           ...frameworkDevDependencies,
         },
       })(tree, context);

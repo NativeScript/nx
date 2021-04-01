@@ -22,8 +22,15 @@
     "framework": {
       "description": "The frontend framework to use.",
       "type": "string",
-      "default": "",
-      "x-prompt": "What frontend framework would you like to use with the application?"
+      "default": "angular",
+      "x-prompt": {
+        "message": "What frontend framework would you like to use with this NativeScript app?",
+        "type": "list",
+        "items": [
+          { "value": "angular", "label": "Angular  [ https://angular.io   ]" },
+          { "value": "vanilla", "label": "Vanilla (.xml view files)" }
+        ]
+      }
     },
     "routing": {
       "type": "boolean",

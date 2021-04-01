@@ -3,7 +3,7 @@ import { UnitTestTree } from '@angular-devkit/schematics/testing';
 import { NxJson, readJsonInTree } from '@nrwl/workspace';
 import { createEmptyWorkspace } from '@nrwl/workspace/testing';
 import { runSchematic } from '../../utils/testing';
-import { nsAngularVersion, nsRxjs, nsZonejs } from '../../utils/versions';
+import { angularVersion, nsAngularVersion, nsRxjs, nsZonejs } from '../../utils/versions';
 
 describe('app', () => {
   let appTree: Tree;
@@ -34,7 +34,7 @@ describe('app', () => {
   });
 
   it('should generate files', async () => {
-    const tree = await runSchematic('app', { name: 'myApp' }, appTree);
+    const tree = await runSchematic('app', { name: 'myApp', framework: 'vanilla' }, appTree);
     const appPath = 'apps/nativescript-my-app';
     expect(tree.exists(`${appPath}/src/app-root.xml`)).toBeTruthy();
     expect(tree.exists(`${appPath}/src/main-page.ts`)).toBeTruthy();
@@ -42,7 +42,7 @@ describe('app', () => {
   });
 
   it('nested in directory: should generate files', async () => {
-    const tree = await runSchematic('app', { name: 'myApp', directory: 'mobile' }, appTree);
+    const tree = await runSchematic('app', { name: 'myApp', directory: 'mobile', framework: 'vanilla' }, appTree);
     const appPath = 'apps/mobile/nativescript-my-app';
     expect(tree.exists(`${appPath}/src/app-root.xml`)).toBeTruthy();
     expect(tree.exists(`${appPath}/src/main-page.ts`)).toBeTruthy();
@@ -91,14 +91,14 @@ describe('app', () => {
     const tree = await runSchematic('app', { name: 'myApp', framework: 'angular' }, appTree);
     const packageJson = readJsonInTree(tree, `package.json`);
 
-    expect(packageJson['dependencies']['@angular/animations']).toEqual(nsAngularVersion);
-    expect(packageJson['dependencies']['@angular/common']).toEqual(nsAngularVersion);
-    expect(packageJson['dependencies']['@angular/compiler']).toEqual(nsAngularVersion);
-    expect(packageJson['dependencies']['@angular/core']).toEqual(nsAngularVersion);
-    expect(packageJson['dependencies']['@angular/forms']).toEqual(nsAngularVersion);
-    expect(packageJson['dependencies']['@angular/platform-browser']).toEqual(nsAngularVersion);
-    expect(packageJson['dependencies']['@angular/platform-browser-dynamic']).toEqual(nsAngularVersion);
-    expect(packageJson['dependencies']['@angular/router']).toEqual(nsAngularVersion);
+    expect(packageJson['dependencies']['@angular/animations']).toEqual(angularVersion);
+    expect(packageJson['dependencies']['@angular/common']).toEqual(angularVersion);
+    expect(packageJson['dependencies']['@angular/compiler']).toEqual(angularVersion);
+    expect(packageJson['dependencies']['@angular/core']).toEqual(angularVersion);
+    expect(packageJson['dependencies']['@angular/forms']).toEqual(angularVersion);
+    expect(packageJson['dependencies']['@angular/platform-browser']).toEqual(angularVersion);
+    expect(packageJson['dependencies']['@angular/platform-browser-dynamic']).toEqual(angularVersion);
+    expect(packageJson['dependencies']['@angular/router']).toEqual(angularVersion);
     expect(packageJson['dependencies']['rxjs']).toEqual(nsRxjs);
     expect(packageJson['dependencies']['zone.js']).toEqual(nsZonejs);
     expect(packageJson['dependencies']['@nativescript/angular']).toEqual(nsAngularVersion);
