@@ -81,7 +81,7 @@ export default function (options: Schema) {
             android: {
               builder: '@nativescript/nx:build',
               options: {
-                platform: 'ios',
+                platform: 'android',
               },
               configurations: {
                 prod: {
