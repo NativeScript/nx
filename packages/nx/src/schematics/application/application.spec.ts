@@ -3,7 +3,7 @@ import { UnitTestTree } from '@angular-devkit/schematics/testing';
 import { NxJson, readJsonInTree } from '@nrwl/workspace';
 import { createEmptyWorkspace } from '@nrwl/workspace/testing';
 import { runSchematic } from '../../utils/testing';
-import { angularVersion, nsAngularVersion, nsRxjs, nsZonejs } from '../../utils/versions';
+import { angularVersion, nsAngularVersion, rxjsVersion, zonejsVersion } from '../../utils/versions';
 
 describe('app', () => {
   let appTree: Tree;
@@ -99,8 +99,8 @@ describe('app', () => {
     expect(packageJson['dependencies']['@angular/platform-browser']).toEqual(angularVersion);
     expect(packageJson['dependencies']['@angular/platform-browser-dynamic']).toEqual(angularVersion);
     expect(packageJson['dependencies']['@angular/router']).toEqual(angularVersion);
-    expect(packageJson['dependencies']['rxjs']).toEqual(nsRxjs);
-    expect(packageJson['dependencies']['zone.js']).toEqual(nsZonejs);
+    expect(packageJson['dependencies']['rxjs']).toEqual(rxjsVersion);
+    expect(packageJson['dependencies']['zone.js']).toEqual(zonejsVersion);
     expect(packageJson['dependencies']['@nativescript/angular']).toEqual(nsAngularVersion);
   });
 

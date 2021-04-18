@@ -1,7 +1,7 @@
 import { apply, branchAndMerge, chain, externalSchematic, mergeWith, move, noop, Rule, SchematicContext, SchematicsException, template, Tree, url } from '@angular-devkit/schematics';
 import { updateWorkspace } from '@nrwl/workspace';
 import { getAppName, getDefaultTemplateOptions, getFrontendFramework, getPrefix, missingArgument, PluginHelpers, prerun, updateNxProjects, updatePackageScripts } from '../../utils';
-import { angularVersion, nsAngularVersion, nsWebpackVersion, nsNgToolsVersion, nsCoreVersion } from '../../utils/versions';
+import { angularVersion, nsAngularVersion, nsWebpackVersion, nsNgToolsVersion, nsCoreVersion, typescriptVersion, rxjsVersion, zonejsVersion } from '../../utils/versions';
 import { Schema } from './schema';
 
 export default function (options: Schema) {
@@ -142,6 +142,9 @@ function addAppFiles(options: Schema, appName: string, extra: string = ''): Rule
           nsCoreVersion,
           nsWebpackVersion,
           nsNgToolsVersion,
+          rxjsVersion,
+          zonejsVersion,
+          typescriptVersion
         }),
         move(`apps/${directory}${appName}`),
       ])

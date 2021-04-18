@@ -19,14 +19,13 @@
     "@nativescript/angular": "<%= nsAngularVersion %>",
     "@nativescript/core": "<%= nsCoreVersion %>",
     "nativescript-theme-core": "file:<%= pathOffset %>node_modules/nativescript-theme-core",
-    "rxjs": "file:<%= pathOffset %>node_modules/rxjs",
-    "zone.js": "file:<%= pathOffset %>node_modules/zone.js"
+    "rxjs": "<%= rxjsVersion %>",
+    "zone.js": "<%= zonejsVersion %>"
   },
   "devDependencies": {
     "@angular/compiler-cli": "<%= angularVersion %>",
-    "@nativescript/types": "file:<%= pathOffset %>node_modules/@nativescript/types",
     "@nativescript/webpack": "<%= nsWebpackVersion %>",
     "@ngtools/webpack": "<%= angularVersion %>",
-    "typescript": "file:<%= pathOffset %>node_modules/typescript"
+    "typescript": "<%= typescriptVersion %>"
   }
 }

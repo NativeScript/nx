@@ -22,7 +22,7 @@ import {
   supportedSandboxPlatforms,
   updateJsonFile,
 } from './general';
-import { sassVersion, angularVersion, nsAngularVersion, nsTypesVersion, nsCoreVersion, nsNgToolsVersion, nsNxPluginVersion, nsRxjs, nsThemeVersion, nsZonejs } from './versions';
+import { sassVersion, angularVersion, nsAngularVersion, nsTypesVersion, nsCoreVersion, nsNgToolsVersion, nsNxPluginVersion, rxjsVersion, nsThemeVersion, zonejsVersion } from './versions';
 
 export namespace PluginHelpers {
   export interface Schema {
@@ -106,8 +106,8 @@ export namespace PluginHelpers {
           frameworkDependencies['@angular/platform-browser'] = angularVersion;
           frameworkDependencies['@angular/platform-browser-dynamic'] = angularVersion;
           frameworkDependencies['@angular/router'] = angularVersion;
-          frameworkDependencies['rxjs'] = nsRxjs;
-          frameworkDependencies['zone.js'] = nsZonejs;
+          frameworkDependencies['rxjs'] = rxjsVersion;
+          frameworkDependencies['zone.js'] = zonejsVersion;
 
           // devDep
           frameworkDevDependencies['@angular/compiler-cli'] = angularVersion;
