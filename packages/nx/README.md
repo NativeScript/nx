@@ -168,8 +168,8 @@ Here's an example app config:
         "prod": {
           "fileReplacements": [
             {
-              "replace": "apps/nativescript-mobile/src/environments/environment.ts",
-              "with": "apps/nativescript-mobile/src/environments/environment.prod.ts"
+              "replace": "./src/environments/environment.ts",
+              "with": "./src/environments/environment.prod.ts"
             }
           ]
         }
