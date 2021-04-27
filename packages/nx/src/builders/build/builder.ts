@@ -87,7 +87,7 @@ export function runBuilder(options: BuildBuilderSchema, context: ExecutorContext
         nsOptions.push(fileReplacements.join(','));
       }
     }
-    const child = childProcess.spawn('ns', nsOptions, {
+    const child = childProcess.spawn(/^win/.test(process.platform) ? 'ns.cmd' : 'ns', nsOptions, {
       cwd: projectCwd,
       stdio: 'inherit'
     });
