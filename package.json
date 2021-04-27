@@ -1,6 +1,6 @@
 {
   "name": "nativescript-nx-plugins",
-  "version": "0.0.0",
+  "version": "1.0.4",
   "license": "MIT",
   "scripts": {
     "nx": "nx",
@@ -24,7 +24,9 @@
     "dep-graph": "nx dep-graph",
     "help": "nx help",
     "doctoc": "doctoc packages/nx/README.md",
-    "workspace-generator": "nx workspace-generator"
+    "workspace-generator": "nx workspace-generator",
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
+    "reset.changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0"
   },
   "private": true,
   "devDependencies": {
@@ -41,6 +43,8 @@
     "@types/node": "14.14.33",
     "@typescript-eslint/eslint-plugin": "4.19.0",
     "@typescript-eslint/parser": "4.19.0",
+    "conventional-changelog-cli": "^2.1.1",
+    "cz-conventional-changelog": "^3.3.0",
     "doctoc": "^1.4.0",
     "dotenv": "8.2.0",
     "eslint": "7.22.0",
