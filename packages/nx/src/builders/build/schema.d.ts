@@ -7,6 +7,7 @@ export interface BuildBuilderSchema extends JsonObject {
   clean?: boolean;
   noHmr?: boolean;
   uglify?: boolean;
+  verbose?: boolean;
   release?: boolean;
   forDevice?: boolean;
   production?: boolean;

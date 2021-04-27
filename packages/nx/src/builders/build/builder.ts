@@ -72,6 +72,9 @@ export function runBuilder(options: BuildBuilderSchema, context: ExecutorContext
       if (options.uglify) {
         nsOptions.push('--env.uglify');
       }
+      if (options.verbose) {
+        nsOptions.push('--env.verbose');
+      }
       if (options.production) {
         nsOptions.push('--env.production');
       }

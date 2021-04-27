@@ -127,6 +127,11 @@ A custom builder is provided via `@nativescript/nx:build` with the following opt
   "default": false,
   "description": "Enable uglify during the webpack build"
 },
+"verbose": {
+  "type": "boolean",
+  "default": false,
+  "description": "Enable verbose logging"
+},
 "release": {
   "type": "boolean",
   "default": false,
