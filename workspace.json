@@ -36,7 +36,12 @@
               "packages/nx/*.md",
               {
                 "input": "./packages/nx/src",
-                "glob": "**/*.!(ts)",
+                "glob": "**/!(*.ts)",
+                "output": "./src"
+              },
+              {
+                "input": "./packages/nx/src",
+                "glob": "**/*.d.ts",
                 "output": "./src"
               },
               {
