@@ -9,6 +9,8 @@
 
 </div>
 
+> Requires at least NativeScript CLI v8.x.x or higher. You can confirm your CLI version by running `ns --version`.
+
 ## Table of Contents
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
@@ -34,7 +36,10 @@
 ### Create a new Nx workspace
 
 ```sh
-npx create-nx-workspace --cli=nx --preset=empty
+npx create-nx-workspace@latest --cli=nx --preset=empty
+
+// If you run into any issue with latest Nx workspace version you may want to try the last known stable version with the following:
+npx create-nx-workspace@12.2 --cli=nx --preset=empty
 ```
 
 ### Install NativeScript plugin
@@ -266,3 +271,26 @@ Which would generate a `buttons-nativescript` library.
 import { PrimaryButton } from '@myorg/buttons-nativescript';
 ```
 
+
+## Using NativeScript plugins
+
+NativeScript plugins can be used in Nx workspaces in one of the two following methods:
+
+### Installing NativeScript plugins at app-level
+
+If the plugin is needed by one app only, and not others, you can install it for the specific app:
+
+```sh
+cd apps/<app-name>
+ns plugin add <plugin-name>
+```
+
+### Installing NativeScript plugins at workspace-level
+
+Alternatively, you can install the plugins at the workspace (root), so it is accesible to all your workspace apps:
+```sh
+npm install --save <plugin-name>
+```
+
+### Known issues
+If a plugin contains platforms folder with native includes, the plugin must be added to app package.json at moment. https://github.com/NativeScript/nx/issues/17#issuecomment-841680719
