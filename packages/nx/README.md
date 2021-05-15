@@ -9,7 +9,7 @@
 
 </div>
 
-> Current version (1.0.x) of `@nativescript/nx` assumes you have NativeScript CLI v8.0.2. You can confirm your CLI version by running `ns --version`.
+> Requires at least NativeScript CLI v8.x.x or higher. You can confirm your CLI version by running `ns --version`.
 
 ## Table of Contents
 
@@ -35,9 +35,10 @@
 
 ### Create a new Nx workspace
 
-> Nx workspace version must be on version 12.2, for that you need to append version number to `npx` command to avoid running `latest` version.
-
 ```sh
+npx create-nx-workspace@latest --cli=nx --preset=empty
+
+// If you run into any issue with latest Nx workspace version you may want to try the last known stable version with the following:
 npx create-nx-workspace@12.2 --cli=nx --preset=empty
 ```
 
@@ -288,3 +289,6 @@ Alternatively, you can install the plugins at the workspace (root), so it is acc
 ```sh
 npm install --save <plugin-name>
 ```
+
+### Known issues
+If a plugin contains platforms folder with native includes, the plugin must be added to app package.json at moment. https://github.com/NativeScript/nx/issues/17#issuecomment-841680719
