@@ -212,6 +212,8 @@ Here's an example app config:
 }
 ```
 
+#### Create a build
+
 Build with an environment configuration enabled (for example, with `prod`):
 
 **Android:**
