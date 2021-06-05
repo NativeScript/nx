@@ -4,12 +4,36 @@ import { BuildBuilderSchema } from './schema';
 
 export function runBuilder(options: BuildBuilderSchema, context: ExecutorContext): Promise<{ success: boolean }> {
   return new Promise((resolve, reject) => {
+    const projectConfig = context.workspace.projects[context.projectName];
+    // determine if running or building only
+    const isBuild = process.argv.find((a) => a === 'build');
+    if (isBuild) {
+      // allow build options to override run target options
+      const buildTarget = projectConfig.targets['build'];
+      if (buildTarget && buildTarget.options) {
+        options = {
+          ...options,
+          ...buildTarget.options
+        };
+      }
+    }
     // console.log('context.projectName:', context.projectName);
-    const projectCwd = context.workspace.projects[context.projectName].root;
+    const projectCwd = projectConfig.root;
     // console.log('projectCwd:', projectCwd);
     // console.log('context.targetName:', context.targetName);
     // console.log('context.configurationName:', context.configurationName);
     // console.log('context.target.options:', context.target.options);
+
+    // determine if any trailing args that need to be added to run/build command
+    const configTarget = context.configurationName ? `:${context.configurationName}` : '';
+    const projectTargetCmd = `${context.projectName}:${context.targetName}${configTarget}`;
+    const projectTargetCmdIndex = process.argv.findIndex(c => c === projectTargetCmd);
+    const additionalCliFlagArgs = [];
+    if (process.argv.length > projectTargetCmdIndex+1) {
+      additionalCliFlagArgs.push(...process.argv.slice(projectTargetCmdIndex+1, process.argv.length));
+      // console.log('additionalCliFlagArgs:', additionalCliFlagArgs);
+    }
+
     const fileReplacements: Array<string> = [];
     let configOptions;
     if (context.target.configurations) {
@@ -25,7 +49,7 @@ export function runBuilder(options: BuildBuilderSchema, context: ExecutorContext
         if (configOptions.combineWithConfig) {
           const configParts = configOptions.combineWithConfig.split(':');
           const combineWithTargetName = configParts[0];
-          const combineWithTarget = context.workspace.projects[context.projectName].targets[combineWithTargetName];
+          const combineWithTarget = projectConfig.targets[combineWithTargetName];
           if (combineWithTarget && combineWithTarget.configurations) {
             if (configParts.length > 1) {
               const configName = configParts[1];
@@ -50,12 +74,19 @@ export function runBuilder(options: BuildBuilderSchema, context: ExecutorContext
     if (options.clean) {
       nsOptions.push('clean');
     } else {
-      if (options.debug === false) {
-        nsOptions.push('run');
+      if (isBuild) {
+        nsOptions.push('build');
       } else {
-        // default to debug mode
-        nsOptions.push('debug');
+        if (options.debug === false) {
+          nsOptions.push('run');
+        } else {
+          // default to debug mode
+          nsOptions.push('debug');
+        }
       }
+      // always add --force for now since within Nx we use @nativescript/webpack at root only and the {N} cli shows a blocking error if not within the app
+      nsOptions.push('--force');
+
       if (options.platform) {
         nsOptions.push(options.platform);
       }
@@ -90,9 +121,9 @@ export function runBuilder(options: BuildBuilderSchema, context: ExecutorContext
         nsOptions.push(fileReplacements.join(','));
       }
     }
-    const child = childProcess.spawn(/^win/.test(process.platform) ? 'ns.cmd' : 'ns', nsOptions, {
+    const child = childProcess.spawn(/^win/.test(process.platform) ? 'ns.cmd' : 'ns', [...nsOptions, ...additionalCliFlagArgs], {
       cwd: projectCwd,
-      stdio: 'inherit'
+      stdio: 'inherit',
     });
     child.on('close', (code) => {
       console.log(`Done.`);

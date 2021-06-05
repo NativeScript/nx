@@ -16,7 +16,6 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-
 - [Getting started](#getting-started)
   - [Create a new Nx workspace](#create-a-new-nx-workspace)
   - [Install NativeScript plugin](#install-nativescript-plugin)
@@ -25,9 +24,15 @@
     - [`--groupByName`](#--groupbyname)
     - [Develop on simulators and devices](#develop-on-simulators-and-devices)
     - [Configuration options](#configuration-options)
+    - [Run with a specific configuration](#run-with-a-specific-configuration)
+    - [Create a build](#create-a-build)
     - [Clean](#clean)
 - [Create NativeScript library](#create-nativescript-library)
   - [`--groupByName`](#--groupbyname-1)
+- [Using NativeScript plugins](#using-nativescript-plugins)
+  - [Installing NativeScript plugins at app-level](#installing-nativescript-plugins-at-app-level)
+  - [Installing NativeScript plugins at workspace-level](#installing-nativescript-plugins-at-workspace-level)
+  - [Known issues](#known-issues)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -154,7 +159,7 @@ A custom builder is provided via `@nativescript/nx:build` with the following opt
 }
 ```
 
-The options follow the [NativeScript command line options]().
+The options follow the [NativeScript command line option flags](https://docs.nativescript.org/development-workflow.html#run).
 
 Here's an example app config:
 
@@ -217,9 +222,7 @@ Here's an example app config:
 }
 ```
 
-#### Create a build
-
-Build with an environment configuration enabled (for example, with `prod`):
+#### Run with a specific configuration
 
 **Android:**
 
@@ -231,6 +234,48 @@ npx nx run <app-name>:android:prod
 
 ```sh
 npx nx run <app-name>:ios:prod
+```
+
+#### Create a build
+
+Instead of running the app on a simulator or device you can create a build for the purposes of distribution/release. Various release settings will be needed for iOS and Android which can be passed as additional command line arguments. [See more in the NativeScript docs here](https://docs.nativescript.org/releasing.html#overview). Any additional cli flags as stated in the docs can be passed on the end of the `nx build` command that follows.
+
+The key difference is usage of `nx build` instead of `nx run`.
+
+Build with an environment configuration enabled (for example, with `prod`):
+
+**Android:**
+
+```sh
+npx nx build <app-name>:android:prod
+```
+
+**iOS:** (Mac only)
+
+```sh
+npx nx build <app-name>:ios:prod
+```
+
+As mentioned, you can pass any additional NativeScript CLI options as flags on the end of your nx build command:
+
+* example of building AAB bundle for upload to Google Play:
+
+```
+npx nx build <app-name>:android:prod \
+  --aab \
+  --key-store-path <path-to-your-keystore> \
+  --key-store-password <your-key-store-password> \
+  --key-store-alias <your-alias-name> \
+  --key-store-alias-password <your-alias-password> \
+  --copy-to ./dist/build.aab
+```
+
+* example of building IPA for upload to iOS TestFlight:
+
+```
+npx nx build <app-name>:ios:prod \
+  --provision <provisioning-profile-name> \
+  --copy-to ./dist/build.ipa
 ```
 
 #### Clean

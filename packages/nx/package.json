@@ -1,6 +1,6 @@
 {
   "name": "@nativescript/nx",
-  "version": "1.0.4",
+  "version": "2.0.0-rc.0",
   "description": "NativeScript Plugin for Nx",
   "repository": {
     "type": "git",
@@ -29,13 +29,11 @@
     "migrations": "./migrations.json"
   },
   "dependencies": {
-    "@angular-devkit/architect": "~0.1102.6",
-    "@angular-devkit/core": "^11.2.6",
-    "@angular-devkit/schematics": "^11.2.6",
-    "metro-resolver": "~0.65.0",
-    "fs-extra": "~9.1.0",
-    "ignore": "^5.1.8",
-    "node-fetch": "~2.6.1",
-    "strip-json-comments": "2.0.1"
+    "@angular-devkit/architect": "^0.1200.0",
+    "@angular-devkit/core": "^12.0.0",
+    "@angular-devkit/schematics": "^12.0.0",
+    "fs-extra": "^9.1.0",
+    "ignore": "^5.0.4",
+    "strip-json-comments": "^3.1.1"
   }
 }

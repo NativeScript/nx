@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/schema",
-  "id": "NativeScriptNxInit",
+  "$id": "NativeScriptNxInit",
   "title": "Add NativeScript Nx Schematics",
   "type": "object",
   "properties": {

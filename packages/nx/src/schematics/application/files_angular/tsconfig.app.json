@@ -7,5 +7,5 @@
   "include": [
     "./src/environments/environment.*.ts"
   ],
-  "files": ["./references.d.ts", "./src/main.ts"]
+  "files": ["./references.d.ts", "./src/main.ts", "./src/polyfills.ts"]
 }
