@@ -143,6 +143,7 @@ function addAppFiles(options: Schema, appName: string, extra: string = ''): Rule
           appname,
           directoryAppPath: `${directory}${options.name}`,
           pathOffset: directory ? '../../../' : '../../',
+          pathOffsetWindows: directory ? '..\\..\\..\\' : '..\\..\\',
           libFolderName: PluginHelpers.getLibFoldername('nativescript'),
           angularVersion,
           nsAngularVersion,
