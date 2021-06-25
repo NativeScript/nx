@@ -12,4 +12,15 @@ export interface BuildBuilderSchema extends JsonObject {
   forDevice?: boolean;
   production?: boolean;
   platform?: 'ios' | 'android';
+  copyTo?: string;
+
+  // ios only
+  provision?: string;
+
+  // android only
+  aab?: boolean;
+  keyStorePath?: string;
+  keyStorePassword?: string;
+  keyStoreAlias?: string;
+  keyStoreAliasPassword?: string;
 } 

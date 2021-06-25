@@ -6,7 +6,7 @@ import {
   noop
 } from '@angular-devkit/schematics';
 import { NodePackageInstallTask } from '@angular-devkit/schematics/tasks';
-import * as stripJsonComments from 'strip-json-comments';
+import { parseJson } from '@nrwl/devkit';
 import { getWorkspacePath, readJsonInTree, serializeJson, stringUtils as nxStringUtils, toFileName, updateWorkspaceInTree } from '@nrwl/workspace';
 
 export interface IPluginSettings {
@@ -206,7 +206,7 @@ export function addInstallTask(options?: any) {
 export function jsonParse(content: string) {
   if (content) {
     // ensure comments are stripped when parsing (otherwise will fail)
-    return JSON.parse(stripJsonComments(content));
+    return parseJson(content);
   }
   return {};
 }

@@ -1,7 +1,6 @@
 import { Tree } from '@angular-devkit/schematics';
 import { createEmptyWorkspace } from '@nrwl/workspace/testing';
 import { readJsonInTree, updateJsonInTree } from '@nrwl/workspace';
-import { NxJson } from '@nrwl/workspace';
 
 import { runSchematic } from '../../utils/testing';
 import { Schema } from './schema';
@@ -55,7 +54,7 @@ describe('lib', () => {
     it('should update nx.json', async () => {
       const tree = await runSchematic('lib', { name: 'myLib', tags: 'one,two' }, appTree);
       const libName = `nativescript-my-lib`;
-      const nxJson = readJsonInTree<NxJson>(tree, '/nx.json');
+      const nxJson = readJsonInTree<any>(tree, '/nx.json');
       expect(nxJson.projects).toEqual({
         [libName]: {
           tags: ['one', 'two'],

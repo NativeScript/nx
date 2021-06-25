@@ -1,7 +1,7 @@
 import { apply, branchAndMerge, chain, externalSchematic, mergeWith, move, noop, Rule, SchematicContext, SchematicsException, template, Tree, url } from '@angular-devkit/schematics';
 import { updateWorkspace } from '@nrwl/workspace';
 import { getAppName, getDefaultTemplateOptions, getFrontendFramework, getPrefix, missingArgument, PluginHelpers, prerun, updateNxProjects, updatePackageScripts } from '../../utils';
-import { angularVersion, nsAngularVersion, nsWebpackVersion, nsNgToolsVersion, nsCoreVersion, typescriptVersion, rxjsVersion, zonejsVersion } from '../../utils/versions';
+import { angularVersion, nsAngularVersion, nsWebpackVersion, nsNgToolsVersion, nsCoreVersion, typescriptVersion, rxjsVersion, zonejsVersion, nsIOSRuntimeVersion, nsAndroidRuntimeVersion } from '../../utils/versions';
 import { Schema } from './schema';
 
 export default function (options: Schema) {
@@ -48,8 +48,8 @@ export default function (options: Schema) {
                 prod: {
                   fileReplacements: [
                     {
-                      replace: `${appPath}/src/environments/environment.ts`,
-                      with: `${appPath}/src/environments/environment.prod.ts`,
+                      replace: `./src/environments/environment.ts`,
+                      with: `./src/environments/environment.prod.ts`,
                     },
                   ],
                 },
@@ -73,6 +73,9 @@ export default function (options: Schema) {
                 platform: 'ios',
               },
               configurations: {
+                build: {
+                  copyTo: './dist/build.ipa',
+                },
                 prod: {
                   combineWithConfig: 'build:prod',
                 },
@@ -84,6 +87,9 @@ export default function (options: Schema) {
                 platform: 'android',
               },
               configurations: {
+                build: {
+                  copyTo: './dist/build.apk',
+                },
                 prod: {
                   combineWithConfig: 'build:prod',
                 },
@@ -135,6 +141,7 @@ function addAppFiles(options: Schema, appName: string, extra: string = ''): Rule
           ...(options as any),
           ...getDefaultTemplateOptions(),
           appname,
+          directoryAppPath: `${directory}${options.name}`,
           pathOffset: directory ? '../../../' : '../../',
           libFolderName: PluginHelpers.getLibFoldername('nativescript'),
           angularVersion,
@@ -144,7 +151,9 @@ function addAppFiles(options: Schema, appName: string, extra: string = ''): Rule
           nsNgToolsVersion,
           rxjsVersion,
           zonejsVersion,
-          typescriptVersion
+          typescriptVersion,
+          nsIOSRuntimeVersion,
+          nsAndroidRuntimeVersion,
         }),
         move(`apps/${directory}${appName}`),
       ])

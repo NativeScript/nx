@@ -53,6 +53,35 @@
       "default": false,
       "description": "Build in production mode using the --env.production flag"
     },
+    "copyTo": {
+      "type": "string",
+      "description": "When building, copy the package to this location."
+    },
+    "provision": {
+      "type": "string",
+      "description": "(iOS Only) When building, use this provision profile name."
+    },
+    "aab": {
+      "type": "boolean",
+      "default": false,
+      "description": "(Android Only) When building, create an Android App Bundle (.aab file)."
+    },
+    "keyStorePath": {
+      "type": "string",
+      "description": "(Android Only) When building, use the keystore file at this location."
+    },
+    "keyStorePassword": {
+      "type": "string",
+      "description": "(Android Only) When building, use this keystore password."
+    },
+    "keyStoreAlias": {
+      "type": "string",
+      "description": "(Android Only) When building, use this keystore alias."
+    },
+    "keyStoreAliasPassword": {
+      "type": "string",
+      "description": "(Android Only) When building, use this keystore alias password."
+    },
     "clean": {
       "type": "boolean",
       "default": false,

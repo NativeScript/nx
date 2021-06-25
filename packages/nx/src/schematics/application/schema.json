@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/schema",
-  "id": "NativeScriptNxApp",
+  "$id": "NativeScriptNxApp",
   "title": "Create a NativeScript Application for Nx",
   "examples": [
     {

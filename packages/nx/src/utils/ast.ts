@@ -7,7 +7,6 @@
  */
 import { Rule, Tree, SchematicContext } from '@angular-devkit/schematics';
 import * as ts from 'typescript';
-import * as stripJsonComments from 'strip-json-comments';
 import {
   serializeJson,
   updateJsonInTree,

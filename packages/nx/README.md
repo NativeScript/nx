@@ -16,7 +16,6 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-
 - [Getting started](#getting-started)
   - [Create a new Nx workspace](#create-a-new-nx-workspace)
   - [Install NativeScript plugin](#install-nativescript-plugin)
@@ -25,9 +24,15 @@
     - [`--groupByName`](#--groupbyname)
     - [Develop on simulators and devices](#develop-on-simulators-and-devices)
     - [Configuration options](#configuration-options)
+    - [Run with a specific configuration](#run-with-a-specific-configuration)
+    - [Create a build](#create-a-build)
     - [Clean](#clean)
 - [Create NativeScript library](#create-nativescript-library)
   - [`--groupByName`](#--groupbyname-1)
+- [Using NativeScript plugins](#using-nativescript-plugins)
+  - [Installing NativeScript plugins at app-level](#installing-nativescript-plugins-at-app-level)
+  - [Installing NativeScript plugins at workspace-level](#installing-nativescript-plugins-at-workspace-level)
+  - [Known issues](#known-issues)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -39,7 +44,7 @@
 npx create-nx-workspace@latest --cli=nx --preset=empty
 
 // If you run into any issue with latest Nx workspace version you may want to try the last known stable version with the following:
-npx create-nx-workspace@12.2 --cli=nx --preset=empty
+npx create-nx-workspace@12.4 --cli=nx --preset=empty
 ```
 
 ### Install NativeScript plugin
@@ -151,10 +156,39 @@ A custom builder is provided via `@nativescript/nx:build` with the following opt
   "type": "boolean",
   "default": false,
   "description": "Build in production mode using the --env.production flag"
+},
+"copyTo": {
+  "type": "string",
+  "description": "When building, copy the package to this location."
+},
+"provision": {
+  "type": "string",
+  "description": "(iOS Only) When building, use this provision profile name."
+},
+"aab": {
+  "type": "boolean",
+  "default": false,
+  "description": "(Android Only) When building, create an Android App Bundle (.aab file)."
+},
+"keyStorePath": {
+  "type": "string",
+  "description": "(Android Only) When building, use the keystore file at this location."
+},
+"keyStorePassword": {
+  "type": "string",
+  "description": "(Android Only) When building, use this keystore password."
+},
+"keyStoreAlias": {
+  "type": "string",
+  "description": "(Android Only) When building, use this keystore alias."
+},
+"keyStoreAliasPassword": {
+  "type": "string",
+  "description": "(Android Only) When building, use this keystore alias password."
 }
 ```
 
-The options follow the [NativeScript command line options]().
+The options follow the [NativeScript command line option flags](https://docs.nativescript.org/development-workflow.html#run).
 
 Here's an example app config:
 
@@ -191,6 +225,10 @@ Here's an example app config:
         "platform": "ios"
       },
       "configurations": {
+        "build": {
+          "provision": "AppStore Profile",
+          "copyTo": "./dist/build.ipa"
+        },
         "prod": {
           "combineWithConfig": "build:prod"
         }
@@ -202,6 +240,14 @@ Here's an example app config:
         "platform": "android"
       },
       "configurations": {
+        "build": {
+          "aab": true,
+          "keyStorePath": "./tools/keystore.jks",
+          "keyStorePassword": "your-password",
+          "keyStoreAlias": "keystore-alias",
+          "keyStoreAliasPassword": "keystore-alias-password",
+          "copyTo": "./dist/build.aab"
+        },
         "prod": {
           "combineWithConfig": "build:prod"
         }
@@ -217,9 +263,7 @@ Here's an example app config:
 }
 ```
 
-#### Create a build
-
-Build with an environment configuration enabled (for example, with `prod`):
+#### Run with a specific configuration
 
 **Android:**
 
@@ -231,6 +275,50 @@ npx nx run <app-name>:android:prod
 
 ```sh
 npx nx run <app-name>:ios:prod
+```
+
+#### Create a build
+
+Instead of running the app on a simulator or device you can create a build for the purposes of distribution/release. Various release settings will be needed for iOS and Android which can be passed as additional command line arguments. [See more in the NativeScript docs here](https://docs.nativescript.org/releasing.html#overview). Any additional cli flags as stated in the docs can be passed on the end of the `nx build` command that follows.
+
+The key difference is usage of `nx build` instead of `nx run`.
+
+Build with an environment configuration enabled (for example, with `prod`):
+
+**Android:**
+
+```sh
+npx nx build <app-name>:android:prod
+```
+
+You can pass additional NativeScript CLI options as flags on the end of you build command.
+
+* example of building AAB bundle for upload to Google Play:
+
+```
+npx nx build <app-name>:android:prod \
+  --aab \
+  --key-store-path <path-to-your-keystore> \
+  --key-store-password <your-key-store-password> \
+  --key-store-alias <your-alias-name> \
+  --key-store-alias-password <your-alias-password> \
+  --copy-to ./dist/build.aab
+```
+
+**iOS:** (Mac only)
+
+```sh
+npx nx build <app-name>:ios:prod
+```
+
+As mentioned, you can pass any additional NativeScript CLI options as flags on the end of your nx build command:
+
+* example of building IPA for upload to iOS TestFlight:
+
+```
+npx nx build <app-name>:ios:prod \
+  --provision <provisioning-profile-name> \
+  --copy-to ./dist/build.ipa
 ```
 
 #### Clean
