@@ -11,9 +11,9 @@ export const nsAndroidRuntimeVersion = '8.0.0';
 
 
 // Frontend frameworks
-export const angularVersion = '~12.0.0';
-export const nsAngularVersion = '~12.0.0';
-export const nsNgToolsVersion = '~12.0.0';
+export const angularVersion = '^12.0.0';
+export const nsAngularVersion = '^12.0.0';
+export const nsNgToolsVersion = '^12.0.0';
 export const rxjsVersion = '~6.6.0';
 export const zonejsVersion = '^0.11.1';
 export const typescriptVersion = '~4.2.0';
