@@ -6,7 +6,7 @@ export function runBuilder(options: BuildBuilderSchema, context: ExecutorContext
   return new Promise((resolve, reject) => {
     const projectConfig = context.workspace.projects[context.projectName];
     // determine if running or building only
-    const isBuild = process.argv.find((a) => a === 'build');
+    const isBuild = process.argv.find((a) => a === 'build' || a.endsWith(":build"));
     if (isBuild) {
       // allow build options to override run target options
       const buildTarget = projectConfig.targets['build'];
