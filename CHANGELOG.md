@@ -1,3 +1,12 @@
+## [2.0.2](https://github.com/NativeScript/nx/compare/2.0.1...2.0.2) (2021-06-25)
+
+
+### Bug Fixes
+
+* windows handling of ngcc in postinstall ([32284d7](https://github.com/NativeScript/nx/commit/32284d7dd1df986e34c43e99eba9b78d27f3df7a))
+
+
+
 ## [2.0.1](https://github.com/NativeScript/nx/compare/2.0.0...2.0.1) (2021-06-25)
 
 
