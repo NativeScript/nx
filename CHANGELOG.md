@@ -1,3 +1,12 @@
+## [2.0.1](https://github.com/NativeScript/nx/compare/2.0.0...2.0.1) (2021-06-25)
+
+
+### Features
+
+* additional support for `nx run nativescript-app:build` ([#29](https://github.com/NativeScript/nx/issues/29)) ([34da522](https://github.com/NativeScript/nx/commit/34da522a1a5d3c02f8c64cf335a696493e3dac42))
+
+
+
 # [2.0.0](https://github.com/NativeScript/nx/compare/1.0.4...2.0.0) (2021-06-25)
 
 
