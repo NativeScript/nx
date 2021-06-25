@@ -1,6 +1,6 @@
 import { Tree } from '@angular-devkit/schematics';
 import { UnitTestTree } from '@angular-devkit/schematics/testing';
-import { NxJson, readJsonInTree } from '@nrwl/workspace';
+import { readJsonInTree } from '@nrwl/workspace';
 import { createEmptyWorkspace } from '@nrwl/workspace/testing';
 import { runSchematic } from '../../utils/testing';
 import { angularVersion, nsAngularVersion, rxjsVersion, zonejsVersion } from '../../utils/versions';
@@ -22,7 +22,7 @@ describe('app', () => {
 
   it('should update nx.json', async () => {
     const tree = await runSchematic('app', { name: 'myApp', tags: 'one,two' }, appTree);
-    const nxJson = readJsonInTree<NxJson>(tree, '/nx.json');
+    const nxJson = readJsonInTree<any>(tree, '/nx.json');
     expect(nxJson).toMatchObject({
       npmScope: 'proj',
       projects: {

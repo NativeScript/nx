@@ -44,7 +44,7 @@
 npx create-nx-workspace@latest --cli=nx --preset=empty
 
 // If you run into any issue with latest Nx workspace version you may want to try the last known stable version with the following:
-npx create-nx-workspace@12.2 --cli=nx --preset=empty
+npx create-nx-workspace@12.4 --cli=nx --preset=empty
 ```
 
 ### Install NativeScript plugin
@@ -250,13 +250,7 @@ Build with an environment configuration enabled (for example, with `prod`):
 npx nx build <app-name>:android:prod
 ```
 
-**iOS:** (Mac only)
-
-```sh
-npx nx build <app-name>:ios:prod
-```
-
-As mentioned, you can pass any additional NativeScript CLI options as flags on the end of your nx build command:
+You can pass additional NativeScript CLI options as flags on the end of you build command.
 
 * example of building AAB bundle for upload to Google Play:
 
@@ -269,6 +263,14 @@ npx nx build <app-name>:android:prod \
   --key-store-alias-password <your-alias-password> \
   --copy-to ./dist/build.aab
 ```
+
+**iOS:** (Mac only)
+
+```sh
+npx nx build <app-name>:ios:prod
+```
+
+As mentioned, you can pass any additional NativeScript CLI options as flags on the end of your nx build command:
 
 * example of building IPA for upload to iOS TestFlight:
 
