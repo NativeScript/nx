@@ -73,6 +73,9 @@ export default function (options: Schema) {
                 platform: 'ios',
               },
               configurations: {
+                build: {
+                  copyTo: './dist/build.ipa',
+                },
                 prod: {
                   combineWithConfig: 'build:prod',
                 },
@@ -84,6 +87,9 @@ export default function (options: Schema) {
                 platform: 'android',
               },
               configurations: {
+                build: {
+                  copyTo: './dist/build.apk',
+                },
                 prod: {
                   combineWithConfig: 'build:prod',
                 },

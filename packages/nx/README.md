@@ -156,6 +156,35 @@ A custom builder is provided via `@nativescript/nx:build` with the following opt
   "type": "boolean",
   "default": false,
   "description": "Build in production mode using the --env.production flag"
+},
+"copyTo": {
+  "type": "string",
+  "description": "When building, copy the package to this location."
+},
+"provision": {
+  "type": "string",
+  "description": "(iOS Only) When building, use this provision profile name."
+},
+"aab": {
+  "type": "boolean",
+  "default": false,
+  "description": "(Android Only) When building, create an Android App Bundle (.aab file)."
+},
+"keyStorePath": {
+  "type": "string",
+  "description": "(Android Only) When building, use the keystore file at this location."
+},
+"keyStorePassword": {
+  "type": "string",
+  "description": "(Android Only) When building, use this keystore password."
+},
+"keyStoreAlias": {
+  "type": "string",
+  "description": "(Android Only) When building, use this keystore alias."
+},
+"keyStoreAliasPassword": {
+  "type": "string",
+  "description": "(Android Only) When building, use this keystore alias password."
 }
 ```
 
@@ -196,6 +225,10 @@ Here's an example app config:
         "platform": "ios"
       },
       "configurations": {
+        "build": {
+          "provision": "AppStore Profile",
+          "copyTo": "./dist/build.ipa"
+        },
         "prod": {
           "combineWithConfig": "build:prod"
         }
@@ -207,6 +240,14 @@ Here's an example app config:
         "platform": "android"
       },
       "configurations": {
+        "build": {
+          "aab": true,
+          "keyStorePath": "./tools/keystore.jks",
+          "keyStorePassword": "your-password",
+          "keyStoreAlias": "keystore-alias",
+          "keyStoreAliasPassword": "keystore-alias-password",
+          "copyTo": "./dist/build.aab"
+        },
         "prod": {
           "combineWithConfig": "build:prod"
         }
