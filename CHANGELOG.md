@@ -1,3 +1,17 @@
+# [2.0.0](https://github.com/NativeScript/nx/compare/1.0.4...2.0.0) (2021-06-25)
+
+
+### Bug Fixes
+
+* building nx plugin includes spec files ([#19](https://github.com/NativeScript/nx/issues/19)) ([ae6ce54](https://github.com/NativeScript/nx/commit/ae6ce5465fa2da26754e6629ed5ac12036c7576d))
+
+
+### Features
+
+* Nx 12.4 support with Angular 12 and builder improvements ([#28](https://github.com/NativeScript/nx/issues/28)) ([5952dfe](https://github.com/NativeScript/nx/commit/5952dfe794627c267fccb67c05e476a1c16876a1))
+
+
+
 ## [1.0.4](https://github.com/NativeScript/nx/compare/1.0.3...1.0.4) (2021-04-27)
 
 ### Bug Fixes
