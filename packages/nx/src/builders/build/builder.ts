@@ -33,11 +33,11 @@ export function runBuilder(options: BuildBuilderSchema, context: ExecutorContext
     const configTarget = targetConfigName ? `:${targetConfigName}` : '';
     const projectTargetCmd = `${context.projectName}:${context.targetName}${configTarget}`;
     const projectTargetCmdIndex = process.argv.findIndex(c => c === projectTargetCmd);
-    const additionalCliFlagArgs = [];
-    if (process.argv.length > projectTargetCmdIndex+1) {
-      additionalCliFlagArgs.push(...process.argv.slice(projectTargetCmdIndex+1, process.argv.length));
-      // console.log('additionalCliFlagArgs:', additionalCliFlagArgs);
-    }
+    // const additionalCliFlagArgs = [];
+    // if (process.argv.length > projectTargetCmdIndex+1) {
+    //   additionalCliFlagArgs.push(...process.argv.slice(projectTargetCmdIndex+1, process.argv.length));
+    //   // console.log('additionalCliFlagArgs:', additionalCliFlagArgs);
+    // }
 
     const fileReplacements: Array<string> = [];
     let configOptions;
@@ -166,7 +166,8 @@ export function runBuilder(options: BuildBuilderSchema, context: ExecutorContext
       nsOptions.push('--force');
     }
     // console.log('command:', [`ns`, ...nsOptions, ...additionalCliFlagArgs].join(' '));
-    const child = childProcess.spawn(/^win/.test(process.platform) ? 'ns.cmd' : 'ns', [...nsOptions, ...additionalCliFlagArgs], {
+    // console.log('command:', [`ns`, ...nsOptions].join(' '));
+    const child = childProcess.spawn(/^win/.test(process.platform) ? 'ns.cmd' : 'ns', [...nsOptions], {
       cwd: projectCwd,
       stdio: 'inherit',
     });
