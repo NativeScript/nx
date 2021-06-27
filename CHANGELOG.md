@@ -1,3 +1,12 @@
+## [2.0.3](https://github.com/NativeScript/nx/compare/2.0.2...2.0.3) (2021-06-27)
+
+
+### Bug Fixes
+
+* **builder:** additional cli args should no longer collide with schema options ([3a28111](https://github.com/NativeScript/nx/commit/3a28111f8b96340a1ab73d19a4766ad4b15a88fe))
+
+
+
 ## [2.0.2](https://github.com/NativeScript/nx/compare/2.0.1...2.0.2) (2021-06-25)
 
 
