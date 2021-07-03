@@ -1,3 +1,12 @@
+## [2.0.4](https://github.com/NativeScript/nx/compare/2.0.3...2.0.4) (2021-07-03)
+
+
+### Bug Fixes
+
+* postinstall handling for windows ([bfec2b4](https://github.com/NativeScript/nx/commit/bfec2b4f75df6e584bb7917cf463b70213539df3))
+
+
+
 ## [2.0.3](https://github.com/NativeScript/nx/compare/2.0.2...2.0.3) (2021-06-27)
 
 
