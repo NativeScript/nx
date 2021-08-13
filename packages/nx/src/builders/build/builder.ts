@@ -156,14 +156,16 @@ export function runBuilder(options: BuildBuilderSchema, context: ExecutorContext
         nsOptions.push('--copy-to');
         nsOptions.push(options.copyTo);
       }
- 
+
       if (fileReplacements.length) {
         // console.log('fileReplacements:', fileReplacements);
         nsOptions.push('--env.replace');
         nsOptions.push(fileReplacements.join(','));
       }
-      // always add --force for now since within Nx we use @nativescript/webpack at root only and the {N} cli shows a blocking error if not within the app
-      nsOptions.push('--force');
+      // always add --force (unless explicity set to false) for now since within Nx we use @nativescript/webpack at root only and the {N} cli shows a blocking error if not within the app
+      if (options?.force !== false) {
+        nsOptions.push('--force');
+      }
     }
     // console.log('command:', [`ns`, ...nsOptions, ...additionalCliFlagArgs].join(' '));
     // console.log('command:', [`ns`, ...nsOptions].join(' '));
