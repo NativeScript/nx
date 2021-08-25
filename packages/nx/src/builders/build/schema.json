@@ -91,6 +91,11 @@
       "type": "boolean",
       "default": false,
       "description": "Do a full project clean"
+    },
+    "force": {
+      "type": "boolean",
+      "default": true,
+      "description": "If true, skips the application compatibility checks and forces npm i to ensure all dependencies are installed. Otherwise, the command will check the application compatibility with the current CLI version and could fail requiring ns migrate."
     }
   },
   "required": []
