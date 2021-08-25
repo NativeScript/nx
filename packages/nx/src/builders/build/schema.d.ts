@@ -13,6 +13,8 @@ export interface BuildBuilderSchema extends JsonObject {
   production?: boolean;
   platform?: 'ios' | 'android';
   copyTo?: string;
+  /** For running `ns prepare <platform>` */
+  prepare:? boolean;
 
   // ios only
   provision?: string;
@@ -23,4 +25,4 @@ export interface BuildBuilderSchema extends JsonObject {
   keyStorePassword?: string;
   keyStoreAlias?: string;
   keyStoreAliasPassword?: string;
-} 
+}
