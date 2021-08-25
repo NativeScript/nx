@@ -92,6 +92,8 @@ export function runBuilder(options: BuildBuilderSchema, context: ExecutorContext
     } else {
       if (isBuild) {
         nsOptions.push('build');
+      } else if (options.prepare) {
+        nsOptions.push('prepare');
       } else {
         if (options.debug === false) {
           nsOptions.push('run');

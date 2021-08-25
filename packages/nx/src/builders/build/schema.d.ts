@@ -14,6 +14,8 @@ export interface BuildBuilderSchema extends JsonObject {
   platform?: 'ios' | 'android';
   copyTo?: string;
   force?: boolean;
+  /** For running `ns prepare <platform>` */
+  prepare:? boolean;
 
   // ios only
   provision?: string;
