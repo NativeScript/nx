@@ -1,3 +1,19 @@
+## [2.0.5](https://github.com/NativeScript/nx/compare/2.0.4...2.0.5) (2021-09-21)
+
+
+### Bug Fixes
+
+* allow --force to be optional ([#33](https://github.com/NativeScript/nx/issues/33)) ([33a0e61](https://github.com/NativeScript/nx/commit/33a0e61000e1f2e794a4df44f35d2dfcadbc9283))
+* vanilla app setup ([fcc9c84](https://github.com/NativeScript/nx/commit/fcc9c84eb5f593922b3d4962047348aabe51945c))
+
+
+### Features
+
+* add ns prepare as an option ([#34](https://github.com/NativeScript/nx/issues/34)) ([9c58bed](https://github.com/NativeScript/nx/commit/9c58bedc8193a10161f3c4fad992e7c5ff3211ed))
+* pass through additional args after `--` to `ns` ([#37](https://github.com/NativeScript/nx/issues/37)) ([24d7af9](https://github.com/NativeScript/nx/commit/24d7af97ae511f1ca3597065b97ce9633437bd3d))
+
+
+
 ## [2.0.4](https://github.com/NativeScript/nx/compare/2.0.3...2.0.4) (2021-07-03)
 
 
