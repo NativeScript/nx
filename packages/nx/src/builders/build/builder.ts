@@ -169,9 +169,17 @@ export function runBuilder(options: BuildBuilderSchema, context: ExecutorContext
         nsOptions.push('--force');
       }
     }
+    
+    // additional args after -- should be passed through
+    const argSeparator = process.argv.findIndex(arg => arg === '--');
+    let additionalArgs = [];
+    if(argSeparator >= 0) {
+        additionalArgs = process.argv.slice(argSeparator + 1);
+    }
+    
     // console.log('command:', [`ns`, ...nsOptions, ...additionalCliFlagArgs].join(' '));
     // console.log('command:', [`ns`, ...nsOptions].join(' '));
-    const child = childProcess.spawn(/^win/.test(process.platform) ? 'ns.cmd' : 'ns', [...nsOptions], {
+    const child = childProcess.spawn(/^win/.test(process.platform) ? 'ns.cmd' : 'ns', [...nsOptions, ...additionalArgs], {
       cwd: projectCwd,
       stdio: 'inherit',
     });
