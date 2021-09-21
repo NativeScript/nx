@@ -172,7 +172,7 @@ export function runBuilder(options: BuildBuilderSchema, context: ExecutorContext
     
     // additional args after -- should be passed through
     const argSeparator = process.argv.findIndex(arg => arg === '--');
-    let additionalArgs;
+    let additionalArgs = [];
     if(argSeparator >= 0) {
         additionalArgs = process.argv.slice(argSeparator + 1);
     }
