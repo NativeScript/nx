@@ -1,3 +1,13 @@
+## [2.0.6](https://github.com/NativeScript/nx/compare/2.0.5...2.0.6) (2021-11-05)
+
+
+### Features
+
+* print {N} cli commands when invoking builder for clarity ([e23b6c3](https://github.com/NativeScript/nx/commit/e23b6c3bb21dd7d7674ee92206f856ff55ec5ace))
+* use 8.1.0 core plus 5.0.0 webpack
+
+
+
 ## [2.0.5](https://github.com/NativeScript/nx/compare/2.0.4...2.0.5) (2021-09-21)
 
 
