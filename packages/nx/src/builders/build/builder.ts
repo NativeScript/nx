@@ -176,8 +176,12 @@ export function runBuilder(options: BuildBuilderSchema, context: ExecutorContext
     if(argSeparator >= 0) {
         additionalArgs = process.argv.slice(argSeparator + 1);
     }
-    
-    // console.log('command:', [`ns`, ...nsOptions, ...additionalCliFlagArgs].join(' '));
+
+    console.log('---')
+    console.log(`Running NativeScript CLI within ${projectCwd}`);
+    console.log(' ')
+    console.log([`ns`, ...nsOptions, ...additionalArgs].join(' '));
+    console.log('---')
     // console.log('command:', [`ns`, ...nsOptions].join(' '));
     const child = childProcess.spawn(/^win/.test(process.platform) ? 'ns.cmd' : 'ns', [...nsOptions, ...additionalArgs], {
       cwd: projectCwd,
