@@ -3,7 +3,6 @@ import { createEmptyWorkspace } from '@nrwl/workspace/testing';
 import { readJsonInTree, updateJsonInTree } from '@nrwl/workspace';
 
 import { runSchematic } from '../../utils/testing';
-import { Schema } from './schema';
 
 describe('lib', () => {
   let appTree: Tree;
@@ -33,6 +32,7 @@ describe('lib', () => {
         options: {
           lintFilePatterns: [`libs/${libName}/**/*.ts`],
         },
+        outputs: ['{options.outputFile}'],
       });
     });
 
@@ -48,6 +48,7 @@ describe('lib', () => {
         options: {
           lintFilePatterns: [`libs/${libName}/**/*.ts`],
         },
+        outputs: ['{options.outputFile}'],
       });
     });
 
