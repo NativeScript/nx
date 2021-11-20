@@ -7,6 +7,7 @@ import runBuilder from './builder';
 
 const options: BuildBuilderSchema = {
   noHmr: true,
+  prepare: true,
   platform: 'ios',
 };
 
