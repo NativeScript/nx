@@ -1,3 +1,12 @@
+## [2.0.7](https://github.com/NativeScript/nx/compare/2.0.6...2.0.7) (2021-11-20)
+
+
+### Bug Fixes
+
+* library test errors ([#42](https://github.com/NativeScript/nx/issues/42)) ([8ec5e77](https://github.com/NativeScript/nx/commit/8ec5e777b4c2dc52be1f399ffc5ff0f6a3470855))
+
+
+
 ## [2.0.6](https://github.com/NativeScript/nx/compare/2.0.5...2.0.6) (2021-11-05)
 
 
