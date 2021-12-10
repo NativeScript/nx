@@ -5,6 +5,11 @@
       "implementation": "./src/builders/build/builder",
       "schema": "./src/builders/build/schema.json",
       "description": "NativeScript builder"
+    },
+    "test": {
+      "implementation": "./src/builders/test/builder",
+      "schema": "./src/builders/test/schema.json",
+      "description": "Start the NativeScript unit test runner"
     }
   }
 }
