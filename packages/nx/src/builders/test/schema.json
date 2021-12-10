@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "title": "Start the NativeScript unit test runner",
+  "description": "",
+  "type": "object",
+  "properties": {
+    "platform": {
+      "type": "string",
+      "description": "Platform to test."
+    },
+    "coverage": {
+      "type": "boolean",
+      "default": false,
+      "description": "Enable code coverage reports."
+    },
+    "device": {
+      "type": "string",
+      "description": "Device identifier to run tests on.",
+      "alias": "d"
+    },
+    "force": {
+      "type": "boolean",
+      "default": true,
+      "description": "If true, skips the application compatibility checks and forces npm i to ensure all dependencies are installed. Otherwise, the command will check the application compatibility with the current CLI version and could fail requiring ns migrate."
+    }
+  },
+  "required": []
+}

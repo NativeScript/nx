@@ -25,6 +25,7 @@
     - [Develop on simulators and devices](#develop-on-simulators-and-devices)
     - [Configuration options](#configuration-options)
     - [Run with a specific configuration](#run-with-a-specific-configuration)
+    - [Run tests](#run-tests)
     - [Create a build](#create-a-build)
     - [Clean](#clean)
 - [Create NativeScript library](#create-nativescript-library)
@@ -192,7 +193,7 @@ The options follow the [NativeScript command line option flags](https://docs.nat
 
 Here's an example app config:
 
-```
+```json
 "nativescript-mobile": {
   "projectType": "application",
   "root": "apps/nativescript-mobile/",
@@ -253,6 +254,17 @@ Here's an example app config:
         }
       }
     },
+    "test": {
+      "executor": "@nativescript/nx:test",
+      "outputs": ["coverage/apps/nativescript-mobile"],
+      "options": {
+        "coverage": false
+      },
+      "configurations": {
+        "android": {},
+        "ios": {}
+      }
+    },
     "clean": {
       "builder": "@nativescript/nx:build",
       "options": {
@@ -275,6 +287,46 @@ npx nx run <app-name>:android:prod
 
 ```sh
 npx nx run <app-name>:ios:prod
+```
+
+#### Run tests
+
+**Android:**
+
+```sh
+npx nx run <app-name>:test:android
+```
+
+**iOS:** (Mac only)
+
+```sh
+npx nx run <app-name>:test:ios
+```
+
+You can generate coverage reports by using the flag with iOS or Android, for example:
+
+```sh
+npx nx run <app-name>:test:ios --coverage
+```
+
+You can also set this option in the config, for example:
+
+```json
+"test": {
+  "executor": "@nativescript/nx:test",
+  "outputs": ["coverage/apps/nativescript-mobile"],
+  "options": {
+    "coverage": true // can set to always be on for both platforms
+  },
+  "configurations": {
+    "android": {
+      "coverage": false // or can override per platform if needed
+    },
+    "ios": {
+      "coverage": true
+    }
+  }
+}
 ```
 
 #### Create a build
