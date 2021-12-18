@@ -1,3 +1,12 @@
+## [2.0.8](https://github.com/NativeScript/nx/compare/2.0.7...2.0.8) (2021-12-18)
+
+
+### Features
+
+* unit testing executor and configuration ([98f0216](https://github.com/NativeScript/nx/commit/98f02167df538d9a1828a88f7116ef534238ebb1))
+
+
+
 ## [2.0.7](https://github.com/NativeScript/nx/compare/2.0.6...2.0.7) (2021-11-20)
 
 
