@@ -1,3 +1,12 @@
+## [3.0.8](https://github.com/NativeScript/nx/compare/2.0.8...3.0.8) (2022-01-22)
+
+
+### Features
+
+* use @nrwl/devkit ([2214a30](https://github.com/NativeScript/nx/commit/2214a3057b19a97aaae9d982e50cb80bb37df448))
+
+
+
 ## [2.0.8](https://github.com/NativeScript/nx/compare/2.0.7...2.0.8) (2021-12-18)
 
 
