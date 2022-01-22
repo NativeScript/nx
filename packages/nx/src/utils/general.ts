@@ -1,13 +1,5 @@
-import {
-  Rule,
-  Tree,
-  SchematicContext,
-  SchematicsException,
-  noop
-} from '@angular-devkit/schematics';
-import { NodePackageInstallTask } from '@angular-devkit/schematics/tasks';
-import { parseJson } from '@nrwl/devkit';
-import { getWorkspacePath, readJsonInTree, serializeJson, stringUtils as nxStringUtils, toFileName, updateWorkspaceInTree } from '@nrwl/workspace';
+import { Tree, parseJson, serializeJson, getWorkspacePath, readJson } from '@nrwl/devkit';
+import { stringUtils as nxStringUtils, updateWorkspaceInTree } from '@nrwl/workspace';
 
 export interface IPluginSettings {
   prefix?: string;
@@ -72,15 +64,10 @@ export function isXplatWorkspace() {
 export function applyAppNamingConvention(
   options: any,
   platform: PlatformTypes
-): Rule {
-  return (tree: Tree, context: SchematicContext) => {
+) {
     const { name, directory } = getAppNamingConvention(options, platform);
     options.name = name;
     options.directory = directory;
-    // console.log('applyAppNamingConvention:', options);
-    // adjusted name, nothing else to do
-    return noop()(tree, context);
-  };
 }
 
 export function getAppNamingConvention(
@@ -126,8 +113,8 @@ export function getDefaultTemplateOptions() {
   };
 }
 
-export function prerun(options?: any, init?: boolean) {
-  return (tree: Tree) => {
+export function prerun(tree: Tree, options?: any, init?: boolean) {
+
     const nxJson = getNxWorkspaceConfig(tree);
     if (nxJson) {
       npmScope = nxJson.npmScope || 'workspace';
@@ -190,17 +177,7 @@ export function prerun(options?: any, init?: boolean) {
       }
     }
     // console.log('prefix:', prefix);
-    return tree;
-  };
-}
 
-export function addInstallTask(options?: any) {
-  return (host: Tree, context: SchematicContext) => {
-    if (!options || (options && !options.skipInstall)) {
-      context.addTask(new NodePackageInstallTask());
-    }
-    return host;
-  };
 }
 
 export function jsonParse(content: string) {
@@ -213,28 +190,27 @@ export function jsonParse(content: string) {
 
 export function getJsonFromFile(tree: Tree, path: string) {
   // console.log('getJsonFromFile:', path)
-  return jsonParse(tree.get(path).content.toString());
+  return jsonParse(tree.read(path).toString('utf-8'));
 }
 
 export function updateJsonFile(tree: Tree, path: string, jsonData: any) {
   try {
-    tree.overwrite(path, serializeJson(jsonData));
-    return tree;
+    tree.write(path, serializeJson(jsonData));
   } catch (err) {
     // console.warn(err);
-    throw new SchematicsException(`${path}: ${err}`);
+    throw new Error(`${path}: ${err}`);
   }
 }
 
 export function updateFile(tree: Tree, path: string, content: string) {
   try {
     // if (tree.exists(path)) {
-    tree.overwrite(path, content);
+    tree.write(path, content);
     // }
     return tree;
   } catch (err) {
     // console.warn(err);
-    throw new SchematicsException(`${path}: ${err}`);
+    throw new Error(`${path}: ${err}`);
   }
 }
 
@@ -247,7 +223,7 @@ export function updatePackageScripts(tree: Tree, scripts: any) {
 }
 
 export function readWorkspaceJson(tree: Tree) {
-  return readJsonInTree(tree, getWorkspacePath(tree));
+  return readJson(tree, getWorkspacePath(tree));
 }
 
 export function updateWorkspace(updates: any) {
@@ -280,7 +256,7 @@ export function getNxWorkspaceConfig(tree: Tree): any {
       return nxConfig;
     }
   }
-  throw new SchematicsException(
+  throw new Error(
     '@nativescript/nx must be used inside an Nx workspace. Create a workspace first. https://nx.dev'
   );
 }
@@ -315,5 +291,12 @@ export const sanitize = (str: string): string =>
     .split('')
     .filter((char) => /[a-zA-Z0-9]/.test(char))
     .join('');
+
+export function toFileName(s: string): string {
+  return s
+    .replace(/([a-z\d])([A-Z])/g, '$1_$2')
+    .toLowerCase()
+    .replace(/[ _]/g, '-');
+}
 
 export const stringUtils = { sanitize, ...nxStringUtils };

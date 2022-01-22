@@ -1,8 +1,6 @@
-import { apply, branchAndMerge, externalSchematic, mergeWith, move, noop, Rule, SchematicContext, SchematicsException, template, Tree, url } from '@angular-devkit/schematics';
-import { NodePackageInstallTask, RunSchematicTask } from '@angular-devkit/schematics/tasks';
-import { toFileName } from '@nrwl/workspace';
+import { readJson, updateJson, Tree, addProjectConfiguration, installPackagesTask, generateFiles } from '@nrwl/devkit';
 import { createSourceFile, ScriptTarget } from 'typescript';
-import { addGlobal, insert } from './ast';
+import { addGlobal, insert } from '@nrwl/workspace';
 import { generateOptionError, unsupportedFrameworkError } from './errors';
 import {
   FrameworkTypes,
@@ -21,8 +19,11 @@ import {
   supportedPlatforms,
   supportedSandboxPlatforms,
   updateJsonFile,
+  toFileName,
 } from './general';
 import { sassVersion, angularVersion, nsAngularVersion, nsTypesVersion, nsCoreVersion, nsNgToolsVersion, nsNxPluginVersion, rxjsVersion, nsThemeVersion, zonejsVersion, nsWebpackVersion } from './versions';
+import { applicationGenerator } from '../generators/application/application';
+import { insertChange } from './ast';
 
 export namespace PluginHelpers {
   export interface Schema {
@@ -90,44 +91,43 @@ export namespace PluginHelpers {
     return frameworks.length ? frameworks[0] : null;
   }
 
-  export function updateRootDeps(options: PluginHelpers.Schema) {
-    return (tree: Tree, context: SchematicContext) => {
-      const frameworkDependencies: any = {};
-      const frameworkDevDependencies: any = {};
-      switch (options.framework) {
-        case 'angular':
-          // dep
-          frameworkDependencies['@nativescript/angular'] = nsAngularVersion;
-          frameworkDependencies['@angular/animations'] = angularVersion;
-          frameworkDependencies['@angular/common'] = angularVersion;
-          frameworkDependencies['@angular/compiler'] = angularVersion;
-          frameworkDependencies['@angular/core'] = angularVersion;
-          frameworkDependencies['@angular/forms'] = angularVersion;
-          frameworkDependencies['@angular/platform-browser'] = angularVersion;
-          frameworkDependencies['@angular/platform-browser-dynamic'] = angularVersion;
-          frameworkDependencies['@angular/router'] = angularVersion;
-          frameworkDependencies['rxjs'] = rxjsVersion;
-          frameworkDependencies['zone.js'] = zonejsVersion;
+  export function updateRootDeps(tree: Tree, options: PluginHelpers.Schema) {
+    const frameworkDependencies: any = {};
+    const frameworkDevDependencies: any = {};
+    switch (options.framework) {
+      case 'angular':
+        // dep
+        frameworkDependencies['@nativescript/angular'] = nsAngularVersion;
+        frameworkDependencies['@angular/animations'] = angularVersion;
+        frameworkDependencies['@angular/common'] = angularVersion;
+        frameworkDependencies['@angular/compiler'] = angularVersion;
+        frameworkDependencies['@angular/core'] = angularVersion;
+        frameworkDependencies['@angular/forms'] = angularVersion;
+        frameworkDependencies['@angular/platform-browser'] = angularVersion;
+        frameworkDependencies['@angular/platform-browser-dynamic'] = angularVersion;
+        frameworkDependencies['@angular/router'] = angularVersion;
+        frameworkDependencies['rxjs'] = rxjsVersion;
+        frameworkDependencies['zone.js'] = zonejsVersion;
 
-          // devDep
-          frameworkDevDependencies['@angular/compiler-cli'] = angularVersion;
-          frameworkDevDependencies['@ngtools/webpack'] = nsNgToolsVersion;
-          break;
-      }
-      return PluginHelpers.updatePackageForWorkspace(options, {
-        dependencies: {
-          '@nativescript/core': nsCoreVersion,
-          'nativescript-theme-core': nsThemeVersion,
-          ...frameworkDependencies,
-        },
-        devDependencies: {
-          'sass': sassVersion,
-          '@nativescript/webpack': nsWebpackVersion,
-          '@nativescript/types': nsTypesVersion,
-          ...frameworkDevDependencies,
-        },
-      })(tree, context);
-    };
+        // devDep
+        frameworkDevDependencies['@angular-devkit/build-angular'] = angularVersion;
+        frameworkDevDependencies['@angular/compiler-cli'] = angularVersion;
+        frameworkDevDependencies['@ngtools/webpack'] = nsNgToolsVersion;
+        break;
+    }
+    PluginHelpers.updatePackageForWorkspace(tree, options, {
+      dependencies: {
+        '@nativescript/core': nsCoreVersion,
+        'nativescript-theme-core': nsThemeVersion,
+        ...frameworkDependencies,
+      },
+      devDependencies: {
+        sass: sassVersion,
+        '@nativescript/webpack': nsWebpackVersion,
+        '@nativescript/types': nsTypesVersion,
+        ...frameworkDevDependencies,
+      },
+    });
   }
 
   //   export function updatePrettierIgnore() {
@@ -233,18 +233,18 @@ export namespace PluginHelpers {
           // externalChains.push(externalSchematic(`@nstudio/${platform}-${framework}`, 'app', options));
           packagesToRunXplat.push(packageName);
         } else {
-          throw new SchematicsException(unsupportedFrameworkError(framework));
+          throw new Error(unsupportedFrameworkError(framework));
         }
       }
     }
 
     if (Object.keys(devDependencies).length) {
-      externalChains.push((tree: Tree, context: SchematicContext) => {
+      externalChains.push((tree: Tree) => {
         // console.log(devDependencies);
 
-        return PluginHelpers.updatePackageForWorkspace(options, {
+        PluginHelpers.updatePackageForWorkspace(tree, options, {
           devDependencies,
-        })(tree, context);
+        });
       });
 
       if (options.isTesting) {
@@ -252,22 +252,23 @@ export namespace PluginHelpers {
         // console.log('packagesToRunXplat:', packagesToRunXplat)
         if (packagesToRunXplat.length) {
           for (const packageName of packagesToRunXplat) {
-            externalChains.push(
-              externalSchematic(packageName, generator, options, {
-                interactive: false,
-              })
-            );
+            externalChains.push((tree: Tree) => {
+              // externalSchematic(packageName, generator, options, {
+              //   interactive: false,
+              // })
+            });
           }
         }
       } else {
-        externalChains.push((tree: Tree, context: SchematicContext) => {
-          const installPackageTask = context.addTask(new NodePackageInstallTask());
+        externalChains.push((tree: Tree) => {
+          installPackagesTask(tree);
+          // const installPackageTask = context.addTask(new NodePackageInstallTask());
 
-          // console.log('devDependencies:', devDependencies);
-          // console.log('packagesToRunXplat:', packagesToRunXplat);
-          for (const packageName of packagesToRunXplat) {
-            context.addTask(new RunSchematicTask(packageName, generator, options), [installPackageTask]);
-          }
+          // // console.log('devDependencies:', devDependencies);
+          // // console.log('packagesToRunXplat:', packagesToRunXplat);
+          // for (const packageName of packagesToRunXplat) {
+          //   context.addTask(new RunSchematicTask(packageName, generator, options), [installPackageTask]);
+          // }
         });
       }
     }
@@ -288,11 +289,12 @@ export namespace PluginHelpers {
     if (options.isTesting) {
       // necessary to unit test the appropriately
       if (targetPlatforms) {
-        externalChains.push(
-          externalSchematic('@nativescript/nx', 'app-generate', options, {
-            interactive: false,
-          })
-        );
+        externalChains.push((tree: Tree, options) => {
+          applicationGenerator(tree, options);
+          // externalSchematic('@nativescript/nx', 'app-generate', options, {
+          //   interactive: false,
+          // })
+        });
       }
 
       if (packagesToRun.length) {
@@ -300,59 +302,59 @@ export namespace PluginHelpers {
           const nxPlatform = <PlatformTypes>packageName.replace('@nrwl/', '');
           const { name, directory } = getAppNamingConvention(options, nxPlatform);
 
-          externalChains.push(
-            externalSchematic(
-              packageName,
-              generator,
-              {
-                ...options,
-                name,
-                directory,
-              },
-              {
-                interactive: false,
-              }
-            )
-          );
+          externalChains.push((tree: Tree, options) => {
+            // externalSchematic(
+            //   packageName,
+            //   generator,
+            //   {
+            //     ...options,
+            //     name,
+            //     directory,
+            //   },
+            //   {
+            //     interactive: false,
+            //   }
+            // )
+          });
         }
       }
     } else {
       if (targetPlatforms) {
-        externalChains.push(externalSchematic('@nativescript/nx', 'app-generate', options));
+        externalChains.push((tree: Tree, options) => {
+          applicationGenerator(tree, options);
+          // externalSchematic('@nativescript/nx', 'app-generate', options)
+        });
       }
       if (packagesToRun.length) {
-        externalChains.push((tree: Tree, context: SchematicContext) => {
-          const installPackageTask = context.addTask(new NodePackageInstallTask());
+        externalChains.push((tree: Tree, options) => {
+          installPackagesTask(tree);
+          // const installPackageTask = context.addTask(new NodePackageInstallTask());
 
-          // console.log('devDependencies:', devDependencies);
-          // console.log('packagesToRunXplat:', packagesToRunXplat);
-          for (const packageName of packagesToRun) {
-            const nxPlatform = <PlatformTypes>packageName.replace('@nrwl/', '');
-            const { name, directory } = getAppNamingConvention(options, nxPlatform);
-            context.addTask(
-              new RunSchematicTask(packageName, generator, {
-                ...options,
-                name,
-                directory,
-              }),
-              [installPackageTask]
-            );
-          }
+          // // console.log('devDependencies:', devDependencies);
+          // // console.log('packagesToRunXplat:', packagesToRunXplat);
+          // for (const packageName of packagesToRun) {
+          //   const nxPlatform = <PlatformTypes>packageName.replace('@nrwl/', '');
+          //   const { name, directory } = getAppNamingConvention(options, nxPlatform);
+          //   context.addTask(
+          //     new RunSchematicTask(packageName, generator, {
+          //       ...options,
+          //       name,
+          //       directory,
+          //     }),
+          //     [installPackageTask]
+          //   );
+          // }
         });
       }
     }
     return externalChains;
   }
 
-  export function applyAppNamingConvention(options: any, platform: PlatformTypes): Rule {
-    return (tree: Tree, context: SchematicContext) => {
-      const { name, directory } = getAppNamingConvention(options, platform);
-      options.name = name;
-      options.directory = directory;
-      // console.log('applyAppNamingConvention:', options);
-      // adjusted name, nothing else to do
-      return noop()(tree, context);
-    };
+  export function applyAppNamingConvention(tree: Tree, options: any, platform: PlatformTypes) {
+    const { name, directory } = getAppNamingConvention(options, platform);
+    options.name = name;
+    options.directory = directory;
+    // console.log('applyAppNamingConvention:', options);
   }
 
   export function getAppNamingConvention(options: any, platform: PlatformTypes) {
@@ -375,52 +377,50 @@ export namespace PluginHelpers {
   }
 
   export function updatePackageForWorkspace(
+    tree: Tree,
     options: Schema,
     updates: {
       dependencies?: { [key: string]: string };
       devDependencies?: { [key: string]: string };
     }
   ) {
-    return (tree: Tree, context: SchematicContext) => {
-      const packagePath = 'package.json';
-      let packageJson = getJsonFromFile(tree, packagePath);
+    const packagePath = 'package.json';
+    let packageJson = getJsonFromFile(tree, packagePath);
 
-      if (packageJson) {
-        // could introduce another json config file but trying to avoid too much extra overhead so just store in package.json for now
+    if (packageJson) {
+      // could introduce another json config file but trying to avoid too much extra overhead so just store in package.json for now
 
-        const pluginSettings: IPluginSettings = getUpdatedPluginSettings(options);
-        const pluginSettingsKey = isXplatWorkspace() ? packageSettingKeys.xplat : packageSettingKeys.nativescriptNx;
+      const pluginSettings: IPluginSettings = getUpdatedPluginSettings(options);
+      const pluginSettingsKey = isXplatWorkspace() ? packageSettingKeys.xplat : packageSettingKeys.nativescriptNx;
 
-        if (!updates && pluginSettings) {
-          // just updating plugin settings
-          packageJson[pluginSettingsKey] = {
+      if (!updates && pluginSettings) {
+        // just updating plugin settings
+        packageJson[pluginSettingsKey] = {
+          ...(packageJson[pluginSettingsKey] || {}),
+          ...pluginSettings,
+        };
+        return updateJsonFile(tree, packagePath, packageJson);
+      } else if (updates) {
+        // update root dependencies for the generated support
+        packageJson = {
+          ...packageJson,
+          dependencies: {
+            ...(packageJson.dependencies || {}),
+            ...(updates.dependencies || {}),
+          },
+          devDependencies: {
+            ...(packageJson.devDependencies || {}),
+            ...(updates.devDependencies || {}),
+          },
+          [pluginSettingsKey]: {
             ...(packageJson[pluginSettingsKey] || {}),
             ...pluginSettings,
-          };
-          return updateJsonFile(tree, packagePath, packageJson);
-        } else if (updates) {
-          // update root dependencies for the generated support
-          packageJson = {
-            ...packageJson,
-            dependencies: {
-              ...(packageJson.dependencies || {}),
-              ...(updates.dependencies || {}),
-            },
-            devDependencies: {
-              ...(packageJson.devDependencies || {}),
-              ...(updates.devDependencies || {}),
-            },
-            [pluginSettingsKey]: {
-              ...(packageJson[pluginSettingsKey] || {}),
-              ...pluginSettings,
-            },
-          };
-          // console.log('updatePackageForWorkspace:', serializeJson(packageJson));
-          return updateJsonFile(tree, packagePath, packageJson);
-        }
+          },
+        };
+        // console.log('updatePackageForWorkspace:', serializeJson(packageJson));
+        return updateJsonFile(tree, packagePath, packageJson);
       }
-      return tree;
-    };
+    }
   }
 
   export function updateGitIgnore() {
@@ -444,32 +444,22 @@ export namespace PluginHelpers {
     };
   }
 
-  export function updatePrettierIgnore(content: string, checkExisting: string) {
-    return (tree: Tree) => {
-      const prettierFileName = '.prettierignore';
-      if (tree.exists(prettierFileName)) {
-        let prettier = tree.read(prettierFileName)!.toString('utf-8');
-        if (prettier && prettier.indexOf(checkExisting) === -1) {
-          // update prettier rules
-          prettier = `${prettier}\n${content}`;
+  export function updatePrettierIgnore(tree: Tree, content: string, checkExisting: string) {
+    const prettierFileName = '.prettierignore';
+    if (tree.exists(prettierFileName)) {
+      let prettier = tree.read(prettierFileName)!.toString('utf-8');
+      if (prettier && prettier.indexOf(checkExisting) === -1) {
+        // update prettier rules
+        prettier = `${prettier}\n${content}`;
 
-          tree.overwrite(prettierFileName, prettier);
-        }
+        tree.write(prettierFileName, prettier);
       }
-      return tree;
-    };
+    }
+    return tree;
   }
 
-  export function addPackageInstallTask(options: Schema) {
-    return (tree: Tree, context: SchematicContext) => {
-      // let packageTask;
-      if (!options.skipInstall) {
-        // packageTask = context.addTask(
-        //   new NodePackageInstallTask() //options.directory)
-        // );
-        context.addTask(new NodePackageInstallTask());
-      }
-    };
+  export function addPackageInstallTask(tree: Tree, options: Schema) {
+    installPackagesTask(tree);
   }
 }
 
@@ -604,7 +594,7 @@ export namespace PluginFeatureHelpers {
 
   export function prepare(options: Schema): PluginHelpers.IPluginGeneratorOptions {
     if (!options.name) {
-      throw new SchematicsException(`You did not specify the name of the feature you'd like to generate. For example: nx g @nativescript/nx:feature my-feature`);
+      throw new Error(`You did not specify the name of the feature you'd like to generate. For example: nx g @nativescript/nx:feature my-feature`);
     }
     const featureName = options.name.toLowerCase();
     let projects = options.projects;
@@ -628,7 +618,7 @@ export namespace PluginFeatureHelpers {
             if (supportedSandboxPlatforms.includes(p)) {
               projectSandboxNames.push(`${p}-sandbox`);
             } else {
-              throw new SchematicsException(`The --adjustSandbox flag supports the following at the moment: ${supportedSandboxPlatforms}`);
+              throw new Error(`The --adjustSandbox flag supports the following at the moment: ${supportedSandboxPlatforms}`);
             }
           }
           projects = projectSandboxNames.join(',');
@@ -636,7 +626,7 @@ export namespace PluginFeatureHelpers {
       }
     }
     if (options.routing && !options.onlyProject) {
-      throw new SchematicsException(`When generating a feature with the --routing option, please also specify --onlyProject. Support for shared code routing is under development.`);
+      throw new Error(`When generating a feature with the --routing option, please also specify --onlyProject. Support for shared code routing is under development.`);
     }
 
     if (projects) {
@@ -671,7 +661,7 @@ export namespace PluginFeatureHelpers {
     return { featureName, projectNames, platforms };
   }
 
-  export function addFiles(options: Schema, target: string = '', projectName: string = '', extra: string = '', framework?: FrameworkTypes) {
+  export function addFiles(tree: Tree, options: Schema, target: string = '', projectName: string = '', extra: string = '', framework?: FrameworkTypes) {
     let moveTo: string;
     if (target) {
       moveTo = getMoveTo(options, target, projectName, framework);
@@ -686,19 +676,33 @@ export namespace PluginFeatureHelpers {
     // console.log('target:', target);
     // console.log('addFiles moveTo:', moveTo);
     // console.log('add files from:', `${workingDirectory}/${extra}_files`);
-    return branchAndMerge(mergeWith(apply(url(`./${extra}_files`), [template(getTemplateOptions(options, target, framework)), move(moveTo)])));
+    generateFiles(tree, `./${extra}_files`, moveTo, getTemplateOptions(options, target, framework));
+    // return branchAndMerge(mergeWith(apply(url(`./${extra}_files`), [template(getTemplateOptions(options, target, framework)), move(moveTo)])));
   }
 
-  export function adjustBarrelIndex(options: Schema, indexFilePath: string): Rule {
-    return (tree: Tree) => {
-      // console.log('adjustBarrelIndex indexFilePath:', indexFilePath);
-      // console.log('tree.exists(indexFilePath):', tree.exists(indexFilePath));
-      const indexSource = tree.read(indexFilePath)!.toString('utf-8');
-      const indexSourceFile = createSourceFile(indexFilePath, indexSource, ScriptTarget.Latest, true);
+  export function adjustBarrelIndex(tree: Tree, options: Schema, indexFilePath: string) {
+    // console.log('adjustBarrelIndex indexFilePath:', indexFilePath);
+    // console.log('tree.exists(indexFilePath):', tree.exists(indexFilePath));
+    const indexSource = tree.read(indexFilePath)!.toString('utf-8');
+    const indexSourceFile = createSourceFile(indexFilePath, indexSource, ScriptTarget.Latest, true);
+    const indexChanges = addGlobal(indexSourceFile, indexFilePath, `export * from './${options.name.toLowerCase()}';`);
+    const orderedChanges = indexChanges.sort((a, b) => b.order - a.order) as any;
 
-      insert(tree, indexFilePath, [...addGlobal(indexSourceFile, indexFilePath, `export * from './${options.name.toLowerCase()}';`, true)]);
-      return tree;
-    };
+    for (const change of orderedChanges) {
+      if (change.type == 'insert') {
+        insertChange(tree, indexSourceFile, indexFilePath, change.pos, change.toAdd);
+        // recorder.insertLeft(change.pos, change.toAdd);
+      } else if (change.type == 'remove') {
+        // recorder.remove(change.pos - 1, change.toRemove.length + 1);
+      } else if (change.type == 'replace') {
+        // recorder.remove(change.pos, change.oldText.length);
+        // recorder.insertLeft(change.pos, change.newText);
+      } else if (change.type === 'noop') {
+        // do nothing
+      } else {
+        throw new Error(`Unexpected Change '${change.constructor.name}'`);
+      }
+    }
   }
 
   export function getTemplateOptions(options: Schema, platform: string, framework?: FrameworkTypes) {

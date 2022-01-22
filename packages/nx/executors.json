@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "executors": {
+    "build": {
+      "implementation": "./src/executors/build/executor",
+      "schema": "./src/executors/build/schema.json",
+      "description": "NativeScript builder"
+    },
+    "test": {
+      "implementation": "./src/executors/test/executor",
+      "schema": "./src/executors/test/schema.json",
+      "description": "Start the NativeScript unit test runner"
+    }
+  },
+  "builders": {
+    "build": {
+      "implementation": "./src/executors/build/builder",
+      "schema": "./src/executors/build/schema.json",
+      "description": "build executor"
+    },
+    "test": {
+      "implementation": "./src/executors/test/builder",
+      "schema": "./src/executors/test/schema.json",
+      "description": "test executor"
+    }
+  }
+}

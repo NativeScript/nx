@@ -1,6 +1,6 @@
 {
   "name": "@nativescript/nx",
-  "version": "2.0.8",
+  "version": "3.0.8",
   "description": "NativeScript Plugin for Nx",
   "repository": {
     "type": "git",
@@ -16,8 +16,8 @@
   ],
   "main": "src/index.js",
   "types": "src/index.d.ts",
-  "builders": "./builders.json",
-  "schematics": "./collection.json",
+  "schematics": "./generators.json",
+  "builders": "./executors.json",
   "author": "NativeScript TSC",
   "license": "Apache-2.0",
   "bugs": {
@@ -28,9 +28,9 @@
     "migrations": "./migrations.json"
   },
   "dependencies": {
-    "@angular-devkit/architect": "^0.1200.0",
-    "@angular-devkit/core": "^12.0.0",
-    "@angular-devkit/schematics": "^12.0.0",
+    "@angular-devkit/architect": "^0.1300.0",
+    "@angular-devkit/core": "^13.0.0",
+    "@angular-devkit/schematics": "^13.0.0",
     "fs-extra": "^9.1.0",
     "ignore": "^5.0.4",
     "jsonc-parser": "3.0.0"

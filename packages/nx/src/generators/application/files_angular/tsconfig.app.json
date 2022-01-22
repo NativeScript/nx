@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "<%= pathOffset %>dist/out-tsc",
+    "types": []
+  },
+  "include": ["./src/environments/environment.*.ts"],
+  "files": ["./references.d.ts", "./src/main.ts", "./src/polyfills.ts"]
+}

@@ -1,0 +1,63 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "name": "NativeScript Nx",
+  "version": "3.0",
+  "generators": {
+    "init": {
+      "factory": "./src/generators/init/init",
+      "schema": "./src/generators/init/schema.json",
+      "description": "Initialize @nativescript/nx",
+      "aliases": ["ng-add"],
+      "hidden": true
+    },
+    "application": {
+      "factory": "./src/generators/application/application",
+      "schema": "./src/generators/application/schema.json",
+      "description": "Create an application",
+      "aliases": ["app"],
+      "x-type": "application"
+    },
+    "library": {
+      "factory": "./src/generators/library/library",
+      "schema": "./src/generators/library/schema.json",
+      "description": "Create a library",
+      "aliases": ["lib"],
+      "x-type": "library"
+    },
+    "app-resources": {
+      "factory": "./src/generators/app-resources/app-resources",
+      "schema": "./src/generators/app-resources/schema.json",
+      "description": "Create app resources for NativeScript app.",
+      "hidden": true
+    }
+  },
+  "schematics": {
+    "init": {
+      "factory": "./src/generators/init/compat",
+      "schema": "./src/generators/init/schema.json",
+      "description": "Initialize @nativescript/nx",
+      "aliases": ["ng-add"],
+      "hidden": true
+    },
+    "application": {
+      "factory": "./src/generators/application/compat",
+      "schema": "./src/generators/application/schema.json",
+      "description": "Create an application",
+      "aliases": ["app"],
+      "x-type": "application"
+    },
+    "library": {
+      "factory": "./src/generators/library/compat",
+      "schema": "./src/generators/library/schema.json",
+      "description": "Create a library",
+      "aliases": ["lib"],
+      "x-type": "library"
+    },
+    "app-resources": {
+      "factory": "./src/generators/app-resources/compat",
+      "schema": "./src/generators/app-resources/schema.json",
+      "description": "Create app resources for NativeScript app.",
+      "hidden": true
+    }
+  }
+}

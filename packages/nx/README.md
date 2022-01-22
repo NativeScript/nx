@@ -110,7 +110,7 @@ npx nx run <app-name>:ios
 
 #### Configuration options
 
-A custom builder is provided via `@nativescript/nx:build` with the following options:
+A custom executor is provided via `@nativescript/nx:build` with the following options:
 
 ```
 "debug": {
@@ -201,7 +201,7 @@ Here's an example app config:
   "prefix": "",
   "targets": {
     "build": {
-      "builder": "@nativescript/nx:build",
+      "executor": "@nativescript/nx:build",
       "options": {
         "noHmr": true,
         "production": true,
@@ -221,7 +221,7 @@ Here's an example app config:
       }
     },
     "ios": {
-      "builder": "@nativescript/nx:build",
+      "executor": "@nativescript/nx:build",
       "options": {
         "platform": "ios"
       },
@@ -236,7 +236,7 @@ Here's an example app config:
       }
     },
     "android": {
-      "builder": "@nativescript/nx:build",
+      "executor": "@nativescript/nx:build",
       "options": {
         "platform": "android"
       },
@@ -266,7 +266,7 @@ Here's an example app config:
       }
     },
     "clean": {
-      "builder": "@nativescript/nx:build",
+      "executor": "@nativescript/nx:build",
       "options": {
         "clean": true
       }
