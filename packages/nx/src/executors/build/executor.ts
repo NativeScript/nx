@@ -6,14 +6,14 @@ export default async function runExecutor(options: BuildBuilderSchema, context: 
   return new Promise((resolve, reject) => {
     const projectConfig = context.workspace.projects[context.projectName];
     // determine if running or building only
-    const isBuild = process.argv.find((a) => a === 'build' || a.endsWith(":build"));
+    const isBuild = process.argv.find((a) => a === 'build' || a.endsWith(':build'));
     if (isBuild) {
       // allow build options to override run target options
       const buildTarget = projectConfig.targets['build'];
       if (buildTarget && buildTarget.options) {
         options = {
           ...options,
-          ...buildTarget.options
+          ...buildTarget.options,
         };
       }
     }
@@ -26,18 +26,13 @@ export default async function runExecutor(options: BuildBuilderSchema, context: 
 
     let targetConfigName = '';
     if (context.configurationName && context.configurationName !== 'build') {
-        targetConfigName = context.configurationName;
+      targetConfigName = context.configurationName;
     }
 
     // determine if any trailing args that need to be added to run/build command
     const configTarget = targetConfigName ? `:${targetConfigName}` : '';
     const projectTargetCmd = `${context.projectName}:${context.targetName}${configTarget}`;
-    const projectTargetCmdIndex = process.argv.findIndex(c => c === projectTargetCmd);
-    // const additionalCliFlagArgs = [];
-    // if (process.argv.length > projectTargetCmdIndex+1) {
-    //   additionalCliFlagArgs.push(...process.argv.slice(projectTargetCmdIndex+1, process.argv.length));
-    //   // console.log('additionalCliFlagArgs:', additionalCliFlagArgs);
-    // }
+    const projectTargetCmdIndex = process.argv.findIndex((c) => c === projectTargetCmd);
 
     const fileReplacements: Array<string> = [];
     let configOptions;
@@ -51,7 +46,7 @@ export default async function runExecutor(options: BuildBuilderSchema, context: 
         if (targetBuildConfig) {
           options = {
             ...options,
-            ...targetBuildConfig
+            ...targetBuildConfig,
           };
         }
       }
@@ -132,7 +127,7 @@ export default async function runExecutor(options: BuildBuilderSchema, context: 
         nsOptions.push('--release');
       }
       if (options.aab) {
-        nsOptions.push('--aab')
+        nsOptions.push('--aab');
       }
       if (options.keyStorePath) {
         nsOptions.push('--key-store-path');
@@ -169,19 +164,25 @@ export default async function runExecutor(options: BuildBuilderSchema, context: 
         nsOptions.push('--force');
       }
     }
-    
-    // additional args after -- should be passed through
-    const argSeparator = process.argv.findIndex(arg => arg === '--');
-    let additionalArgs = [];
-    if(argSeparator >= 0) {
-        additionalArgs = process.argv.slice(argSeparator + 1);
+
+    // additional cli flags
+    // console.log('projectTargetCmdIndex:', projectTargetCmdIndex)
+    const additionalArgs = [];
+    if (process.argv.length > projectTargetCmdIndex + 1) {
+      const extraFlags = process.argv.slice(projectTargetCmdIndex + 1, process.argv.length);
+      for (const flag of extraFlags) {
+        if (!nsOptions.includes(flag) && !additionalArgs.includes(flag)) {
+          additionalArgs.push(flag);
+        }
+      }
+      // console.log('additionalArgs:', additionalArgs);
     }
 
-    console.log('---')
+    console.log('---');
     console.log(`Running NativeScript CLI within ${projectCwd}`);
-    console.log(' ')
+    console.log(' ');
     console.log([`ns`, ...nsOptions, ...additionalArgs].join(' '));
-    console.log('---')
+    console.log('---');
     // console.log('command:', [`ns`, ...nsOptions].join(' '));
     const child = childProcess.spawn(/^win/.test(process.platform) ? 'ns.cmd' : 'ns', [...nsOptions, ...additionalArgs], {
       cwd: projectCwd,
