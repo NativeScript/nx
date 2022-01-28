@@ -1,3 +1,11 @@
+## [3.0.9](https://github.com/NativeScript/nx/compare/3.0.8...3.0.10) (2022-01-28)
+
+
+### Features
+
+* extra cli flag handling ([8d70070](https://github.com/NativeScript/nx/commit/8d7007085ad601cbdfa76e816c64ce3b86bda1fa))
+
+
 ## [3.0.8](https://github.com/NativeScript/nx/compare/2.0.8...3.0.8) (2022-01-22)
 
 
