@@ -83,11 +83,17 @@ export default async function testExecutor(options: TestBuilderSchema, context: 
       nsOptions.push('--force');
     }
 
-    // additional args after -- should be passed through
-    const argSeparator = process.argv.findIndex((arg) => arg === '--');
-    let additionalArgs = [];
-    if (argSeparator >= 0) {
-      additionalArgs = process.argv.slice(argSeparator + 1);
+    // additional cli flags
+    // console.log('projectTargetCmdIndex:', projectTargetCmdIndex)
+    const additionalArgs = [];
+    if (process.argv.length > projectTargetCmdIndex + 1) {
+      const extraFlags = process.argv.slice(projectTargetCmdIndex + 1, process.argv.length);
+      for (const flag of extraFlags) {
+        if (!nsOptions.includes(flag) && !additionalArgs.includes(flag)) {
+          additionalArgs.push(flag);
+        }
+      }
+      // console.log('additionalArgs:', additionalArgs);
     }
 
     console.log('---');
