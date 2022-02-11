@@ -1,4 +1,13 @@
-## [3.0.9](https://github.com/NativeScript/nx/compare/3.0.8...3.0.10) (2022-01-28)
+## [3.0.10](https://github.com/NativeScript/nx/compare/3.0.9...3.0.10) (2022-02-11)
+
+
+### Features
+
+* allow extra cli flags to be passed to unit testing executor ([cf6a614](https://github.com/NativeScript/nx/commit/cf6a614f7a514e289425f09611c2d28de8c37a45))
+
+
+
+## [3.0.9](https://github.com/NativeScript/nx/compare/3.0.8...3.0.9) (2022-01-28)
 
 
 ### Features
