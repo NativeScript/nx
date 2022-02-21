@@ -1,3 +1,12 @@
+## [3.0.11](https://github.com/NativeScript/nx/compare/3.0.10...3.0.11) (2022-02-21)
+
+
+### Features
+
+* support extra cli flags and plistUpdates + xmlUpdates in configurations ([d7782c3](https://github.com/NativeScript/nx/commit/d7782c3f64d631bfd51352697191c409a0fba22e))
+
+
+
 ## [3.0.10](https://github.com/NativeScript/nx/compare/3.0.9...3.0.10) (2022-02-11)
 
 
