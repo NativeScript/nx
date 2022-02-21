@@ -18,6 +18,14 @@
       "description": "Device identifier to run tests on.",
       "alias": "d"
     },
+    "flags": {
+      "type": "string",
+      "description": "Extra flags to pass to the NativeScript CLI (e.g. '--env.config=myapp'). You can separate multiple flags by spaces and use '=' to join option/values (e.g. '--env.config=myapp --env.appComponents=myCustomActivity.ts"
+    },
+    "id": {
+      "type": "string",
+      "description": "App bundle id. Use with configurations that desire a specific bundle id to be set."
+    },
     "force": {
       "type": "boolean",
       "default": true,

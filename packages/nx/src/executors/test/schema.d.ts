@@ -3,4 +3,6 @@ export interface TestBuilderSchema {
   coverage?: boolean;
   device?: string;
   force?: boolean;
+  flags?: string;
+  id?: string;
 }

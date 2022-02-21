@@ -12,6 +12,12 @@ export interface BuildBuilderSchema {
   platform?: 'ios' | 'android';
   copyTo?: string;
   force?: boolean;
+  flags?: string;
+  combineWithConfig?: string;
+  fileReplacements?: Array<{replace: string; with: string}>;
+  id?: string;
+  plistUpdates?: any;
+  xmlUpdates?: any;
   /** For running `ns prepare <platform>` */
   prepare:? boolean;
 

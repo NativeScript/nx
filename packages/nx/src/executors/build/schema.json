@@ -87,6 +87,46 @@
       "type": "string",
       "description": "(Android Only) When building, use this keystore alias password."
     },
+    "combineWithConfig": {
+      "type": "string",
+      "description": "Used with platform targets (ios|android) to share build configurations."
+    },
+    "fileReplacements": {
+      "description": "Replace files with other files in the build.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "replace": {
+            "type": "string",
+            "description": "The file to be replaced."
+          },
+          "with": {
+            "type": "string",
+            "description": "The file to replace with."
+          }
+        },
+        "additionalProperties": false,
+        "required": ["replace", "with"]
+      },
+      "default": []
+    },
+    "flags": {
+      "type": "string",
+      "description": "Extra flags to pass to the NativeScript CLI (e.g. '--env.config=myapp'). You can separate multiple flags by spaces and use '=' to join option/values (e.g. '--env.config=myapp --env.appComponents=myCustomActivity.ts"
+    },
+    "id": {
+      "type": "string",
+      "description": "App bundle id. Use with configurations that desire a specific bundle id to be set."
+    },
+    "plistUpdates": {
+      "type": "object",
+      "description": "Update any .plist value. Specify name of any filename with key/value pairs, e.g. { 'Info.plist': { CFBundleDisplayName: 'MyApp' } }. Defaults to look in App_Resources/iOS/{filepath} however you can specify relative path if located elsewhere."
+    },
+    "xmlUpdates": {
+      "type": "object",
+      "description": "Update any .xml value. Specify name of any filename with key/value pairs, e.g. { 'src/main/res/values/strings.xml': { app_name: 'MyApp', title_activity_kimera: 'MyApp' } }. Defaults to look in App_Resources/Android/{filepath} however you can specify relative path if located elsewhere."
+    },
     "clean": {
       "type": "boolean",
       "default": false,
