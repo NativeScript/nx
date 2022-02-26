@@ -42,9 +42,16 @@
 ### Create a new Nx workspace
 
 ```sh
+# Using npm
 npx create-nx-workspace@latest --cli=nx --preset=empty
 
-// If you run into any issue with latest Nx workspace version you may want to try the last known stable version with the following:
+# Using yarn
+yarn create nx-workspace --cli=nx --preset=empty --packageManager=yarn
+```
+
+If you run into any issue with latest Nx workspace version you may want to try the last known stable version with the following:
+
+```sh
 npx create-nx-workspace@12.4 --cli=nx --preset=empty
 ```
 
@@ -61,7 +68,11 @@ yarn add -D @nativescript/nx
 ### Create an app
 
 ```sh
+# Using npm
 npx nx g @nativescript/nx:app <app-name> [...options]
+
+# Using yarn
+yarn nx g @nativescript/nx:app <app-name> [...options]
 ```
 
 This will generate: 
@@ -72,7 +83,7 @@ apps/nativescript-<app-name>
 
 The NativeScript Nx plugin will prefix apps by default to help distinguish them against other apps in your workspace for clarity. 
 
-#### `--framework [angular]`
+#### `--framework [angular|vanilla]`
 
 You will be prompted to choose a framework when this flag is ommitted.
 
