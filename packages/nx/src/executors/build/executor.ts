@@ -107,8 +107,7 @@ export default async function runExecutor(options: BuildBuilderSchema, context: 
           nsOptions.push(options.platform);
         }
         if (options.device && !options.emulator) {
-          nsOptions.push('--device');
-          nsOptions.push(options.device);
+          nsOptions.push(`--device=${options.device}`);
         }
         if (options.emulator) {
           nsOptions.push('--emulator');
@@ -135,34 +134,27 @@ export default async function runExecutor(options: BuildBuilderSchema, context: 
           nsOptions.push('--aab');
         }
         if (options.keyStorePath) {
-          nsOptions.push('--key-store-path');
-          nsOptions.push(options.keyStorePath);
+          nsOptions.push(`--key-store-path=${options.keyStorePath}`);
         }
         if (options.keyStorePassword) {
-          nsOptions.push('--key-store-password');
-          nsOptions.push(options.keyStorePassword);
+          nsOptions.push(`--key-store-password=${options.keyStorePassword}`);
         }
         if (options.keyStoreAlias) {
-          nsOptions.push('--key-store-alias');
-          nsOptions.push(options.keyStoreAlias);
+          nsOptions.push(`--key-store-alias=${options.keyStoreAlias}`);
         }
         if (options.keyStoreAliasPassword) {
-          nsOptions.push('--key-store-alias-password');
-          nsOptions.push(options.keyStoreAliasPassword);
+          nsOptions.push(`--key-store-alias-password=${options.keyStoreAliasPassword}`);
         }
         if (options.provision) {
-          nsOptions.push('--provision');
-          nsOptions.push(options.provision);
+          nsOptions.push(`--provision=${options.provision}`);
         }
         if (options.copyTo) {
-          nsOptions.push('--copy-to');
-          nsOptions.push(options.copyTo);
+          nsOptions.push(`--copy-to=${options.copyTo}`);
         }
 
         if (nsCliFileReplacements.length) {
           // console.log('nsCliFileReplacements:', nsCliFileReplacements);
-          nsOptions.push('--env.replace');
-          nsOptions.push(nsCliFileReplacements.join(','));
+          nsOptions.push(`--env.replace=${nsCliFileReplacements.join(',')}`);
         }
         // always add --force (unless explicity set to false) for now since within Nx we use @nativescript/webpack at root only and the {N} cli shows a blocking error if not within the app
         if (options?.force !== false) {
