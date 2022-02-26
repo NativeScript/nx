@@ -39,6 +39,16 @@
 
 ## Getting started
 
+Prior to executing any commands, ensure that the node package manager you're going to use is set for NativeScript (more info at ['Package Managers'](https://docs.nativescript.org/development-workflow.html#package-managers) section of docs) and Nx (more info at ['Nx DevKit - Module'](https://nx.dev/nx-devkit/index#package-manager-type-aliases-1) section of docs).
+
+For an example, setting Yarn as your package manager, do the following:
+
+```sh
+ns package-manager set yarn
+```
+
+Now create a Nx workspace using the yarn command expression in the following section.
+
 ### Create a new Nx workspace
 
 ```sh
