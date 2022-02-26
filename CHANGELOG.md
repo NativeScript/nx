@@ -1,3 +1,12 @@
+## [3.0.12](https://github.com/NativeScript/nx/compare/3.0.11...3.0.12) (2022-02-26)
+
+
+### Bug Fixes
+
+* executor properly prevent dupe options ([aa2f5be](https://github.com/NativeScript/nx/commit/aa2f5be1ae8246ece579e20fdf65222c8fe7943e))
+
+
+
 ## [3.0.11](https://github.com/NativeScript/nx/compare/3.0.10...3.0.11) (2022-02-21)
 
 
