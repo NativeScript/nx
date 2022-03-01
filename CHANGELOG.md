@@ -1,3 +1,12 @@
+## [3.0.13](https://github.com/NativeScript/nx/compare/3.0.12...3.0.13) (2022-03-01)
+
+
+### Bug Fixes
+
+* enforce some options as singular only ([b779759](https://github.com/NativeScript/nx/commit/b779759a757f80a6b7ed25aa4507026c1cabaf69))
+
+
+
 ## [3.0.12](https://github.com/NativeScript/nx/compare/3.0.11...3.0.12) (2022-02-26)
 
 
