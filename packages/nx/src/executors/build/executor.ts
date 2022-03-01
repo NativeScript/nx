@@ -162,6 +162,13 @@ export default async function runExecutor(options: BuildBuilderSchema, context: 
         }
       }
 
+      // some options should never be duplicated
+      const enforceSingularOptions = ['provision', 'device', 'copy-to'];
+      const parseOptionName = (flag: string) => {
+        // strip just the option name from extra arguments
+        // --provision='match AppStore my.bundle.com' > provision
+        return flag.split('=')[0].replace('--', '');
+      };
       // additional cli flags
       // console.log('projectTargetCmdIndex:', projectTargetCmdIndex)
       const additionalArgs = [];
@@ -173,7 +180,8 @@ export default async function runExecutor(options: BuildBuilderSchema, context: 
         // manually added flags to the execution command
         const extraFlags = process.argv.slice(projectTargetCmdIndex + 1, process.argv.length);
         for (const flag of extraFlags) {
-          if (!nsOptions.includes(flag) && !additionalArgs.includes(flag)) {
+          const optionName = parseOptionName(flag);
+          if (!nsOptions.includes(flag) && !additionalArgs.includes(flag) && !enforceSingularOptions.includes(optionName)) {
             additionalArgs.push(flag);
           }
         }
@@ -186,7 +194,6 @@ export default async function runExecutor(options: BuildBuilderSchema, context: 
         console.log(' ');
         console.log([`ns`, ...nsOptions, ...additionalArgs].join(' '));
         console.log(' ');
-        // console.log('command:', [`ns`, ...nsOptions].join(' '));
         const child = childProcess.spawn(/^win/.test(process.platform) ? 'ns.cmd' : 'ns', [...nsOptions, ...additionalArgs], {
           cwd: projectCwd,
           stdio: 'inherit',
