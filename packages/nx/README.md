@@ -39,12 +39,29 @@
 
 ## Getting started
 
+Prior to executing any commands, ensure that the node package manager you're going to use is set for NativeScript (more info at ['Package Managers'](https://docs.nativescript.org/development-workflow.html#package-managers) section of docs) and Nx (more info at ['Nx DevKit - Module'](https://nx.dev/nx-devkit/index#package-manager-type-aliases-1) section of docs).
+
+For an example, setting Yarn as your package manager, do the following:
+
+```sh
+ns package-manager set yarn
+```
+
+Now create a Nx workspace using the yarn command expression in the following section.
+
 ### Create a new Nx workspace
 
 ```sh
+# Using npm
 npx create-nx-workspace@latest --cli=nx --preset=empty
 
-// If you run into any issue with latest Nx workspace version you may want to try the last known stable version with the following:
+# Using yarn
+yarn create nx-workspace --cli=nx --preset=empty --packageManager=yarn
+```
+
+If you run into any issue with latest Nx workspace version you may want to try the last known stable version with the following:
+
+```sh
 npx create-nx-workspace@12.4 --cli=nx --preset=empty
 ```
 
@@ -61,7 +78,11 @@ yarn add -D @nativescript/nx
 ### Create an app
 
 ```sh
+# Using npm
 npx nx g @nativescript/nx:app <app-name> [...options]
+
+# Using yarn
+yarn nx g @nativescript/nx:app <app-name> [...options]
 ```
 
 This will generate: 
@@ -72,7 +93,7 @@ apps/nativescript-<app-name>
 
 The NativeScript Nx plugin will prefix apps by default to help distinguish them against other apps in your workspace for clarity. 
 
-#### `--framework [angular]`
+#### `--framework [angular|vanilla]`
 
 You will be prompted to choose a framework when this flag is ommitted.
 
