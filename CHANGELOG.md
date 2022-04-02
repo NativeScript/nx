@@ -1,3 +1,12 @@
+## [3.0.14](https://github.com/NativeScript/nx/compare/3.0.13...3.0.14) (2022-04-02)
+
+
+### Bug Fixes
+
+* misspelled property in schema.json ([#50](https://github.com/NativeScript/nx/issues/50)) ([4d2cb73](https://github.com/NativeScript/nx/commit/4d2cb73967f2ade3c9d545e93560792e52595b23))
+
+
+
 ## [3.0.13](https://github.com/NativeScript/nx/compare/3.0.12...3.0.13) (2022-03-01)
 
 
