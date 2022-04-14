@@ -176,7 +176,7 @@ export default async function runExecutor(options: BuildBuilderSchema, context: 
         // persisted flags in configurations
         additionalArgs.push(...options.flags.split(' '));
       }
-      if (process.argv.length > projectTargetCmdIndex + 1) {
+      if (!options.clean && process.argv.length > projectTargetCmdIndex + 1) {
         // manually added flags to the execution command
         const extraFlags = process.argv.slice(projectTargetCmdIndex + 1, process.argv.length);
         for (const flag of extraFlags) {
