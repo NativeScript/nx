@@ -1,3 +1,12 @@
+## [3.0.15](https://github.com/NativeScript/nx/compare/3.0.14...3.0.15) (2022-04-14)
+
+
+### Bug Fixes
+
+* prevent extra args getting passed to clean target ([114da91](https://github.com/NativeScript/nx/commit/114da91265f8dd6d44904d30a6f68ba1e1e14895))
+
+
+
 ## [3.0.14](https://github.com/NativeScript/nx/compare/3.0.13...3.0.14) (2022-04-02)
 
 
