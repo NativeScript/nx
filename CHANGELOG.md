@@ -1,3 +1,12 @@
+## [3.0.16](https://github.com/NativeScript/nx/compare/3.0.15...3.0.16) (2022-04-22)
+
+
+### Features
+
+* **executor:** support build as targetName in addition to run type + other improvements ([d86bdb3](https://github.com/NativeScript/nx/commit/d86bdb3424240548e89bf7688586c7958780af39))
+
+
+
 ## [3.0.15](https://github.com/NativeScript/nx/compare/3.0.14...3.0.15) (2022-04-14)
 
 
