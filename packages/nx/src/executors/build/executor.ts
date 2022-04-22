@@ -11,7 +11,7 @@ export default async function runExecutor(options: BuildBuilderSchema, context: 
     try {
       const projectConfig = context.workspace.projects[context.projectName];
       // determine if running or building only
-      const isBuild = process.argv.find((a) => a === 'build' || a.endsWith(':build'));
+      const isBuild = context.targetName === 'build' || process.argv.find((a) => a === 'build' || a.endsWith(':build'));
       if (isBuild) {
         // allow build options to override run target options
         const buildTarget = projectConfig.targets['build'];
@@ -103,6 +103,13 @@ export default async function runExecutor(options: BuildBuilderSchema, context: 
           }
         }
 
+        if (!options.platform) {
+          // a platform must be set
+          // absent of it being explicitly set, we default to 'ios'
+          // this helps cases where nx run-many is used for general targets used in, for example, pull request auto prepare/build checks (just need to know if there are any .ts errors in the build where platform often doesn't matter - much)
+          options.platform = 'ios';
+        }
+
         if (options.platform) {
           nsOptions.push(options.platform);
         }
@@ -181,8 +188,11 @@ export default async function runExecutor(options: BuildBuilderSchema, context: 
         const extraFlags = process.argv.slice(projectTargetCmdIndex + 1, process.argv.length);
         for (const flag of extraFlags) {
           const optionName = parseOptionName(flag);
-          if (!nsOptions.includes(flag) && !additionalArgs.includes(flag) && !enforceSingularOptions.includes(optionName)) {
-            additionalArgs.push(flag);
+          if (optionName?.indexOf('/') === -1 && optionName?.indexOf('{') === -1) {
+            // no valid options should start with '/' or '{' - those are often extra process.argv context args that should be ignored
+            if (!nsOptions.includes(flag) && !additionalArgs.includes(flag) && !enforceSingularOptions.includes(optionName)) {
+              additionalArgs.push(flag);
+            }
           }
         }
         // console.log('additionalArgs:', additionalArgs);
@@ -194,6 +204,11 @@ export default async function runExecutor(options: BuildBuilderSchema, context: 
         console.log(' ');
         console.log([`ns`, ...nsOptions, ...additionalArgs].join(' '));
         console.log(' ');
+        if (additionalArgs.length) {
+          console.log('Note: When using extra cli flags, ensure all key/value pairs are separated with =, for example: --provision="Name"');
+          console.log(' ');
+        }
+        console.log(`---`);
         const child = childProcess.spawn(/^win/.test(process.platform) ? 'ns.cmd' : 'ns', [...nsOptions, ...additionalArgs], {
           cwd: projectCwd,
           stdio: 'inherit',
