@@ -220,17 +220,42 @@ export default async function runExecutor(options: BuildBuilderSchema, context: 
         });
       };
 
-      const checkOptions = function () {
-        if (options.id) {
-          // set custom app bundle id before running the app
-          const child = childProcess.spawn(/^win/.test(process.platform) ? 'ns.cmd' : 'ns', ['config', 'set', `${options.platform}.id`, options.id], {
+      const checkAppId = function () {
+        return new Promise((resolve) => {
+          const child = childProcess.spawn(/^win/.test(process.platform) ? 'ns.cmd' : 'ns', ['config', 'get', `id`], {
             cwd: projectCwd,
-            stdio: 'inherit',
+          });
+          child.stdout.setEncoding('utf8');
+          child.stdout.on('data', function (data) {
+            // ensure no newline chars at the end
+            const appId = (data || '').toString().replace('\n', '').replace('\r', '');
+            // console.log('existing app id:', appId);
+            resolve(appId);
           });
           child.on('close', (code) => {
             child.kill('SIGKILL');
-            runCommand();
           });
+        });
+      };
+
+      const checkOptions = function () {
+        if (options.id) {
+          // only modify app id if doesn't match (modifying nativescript.config will cause full native build)
+          checkAppId().then(id => {
+            if (options.id !== id) {
+              // set custom app bundle id before running the app
+              const child = childProcess.spawn(/^win/.test(process.platform) ? 'ns.cmd' : 'ns', ['config', 'set', `${options.platform}.id`, options.id], {
+                cwd: projectCwd,
+                stdio: 'inherit',
+              });
+              child.on('close', (code) => {
+                child.kill('SIGKILL');
+                runCommand();
+              });
+            } else {
+              runCommand();
+            }
+          })
         } else {
           runCommand();
         }
@@ -252,12 +277,32 @@ export default async function runExecutor(options: BuildBuilderSchema, context: 
             }
             const plistFile = parse(readFileSync(plistPath, 'utf8'));
             const plistUpdates = options.plistUpdates[filepath];
+            // check if updates are needed to avoid native build if not needed
+            let needsUpdate = false;
             for (const key in plistUpdates) {
-              plistFile[key] = plistUpdates[key];
-              console.log(`Updating ${filepath}: ${key}=${plistFile[key]}`);
+              if (Array.isArray(plistUpdates[key])) {
+                try {
+                  // compare stringified
+                  const plistString = JSON.stringify(plistFile[key] || {});
+                  const plistUpdateString = JSON.stringify(plistUpdates[key]);
+                  if (plistString !== plistUpdateString) {
+                    plistFile[key] = plistUpdates[key];
+                    console.log(`Updating ${filepath}: ${key}=`, plistFile[key]);
+                    needsUpdate = true;
+                  }
+                } catch (err) {
+                  console.log(`plist file parse error:`, err);
+                }
+              } else if (plistFile[key] !== plistUpdates[key]) {
+                plistFile[key] = plistUpdates[key];
+                console.log(`Updating ${filepath}: ${key}=${plistFile[key]}`);
+                needsUpdate = true;
+              }
             }
-            writeFileSync(plistPath, build(plistFile));
-            console.log(`Updated: ${plistPath}`);
+            if (needsUpdate) {
+              writeFileSync(plistPath, build(plistFile));
+              console.log(`Updated: ${plistPath}`);
+            }
           }
         }
 
