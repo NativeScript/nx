@@ -1,3 +1,12 @@
+## [3.0.17](https://github.com/NativeScript/nx/compare/3.0.16...3.0.17) (2022-04-30)
+
+
+### Features
+
+* compare plistUpdates and id options to only change if needs to ([a201e38](https://github.com/NativeScript/nx/commit/a201e38390111c6a035feffcce6151420a0f4198))
+
+
+
 ## [3.0.16](https://github.com/NativeScript/nx/compare/3.0.15...3.0.16) (2022-04-22)
 
 
