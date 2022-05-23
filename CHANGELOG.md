@@ -1,3 +1,12 @@
+## [3.0.18](https://github.com/NativeScript/nx/compare/3.0.17...3.0.18) (2022-05-23)
+
+
+### Features
+
+* share executor setups between build/test to ensure consistent behavior ([108c19d](https://github.com/NativeScript/nx/commit/108c19df6009d95348c4e9e1f447f92f261a7fa0))
+
+
+
 ## [3.0.17](https://github.com/NativeScript/nx/compare/3.0.16...3.0.17) (2022-04-30)
 
 
