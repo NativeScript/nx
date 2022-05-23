@@ -217,7 +217,6 @@ Here's an example app config:
 ```json
 "nativescript-mobile": {
   "projectType": "application",
-  "root": "apps/nativescript-mobile/",
   "sourceRoot": "apps/nativescript-mobile/src",
   "prefix": "",
   "targets": {
@@ -354,14 +353,12 @@ You can also set this option in the config, for example:
 
 Instead of running the app on a simulator or device you can create a build for the purposes of distribution/release. Various release settings will be needed for iOS and Android which can be passed as additional command line arguments. [See more in the NativeScript docs here](https://docs.nativescript.org/releasing.html#overview). Any additional cli flags as stated in the docs can be passed on the end of the `nx build` command that follows.
 
-The key difference is usage of `nx build` instead of `nx run`.
-
 Build with an environment configuration enabled (for example, with `prod`):
 
 **Android:**
 
 ```sh
-npx nx build <app-name>:android:prod
+npx nx run <app-name>:build:prod --platform=android
 ```
 
 You can pass additional NativeScript CLI options as flags on the end of you build command.
@@ -369,19 +366,19 @@ You can pass additional NativeScript CLI options as flags on the end of you buil
 * example of building AAB bundle for upload to Google Play:
 
 ```
-npx nx build <app-name>:android:prod \
+npx nx run <app-name>:build:prod --platform=android \
   --aab \
-  --key-store-path <path-to-your-keystore> \
-  --key-store-password <your-key-store-password> \
-  --key-store-alias <your-alias-name> \
-  --key-store-alias-password <your-alias-password> \
-  --copy-to ./dist/build.aab
+  --key-store-path=<path-to-your-keystore> \
+  --key-store-password=<your-key-store-password> \
+  --key-store-alias=<your-alias-name> \
+  --key-store-alias-password=<your-alias-password> \
+  --copyTo=./dist/build.aab
 ```
 
 **iOS:** (Mac only)
 
 ```sh
-npx nx build <app-name>:ios:prod
+npx nx run <app-name>:build:prod --platform=ios
 ```
 
 As mentioned, you can pass any additional NativeScript CLI options as flags on the end of your nx build command:
@@ -389,7 +386,7 @@ As mentioned, you can pass any additional NativeScript CLI options as flags on t
 * example of building IPA for upload to iOS TestFlight:
 
 ```
-npx nx build <app-name>:ios:prod \
+npx nx run <app-name>:build:prod --platform=ios \
   --provision <provisioning-profile-name> \
   --copy-to ./dist/build.ipa
 ```
@@ -443,7 +440,7 @@ If the plugin is needed by one app only, and not others, you can install it for 
 
 ```sh
 cd apps/<app-name>
-ns plugin add <plugin-name>
+npm install <plugin-name>
 ```
 
 ### Installing NativeScript plugins at workspace-level
