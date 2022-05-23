@@ -1,7 +1,7 @@
-import { TestBuilderSchema } from './schema';
-import runBuilder from './executor';
+import { TestExecutorSchema } from '../../utils';
+import testExecutor from './executor';
 
-const options: TestBuilderSchema = {
+const options: TestExecutorSchema = {
   coverage: false,
   platform: 'ios',
 };

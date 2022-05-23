@@ -1,8 +1,8 @@
 import { ExecutorContext } from '@nrwl/devkit';
-import { BuildBuilderSchema } from './schema';
-import runBuilder from './executor';
+import { BuildExecutorSchema } from '../../utils';
+import runExecutor from './executor';
 
-const options: BuildBuilderSchema = {
+const options: BuildExecutorSchema = {
   noHmr: true,
   prepare: true,
   platform: 'ios',
