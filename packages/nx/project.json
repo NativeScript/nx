@@ -1,5 +1,5 @@
 {
-  "root": "packages/nx",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/nx/src",
   "projectType": "library",
   "generators": {},
@@ -15,12 +15,12 @@
       "executor": "@nrwl/jest:jest",
       "outputs": ["coverage/packages/nx"],
       "options": {
-        "jestConfig": "packages/nx/jest.config.js",
+        "jestConfig": "packages/nx/jest.config.ts",
         "passWithNoTests": true
       }
     },
     "build": {
-      "executor": "@nrwl/node:package",
+      "executor": "@nrwl/js:tsc",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/packages/nx",
