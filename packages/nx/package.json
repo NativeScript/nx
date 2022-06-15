@@ -28,9 +28,9 @@
     "migrations": "./migrations.json"
   },
   "dependencies": {
-    "@angular-devkit/architect": "^0.1300.0",
-    "@angular-devkit/core": "^13.0.0",
-    "@angular-devkit/schematics": "^13.0.0",
+    "@angular-devkit/architect": "^0.1400.0",
+    "@angular-devkit/core": "^14.0.0",
+    "@angular-devkit/schematics": "^14.0.0",
     "fs-extra": "^9.1.0",
     "ignore": "^5.0.4",
     "jsonc-parser": "3.0.0",
