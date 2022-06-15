@@ -1,3 +1,17 @@
+# [4.0.0](https://github.com/NativeScript/nx/compare/3.0.18...4.0.0) (2022-06-15)
+
+
+### Bug Fixes
+
+* add quotes to file replacement switch ([#54](https://github.com/NativeScript/nx/issues/54)) ([25513fc](https://github.com/NativeScript/nx/commit/25513fc786889c6e8e91373efe2baa8a0ce5367d))
+
+
+### Features
+
+* nx latest with Angular 14 support ([#55](https://github.com/NativeScript/nx/issues/55)) ([aa0be0b](https://github.com/NativeScript/nx/commit/aa0be0b1088949f9d441714f08041f31fc90f420))
+
+
+
 ## [3.0.18](https://github.com/NativeScript/nx/compare/3.0.17...3.0.18) (2022-05-23)
 
 
