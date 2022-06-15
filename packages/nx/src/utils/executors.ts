@@ -205,7 +205,7 @@ export function commonExecutor(options: BuildExecutorSchema | TestExecutorSchema
 
         if (nsCliFileReplacements.length) {
           // console.log('nsCliFileReplacements:', nsCliFileReplacements);
-          nsOptions.push(`--env.replace=${nsCliFileReplacements.join(',')}`);
+          nsOptions.push(`--env.replace="${nsCliFileReplacements.join(',')}"`);
         }
         // always add --force (unless explicity set to false) for now since within Nx we use @nativescript/webpack at root only and the {N} cli shows a blocking error if not within the app
         if (options?.force !== false) {
