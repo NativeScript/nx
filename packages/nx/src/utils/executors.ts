@@ -232,7 +232,7 @@ export function commonExecutor(options: BuildExecutorSchema | TestExecutorSchema
         const extraFlags = process.argv.slice(projectTargetCmdIndex + 1, process.argv.length);
         for (const flag of extraFlags) {
           const optionName = parseOptionName(flag);
-          if (optionName?.indexOf('/') === -1 && optionName?.indexOf('{') === -1) {
+          if (optionName?.indexOf('/') === -1 && optionName?.indexOf('{') === -1 && optionName?.indexOf('\\') === -1) {
             // no valid options should start with '/' or '{' - those are often extra process.argv context args that should be ignored
             if (!nsOptions.includes(flag) && !additionalArgs.includes(flag) && !enforceSingularOptions.includes(optionName)) {
               additionalArgs.push(flag);
