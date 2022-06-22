@@ -1,3 +1,12 @@
+## [4.0.1](https://github.com/NativeScript/nx/compare/4.0.0...4.0.1) (2022-06-22)
+
+
+### Bug Fixes
+
+* **executor:** windows build args are properly isolated ([7311fa3](https://github.com/NativeScript/nx/commit/7311fa36cab6d1f24f54f82cea8499835087c932))
+
+
+
 # [4.0.0](https://github.com/NativeScript/nx/compare/3.0.18...4.0.0) (2022-06-15)
 
 
