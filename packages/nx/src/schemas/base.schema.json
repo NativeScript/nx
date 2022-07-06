@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "title": "NativeScript builder",
+  "description": "",
+  "type": "object",
+  "properties": {
+    "command": {
+      "type": "string",
+      "description": "Platform to run on",
+      "default":"debug"
+    },
+    "platform": {
+      "type": "string",
+      "description": "Platform to run on"
+    },
+    "force": {
+      "type": "boolean",
+      "default": true,
+      "description": "If true, skips the application compatibility checks and forces npm i to ensure all dependencies are installed. Otherwise, the command will check the application compatibility with the current CLI version and could fail requiring ns migrate."
+    },
+    "verbose": {
+      "type": "boolean",
+      "default": false,
+      "description": "Enable verbose logging"
+    }
+  },
+  "required": []
+}

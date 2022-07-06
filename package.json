@@ -57,6 +57,7 @@
     "jsonc-parser": "3.0.0",
     "nx": "14.3.4",
     "plist": "^3.0.4",
+    "inquirer": "^9.0.0",
     "prettier": "2.7.0",
     "ts-jest": "27.1.4",
     "ts-node": "10.8.1",
