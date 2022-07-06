@@ -63,6 +63,7 @@ export function commonExecutor(
       const isTest = options.command === COMMANDS.TEST;
 
       const platformCheck = [].concat(context.configurationName, options.platform, options?.['_']);
+      let platform;
       let isIos = platformCheck.some(overrides => overrides === 'ios');
       let isAndroid = platformCheck.some(overrides => overrides === 'android');
 
@@ -76,9 +77,8 @@ export function commonExecutor(
         });
         isIos = platform === 'ios';
         isAndroid = platform === 'android';
-        options.platform = platform;
       }
-
+      options.platform = isAndroid ? 'android' : 'ios';
       const projectConfig = context.workspace.projects[context.projectName];
       const activeTarget = projectConfig.targets[context.targetName];
       const buildTarget = projectConfig.targets['build'];
