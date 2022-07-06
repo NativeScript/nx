@@ -1,20 +1,15 @@
 {
-  "version": 2,
-  "outputCapture": "direct-nodejs",
   "$schema": "http://json-schema.org/schema",
   "title": "NativeScript builder",
   "description": "",
   "type": "object",
   "properties": {
-    "platform": {
+    "command": {
       "type": "string",
-      "description": "Platform to run on"
+      "description": "Platform to run on",
+      "default":"build"
     },
-    "debug": {
-      "type": "boolean",
-      "default": true,
-      "description": "Use 'ns debug' instead of 'ns run'. Defaults to true"
-    },
+
     "device": {
       "type": "string",
       "description": "Device identifier to run app on.",
@@ -40,11 +35,6 @@
       "default": false,
       "description": "Enable verbose logging"
     },
-    "timeout": {
-      "type": "number",
-      "default": -1,
-      "description": "Increase the default 90s timeout to connect to a device/simulator"
-    },
     "release": {
       "type": "boolean",
       "default": false,
@@ -64,11 +54,7 @@
       "type": "string",
       "description": "When building, copy the package to this location."
     },
-    "prepare": {
-      "type": "boolean",
-      "description": "Starts a Webpack compilation and prepares the app's App_Resources and the plugins platforms directories. The output is generated in a subdirectory for the selected target platform in the platforms directory. This lets you build the project for the selected platform.",
-      "default": false
-    },
+
     "provision": {
       "type": "string",
       "description": "(iOS Only) When building, use this provision profile name."
@@ -114,17 +100,11 @@
           }
         },
         "additionalProperties": false,
-        "required": [
-          "replace",
-          "with"
-        ]
+        "required": ["replace", "with"]
       },
       "default": []
     },
-    "flags": {
-      "type": "string",
-      "description": "Extra flags to pass to the NativeScript CLI (e.g. '--env.config=myapp'). You can separate multiple flags by spaces and use '=' to join option/values (e.g. '--env.config=myapp --env.appComponents=myCustomActivity.ts"
-    },
+
     "id": {
       "type": "string",
       "description": "App bundle id. Use with configurations that desire a specific bundle id to be set."
@@ -141,12 +121,8 @@
       "type": "boolean",
       "default": false,
       "description": "Do a full project clean"
-    },
-    "force": {
-      "type": "boolean",
-      "default": true,
-      "description": "If true, skips the application compatibility checks and forces npm i to ensure all dependencies are installed. Otherwise, the command will check the application compatibility with the current CLI version and could fail requiring ns migrate."
     }
+
   },
   "required": []
 }

@@ -1,11 +1,15 @@
 import { ExecutorContext, readProjectConfiguration } from '@nx/devkit';
 import * as childProcess from 'child_process';
-import { resolve as nodeResolve } from 'path';
-import { parse, build } from 'plist';
-import { parseString, Builder } from 'xml2js';
 import { readFileSync, writeFileSync } from 'fs-extra';
+import { prompt } from 'inquirer';
+import { resolve as nodeResolve } from 'path';
+import { build, parse } from 'plist';
+import { Builder, parseString } from 'xml2js';
+import { COMMANDS } from './commands';
+import { normalizeOverrides } from './normalize-overrides';
 
 export interface BuildExecutorSchema {
+  command?: COMMANDS;
   debug?: boolean;
   device?: string;
   emulator?: boolean;
@@ -44,14 +48,42 @@ export interface TestExecutorSchema extends BuildExecutorSchema {
   coverage?: boolean;
 }
 
-export function commonExecutor(options: BuildExecutorSchema | TestExecutorSchema, context: ExecutorContext, isTesting?: boolean): Promise<{ success: boolean }> {
-  return new Promise((resolve, reject) => {
+export function commonExecutor(
+  options: BuildExecutorSchema | TestExecutorSchema,
+  context: ExecutorContext
+): Promise<{ success: boolean }> {
+  return new Promise(async (resolve, reject) => {
     try {
+
+      const isBuild = options.command === COMMANDS.BUILD;
+      const isClean = options.command === COMMANDS.CLEAN;
+      const isDebug = options.command === COMMANDS.DEBUG;
+      const isPrepare = options.command === COMMANDS.PREPARE;
+      const isRun = options.command === COMMANDS.RUN;
+      const isTest = options.command === COMMANDS.TEST;
+
+      const platformCheck = [].concat(context.configurationName, options.platform, options?.['_']);
+      let isIos = platformCheck.some(overrides => overrides === 'ios');
+      let isAndroid = platformCheck.some(overrides => overrides === 'android');
+
+      if (!isIos && !isAndroid) {
+        const { platform } = await prompt({
+          type: 'list',
+          name: 'platform',
+          message: 'Which platform do you want to target?',
+          choices: ['iOS', 'Android'],
+          filter: (value) => value.toLowerCase()
+        });
+        isIos = platform === 'ios';
+        isAndroid = platform === 'android';
+        options.platform = platform;
+      }
+
       const projectConfig = context.workspace.projects[context.projectName];
       const activeTarget = projectConfig.targets[context.targetName];
       const buildTarget = projectConfig.targets['build'];
       // determine if running or building only
-      const isBuild = context.targetName === 'build' || process.argv.find((a) => a === 'build' || a.endsWith(':build'));
+
       if (isBuild) {
         // allow build options to override run target options
         if (buildTarget && buildTarget.options) {
@@ -63,11 +95,11 @@ export function commonExecutor(options: BuildExecutorSchema | TestExecutorSchema
       }
       // console.log('context.projectName:', context.projectName);
       const projectCwd = projectConfig.root;
+      context.configurationName = context.configurationName || options.platform;
       // console.log('projectCwd:', projectCwd);
-      // console.log('context.targetName:', context.targetName);
-      // console.log('context.configurationName:', context.configurationName);
-      // console.log('context.target.options:', context.target.options);
-
+      console.log('context.targetName:', context.targetName);
+      console.log('context.configurationName:', context.configurationName);
+      console.log('context.target.options:', context.target.options);
       let targetConfigName = '';
       if (context.configurationName && context.configurationName !== 'build') {
         targetConfigName = context.configurationName;
@@ -76,7 +108,12 @@ export function commonExecutor(options: BuildExecutorSchema | TestExecutorSchema
       // determine if any trailing args that need to be added to run/build command
       const configTarget = targetConfigName ? `:${targetConfigName}` : '';
       const projectTargetCmd = `${context.projectName}:${context.targetName}${configTarget}`;
-      const projectTargetCmdIndex = process.argv.findIndex((c) => c === projectTargetCmd);
+      const targetDescription = JSON.parse(process.argv.find(arg => arg.indexOf('targetDescription') !== -1));
+      const overrides = { ...targetDescription.overrides };
+      console.log({ targetDescription });
+      for (const override of Object.keys(overrides)) {
+        if (override.indexOf('_') === 0) delete overrides[override];
+      }
 
       const nsCliFileReplacements: Array<string> = [];
 
@@ -114,7 +151,10 @@ export function commonExecutor(options: BuildExecutorSchema | TestExecutorSchema
                 if (combineWithTargetConfig) {
                   if (combineWithTargetConfig.fileReplacements) {
                     for (const r of combineWithTargetConfig.fileReplacements) {
-                      nsCliFileReplacements.push(`${r.replace.replace(projectCwd, './')}:${r.with.replace(projectCwd, './')}`);
+                      nsCliFileReplacements.push(`${r.replace.replace(projectCwd, './')}:${r.with.replace(
+                        projectCwd,
+                        './'
+                      )}`);
                     }
                   }
                 }
@@ -127,96 +167,47 @@ export function commonExecutor(options: BuildExecutorSchema | TestExecutorSchema
       }
 
       const nsOptions = [];
-      if (isTesting) {
-        nsOptions.push('test');
-      }
+      nsOptions.push(options.command);
 
-      if (options.clean) {
-        nsOptions.push('clean');
-      } else {
-        if (isBuild) {
-          nsOptions.push('build');
-        } else if (options.prepare) {
-          nsOptions.push('prepare');
-        } else if (!isTesting) {
-          if (options.debug === false) {
-            nsOptions.push('run');
-          } else {
-            // default to debug mode
-            nsOptions.push('debug');
-          }
-        }
-
+      if (!isClean) {
         if (!options.platform) {
           // a platform must be set
           // absent of it being explicitly set, we default to 'ios'
           // this helps cases where nx run-many is used for general targets used in, for example, pull request auto prepare/build checks (just need to know if there are any .ts errors in the build where platform often doesn't matter - much)
-          options.platform = 'ios';
+          options.platform = options.platform || options?.['_']?.find(overrides => overrides === 'ios' || 'android') || 'ios';
         }
 
-        if (options.platform) {
-          nsOptions.push(options.platform);
-        }
-        if ((<TestExecutorSchema>options).coverage) {
-          nsOptions.push('--env.codeCoverage');
-        }
-        if (options.device && !options.emulator) {
-          nsOptions.push(`--device=${options.device}`);
-        }
-        if (options.emulator) {
-          nsOptions.push('--emulator');
-        }
-        if (options.noHmr) {
-          nsOptions.push('--no-hmr');
-        }
-        if (options.timeout && options.timeout > -1) {
-          nsOptions.push(`--timeout=${options.timeout}`);
-        }
-        if (options.uglify) {
-          nsOptions.push('--env.uglify');
-        }
-        if (options.verbose) {
-          nsOptions.push('--log=trace');
-        }
-        if (options.production) {
-          nsOptions.push('--env.production');
-        }
-        if (options.forDevice) {
-          nsOptions.push('--for-device');
-        }
-        if (options.release) {
-          nsOptions.push('--release');
-        }
-        if (options.aab) {
-          nsOptions.push('--aab');
-        }
-        if (options.keyStorePath) {
-          nsOptions.push(`--key-store-path=${options.keyStorePath}`);
-        }
-        if (options.keyStorePassword) {
-          nsOptions.push(`--key-store-password=${options.keyStorePassword}`);
-        }
-        if (options.keyStoreAlias) {
-          nsOptions.push(`--key-store-alias=${options.keyStoreAlias}`);
-        }
-        if (options.keyStoreAliasPassword) {
-          nsOptions.push(`--key-store-alias-password=${options.keyStoreAliasPassword}`);
-        }
-        if (options.provision) {
-          nsOptions.push(`--provision=${options.provision}`);
-        }
-        if (options.copyTo) {
-          nsOptions.push(`--copy-to=${options.copyTo}`);
+        options.platform && nsOptions.push(options.platform);
+        options.clean && nsOptions.push('--clean');
+        (<TestExecutorSchema>options).coverage && nsOptions.push('--env.codeCoverage');
+        options.device && !options.emulator && nsOptions.push(`--device=${options.device}`);
+        options.emulator && nsOptions.push('--emulator');
+        options.noHmr && nsOptions.push('--no-hmr');
+        options.timeout && options.timeout > -1 && nsOptions.push(`--timeout=${options.timeout}`);
+        options.uglify && nsOptions.push('--env.uglify');
+        options.verbose && nsOptions.push('--env.verbose');
+        options.production && nsOptions.push('--env.production');
+        options.forDevice && nsOptions.push('--for-device');
+        options.release && nsOptions.push('--release');
+
+        if (isAndroid) {
+          options.aab && nsOptions.push('--aab');
+          options.keyStorePath && nsOptions.push(`--key-store-path=${options.keyStorePath}`);
+          options.keyStorePassword && nsOptions.push(`--key-store-password=${options.keyStorePassword}`);
+          options.keyStoreAlias && nsOptions.push(`--key-store-alias=${options.keyStoreAlias}`);
+          options.keyStoreAliasPassword && nsOptions.push(`--key-store-alias-password=${options.keyStoreAliasPassword}`);
         }
 
-        if (nsCliFileReplacements.length) {
-          // console.log('nsCliFileReplacements:', nsCliFileReplacements);
-          nsOptions.push(`--env.replace="${nsCliFileReplacements.join(',')}"`);
+        if (isIos) {
+          options.provision && nsOptions.push(`--provision=${options.provision}`);
         }
+
+        options.copyTo && nsOptions.push(`--copy-to=${options.copyTo}`);
+
+        nsCliFileReplacements.length && nsOptions.push(`--env.replace="${nsCliFileReplacements.join(',')}"`);
+
         // always add --force (unless explicity set to false) for now since within Nx we use @nativescript/webpack at root only and the {N} cli shows a blocking error if not within the app
-        if (options?.force !== false) {
-          nsOptions.push('--force');
-        }
+        options?.force !== false && nsOptions.push('--force');
       }
 
       // some options should never be duplicated
@@ -227,25 +218,15 @@ export function commonExecutor(options: BuildExecutorSchema | TestExecutorSchema
         return flag.split('=')[0].replace('--', '');
       };
       // additional cli flags
-      // console.log('projectTargetCmdIndex:', projectTargetCmdIndex)
-      const additionalArgs = [];
-      if (options.flags) {
-        // persisted flags in configurations
-        additionalArgs.push(...options.flags.split(' '));
-      }
-      if (!options.clean && process.argv.length > projectTargetCmdIndex + 1) {
-        // manually added flags to the execution command
-        const extraFlags = process.argv.slice(projectTargetCmdIndex + 1, process.argv.length);
-        for (const flag of extraFlags) {
-          const optionName = parseOptionName(flag);
-          if (optionName?.indexOf('/') === -1 && optionName?.indexOf('{') === -1 && optionName?.indexOf('\\') === -1) {
-            // no valid options should start with '/' or '{' - those are often extra process.argv context args that should be ignored
-            if (!nsOptions.includes(flag) && !additionalArgs.includes(flag) && !enforceSingularOptions.includes(optionName)) {
-              additionalArgs.push(flag);
-            }
-          }
-        }
-        // console.log('additionalArgs:', additionalArgs);
+      const additionalArgs = normalizeOverrides(overrides);
+
+      if (!isClean) {
+        // for (const flag of additionalArgs) {
+        // const optionName = parseOptionName(flag);
+        // if (!nsOptions.includes(flag) && !additionalArgs.includes(flag) && !enforceSingularOptions.includes(optionName)) {
+        // additionalArgs.push(flag);
+        // }
+        // }
       }
 
       const runCommand = function () {
@@ -260,19 +241,24 @@ export function commonExecutor(options: BuildExecutorSchema | TestExecutorSchema
           }
         }
         console.log(`―――――――――――――――――――――――― ${icon}`);
-        console.log(`Running NativeScript ${isTesting ? 'unit tests' : 'CLI'} within ${projectCwd}`);
+        console.log(`Running NativeScript ${isTest ? 'unit tests' : 'CLI'} within ${projectCwd}`);
         console.log(' ');
         console.log([`ns`, ...nsOptions, ...additionalArgs].join(' '));
         console.log(' ');
         if (additionalArgs.length) {
-          console.log('Note: When using extra cli flags, ensure all key/value pairs are separated with =, for example: --provision="Name"');
+          console.log(
+            'Note: When using extra cli flags, ensure all key/value pairs are separated with =, for example: --provision="Name"');
           console.log(' ');
         }
         console.log(`---`);
-        const child = childProcess.spawn(/^win/.test(process.platform) ? 'ns.cmd' : 'ns', [...nsOptions, ...additionalArgs], {
-          cwd: projectCwd,
-          stdio: 'inherit',
-        });
+        const child = childProcess.spawn(
+          /^win/.test(process.platform) ? 'ns.cmd' : 'ns',
+          [...nsOptions, ...additionalArgs],
+          {
+            cwd: projectCwd,
+            stdio: 'inherit',
+          }
+        );
         child.on('close', (code) => {
           console.log(`Done.`);
           child.kill('SIGKILL');
@@ -304,10 +290,14 @@ export function commonExecutor(options: BuildExecutorSchema | TestExecutorSchema
           checkAppId().then((id) => {
             if (options.id !== id) {
               // set custom app bundle id before running the app
-              const child = childProcess.spawn(/^win/.test(process.platform) ? 'ns.cmd' : 'ns', ['config', 'set', `${options.platform}.id`, options.id], {
-                cwd: projectCwd,
-                stdio: 'inherit',
-              });
+              const child = childProcess.spawn(
+                /^win/.test(process.platform) ? 'ns.cmd' : 'ns',
+                ['config', 'set', `${options.platform}.id`, options.id],
+                {
+                  cwd: projectCwd,
+                  stdio: 'inherit',
+                }
+              );
               child.on('close', (code) => {
                 child.kill('SIGKILL');
                 runCommand();
