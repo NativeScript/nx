@@ -17,6 +17,19 @@
         "jestConfig": "packages/nx/jest.config.ts"
       }
     },
+    "prepare": {
+      "builder": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          {
+            "command": "ts-node -P .\\packages\\nx\\tsconfig.lib.json .\\packages\\nx\\src\\utils\\generate-schemas.ts"
+          },
+          {
+            "command": "nx build nx"
+          }
+        ]
+      }
+    },
     "build": {
       "executor": "@nx/js:tsc",
       "outputs": ["{options.outputPath}"],

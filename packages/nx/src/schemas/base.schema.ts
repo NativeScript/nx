@@ -1,0 +1,50 @@
+import { COMMANDS } from '../utils/commands';
+import { KeysOfProperty } from '../utils/types';
+
+export interface BaseSchema {
+  command: COMMANDS;
+  force: boolean;
+  id: string;
+  platform: 'ios' | 'android';
+  silent: boolean;
+  verbose: boolean;
+  timeout: number;
+}
+
+export const baseSchema = {
+  $schema: 'http://json-schema.org/schema',
+  title: 'Base Schema',
+  description: 'Base schema for all base properties.',
+  type: 'object',
+  properties: <KeysOfProperty<BaseSchema>>{
+    command: {
+      type: 'string',
+      description: 'Platform to run on',
+      default: 'debug',
+    },
+    platform: {
+      type: 'string',
+      description: 'Platform to run on',
+    },
+    force: {
+      type: 'boolean',
+      default: true,
+      description: 'If true, skips the application compatibility checks and forces npm i to ensure all dependencies are installed. Otherwise, the command will check the application compatibility with the current CLI version and could fail requiring ns migrate.',
+    },
+    silent: {
+      type: 'boolean',
+      default: false,
+      description: 'If true, skips prompts.',
+      alias: 's',
+    },
+    verbose: {
+      type: 'boolean',
+      default: false,
+      description: 'Enable verbose logging',
+    },
+    id: {
+      type: 'string',
+      description: 'App bundle id. Use with configurations that desire a specific bundle id to be set.',
+    },
+  },
+};
