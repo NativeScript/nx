@@ -16,27 +16,27 @@
     "build": {
       "implementation": "./src/executors/build/builder",
       "schema": "./src/executors/build/build.schema.json",
-      "description": "build executor"
+      "description": "NativeScript build builder"
     },
     "debug": {
       "implementation": "./src/executors/build/builder",
       "schema": "./src/executors/build/debug.schema.json",
-      "description": "NativeScript builder"
+      "description": "NativeScript debug builder"
     },
     "run": {
       "implementation": "./src/executors/build/builder",
       "schema": "./src/executors/build/run.schema.json",
-      "description": "NativeScript builder"
+      "description": "NativeScript run builder"
     },
     "prepare": {
       "implementation": "./src/executors/build/builder",
       "schema": "./src/executors/build/prepare.schema.json",
-      "description": "NativeScript builder"
+      "description": "NativeScript prepare builder"
     },
     "test": {
       "implementation": "./src/executors/build/builder",
       "schema": "./src/executors/build/test.schema.json",
-      "description": "test executor"
+      "description": "NativeScript test builder"
     }
   }
 }

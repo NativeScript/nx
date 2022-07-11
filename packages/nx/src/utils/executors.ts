@@ -61,7 +61,7 @@ export function commonExecutor(options: ExecutorSchema, context: ExecutorContext
       // fix for nx overwriting android and ios sub properties
       mergeDeep(options, targetOptions);
 
-      if (!isSilent && !targetConfigurationName) {
+      if (!isSilent && !targetConfigurationName && targetConfigurations?.length) {
         const { configurationName } = await prompt({
           type: 'list',
           name: 'configurationName',
@@ -76,7 +76,9 @@ export function commonExecutor(options: ExecutorSchema, context: ExecutorContext
       }
 
       // fix for nx overwriting android and ios sub properties
-      mergeDeep(options, targetConfigurations[targetConfigurationName]);
+      if(targetConfigurationName) {
+        mergeDeep(options, targetConfigurations[targetConfigurationName]);
+      }
 
       const nsOptions = [];
       nsOptions.push(options.command);
