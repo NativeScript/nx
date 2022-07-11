@@ -9,7 +9,6 @@ export const sassVersion = '^1.32.0';
 export const nsIOSRuntimeVersion = '~8.2.0';
 export const nsAndroidRuntimeVersion = '~8.2.1';
 
-
 // Frontend frameworks
 export const angularVersion = '^14.0.0';
 export const nsAngularVersion = '^14.0.0';

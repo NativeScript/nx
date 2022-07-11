@@ -19,6 +19,19 @@
         "passWithNoTests": true
       }
     },
+    "prepare": {
+      "builder": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          {
+            "command": "ts-node -P .\\packages\\nx\\tsconfig.lib.json .\\packages\\nx\\src\\utils\\generate-schemas.ts"
+          },
+          {
+            "command": "nx build nx"
+          }
+        ]
+      }
+    },
     "build": {
       "executor": "@nrwl/js:tsc",
       "outputs": ["{options.outputPath}"],

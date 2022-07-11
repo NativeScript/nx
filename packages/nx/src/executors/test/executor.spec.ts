@@ -9,7 +9,7 @@ const options: TestExecutorSchema = {
 describe('Executor: test', () => {
   it('sample', () => {
     expect(true).toBe(true);
-  })
+  });
 });
 
 // xdescribe('NativeScript Test Builder', () => {
