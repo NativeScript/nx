@@ -31,7 +31,7 @@
     "@angular-devkit/architect": "^0.1400.0",
     "@angular-devkit/core": "^14.0.0",
     "@angular-devkit/schematics": "^14.0.0",
-    "fs-extra": "^9.1.0",
+    "fs-extra": "^10.1.0",
     "ignore": "^5.0.4",
     "jsonc-parser": "3.0.0",
     "plist": "^3.0.1",
