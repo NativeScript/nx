@@ -23,7 +23,7 @@
     },
     "test": {
       "implementation": "./src/executors/build/executor",
-      "schema": "./src/executors/build/schema.json",
+      "schema": "./src/executors/build/test.schema.json",
       "description": "Start the NativeScript unit test runner"
     }
   },
