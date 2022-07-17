@@ -82,13 +82,34 @@ export async function applicationGenerator(tree: Tree, options: Schema) {
           uglify: true,
           release: true,
           forDevice: true,
-          platform: 'ios'
+          platform: 'ios',
+        },
+        configurations: {
+          production: {
+            combineWithConfig: 'build:production'
+          },
         },
       },
       debug: {
         executor: '@nativescript/nx:debug',
         options: {
           noHmr: true,
+        },
+        configurations: {
+          production: {
+            combineWithConfig: 'build:production'
+          },
+        },
+      },
+      run: {
+        executor: '@nativescript/nx:run',
+        options: {
+          noHmr: true,
+        },
+        configurations: {
+          production: {
+            combineWithConfig: 'build:production'
+          },
         },
       },
       clean: {

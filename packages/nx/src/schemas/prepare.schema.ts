@@ -22,7 +22,7 @@ export const prepareSchema = {
   properties: <KeysOfProperty<PrepareSchema>>{
     command: {
       type: 'string',
-      description: 'Platform to run on',
+      description: 'NativeScript CLI command to invoke',
       default: 'prepare',
     },
     uglify: {

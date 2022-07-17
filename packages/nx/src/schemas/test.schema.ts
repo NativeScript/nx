@@ -25,10 +25,9 @@ export const testSchema = {
   properties: <KeysOfProperty<TestSchema>>{
     command: {
       type: 'string',
-      description: 'Platform to run on',
+      description: 'NativeScript CLI command to invoke',
       default: 'test',
     },
-
     debug: {
       type: 'boolean',
       default: true,

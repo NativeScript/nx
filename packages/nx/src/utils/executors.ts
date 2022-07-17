@@ -28,11 +28,11 @@ export function commonExecutor(options: ExecutorSchema, context: ExecutorContext
       let isAndroid = platformCheck.some((overrides) => overrides === 'android');
 
       if (!isSilent && !isIos && !isAndroid) {
-        const { platform } = <{ platform: string}>await enquirer.default.prompt({
+        const { platform } = <{ platform: string }>await enquirer.default.prompt({
           type: 'select',
           name: 'platform',
           message: 'Which platform do you want to target?',
-          choices: [ { name: 'ios' }, { name: 'android' }],
+          choices: [{ name: 'ios' }, { name: 'android' }],
         });
         isIos = platform === 'ios';
         isAndroid = platform === 'android';
@@ -61,7 +61,7 @@ export function commonExecutor(options: ExecutorSchema, context: ExecutorContext
       mergeDeep(options, targetOptions);
 
       if (!isSilent && !targetConfigurationName && targetConfigurations?.length) {
-        const { configurationName } = <{ configurationName: string}>await enquirer.default.prompt({
+        const { configurationName } = <{ configurationName: string }>await enquirer.default.prompt({
           type: 'select',
           name: 'configurationName',
           message: 'No configuration was provided. Did you mean to select one of these configurations?',
@@ -75,7 +75,7 @@ export function commonExecutor(options: ExecutorSchema, context: ExecutorContext
       }
 
       // fix for nx overwriting android and ios sub properties
-      if(targetConfigurationName) {
+      if (targetConfigurationName) {
         mergeDeep(options, targetConfigurations[targetConfigurationName]);
       }
 
@@ -110,6 +110,31 @@ export function commonExecutor(options: ExecutorSchema, context: ExecutorContext
         }
 
         const nsCliFileReplacements: Array<string> = [];
+        if (targetConfigurationName) {
+          const configOptions = targetConfigurations[targetConfigurationName];
+          if (configOptions.combineWithConfig) {
+            const configParts = configOptions.combineWithConfig.split(':');
+            const combineWithTargetName = configParts[0];
+            let configName: string;
+            const combineWithTarget = projectConfig.targets[combineWithTargetName];
+            if (combineWithTarget && combineWithTarget.configurations) {
+              if (configParts.length > 1) {
+                configName = configParts[1];
+                const combineWithTargetConfig = combineWithTarget.configurations[configName];
+                // TODO: combine configOptions with combineWithConfigOptions
+                if (combineWithTargetConfig) {
+                  if (combineWithTargetConfig.fileReplacements) {
+                    for (const r of combineWithTargetConfig.fileReplacements) {
+                      nsCliFileReplacements.push(`${r.replace.replace(projectCwd, './')}:${r.with.replace(projectCwd, './')}`);
+                    }
+                  }
+                }
+              }
+            } else {
+              console.warn(`Warning: No configurations will be combined. A "${combineWithTargetName}" target${configName ? ' with configuration "' + configName + '"' : ''} was not found for project name: "${context.projectName}"`);
+            }
+          }
+        }
         for (const r of options?.fileReplacements) {
           nsCliFileReplacements.push(`${r.replace.replace(projectCwd, './')}:${r.with.replace(projectCwd, './')}`);
         }
