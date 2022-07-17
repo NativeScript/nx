@@ -4,11 +4,26 @@
     "build": {
       "implementation": "./src/executors/build/executor",
       "schema": "./src/executors/build/build.schema.json",
-      "description": "NativeScript builder"
+      "description": "NativeScript executor"
+    },
+    "debug": {
+      "implementation": "./src/executors/build/executor",
+      "schema": "./src/executors/build/debug.schema.json",
+      "description": "NativeScript debug executor"
+    },
+    "run": {
+      "implementation": "./src/executors/build/executor",
+      "schema": "./src/executors/build/run.schema.json",
+      "description": "NativeScript run executor"
+    },
+    "prepare": {
+      "implementation": "./src/executors/build/executor",
+      "schema": "./src/executors/build/prepare.schema.json",
+      "description": "NativeScript prepare executor"
     },
     "test": {
-      "implementation": "./src/executors/test/executor",
-      "schema": "./src/executors/test/schema.json",
+      "implementation": "./src/executors/build/executor",
+      "schema": "./src/executors/build/schema.json",
       "description": "Start the NativeScript unit test runner"
     }
   },

@@ -22,7 +22,7 @@
       "options": {
         "commands": [
           {
-            "command": "ts-node -P .\\packages\\nx\\tsconfig.lib.json .\\packages\\nx\\src\\utils\\generate-schemas.ts"
+            "command": "ts-node -P ./packages/nx/tsconfig.lib.json ./packages/nx/src/utils/generate-schemas.ts"
           },
           {
             "command": "nx build nx"
