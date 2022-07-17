@@ -18,7 +18,7 @@ export const baseSchema = {
   properties: <KeysOfProperty<BaseSchema>>{
     command: {
       type: 'string',
-      description: 'Platform to run on',
+      description: 'NativeScript CLI command to invoke',
       default: 'debug',
     },
     platform: {
@@ -44,6 +44,10 @@ export const baseSchema = {
     id: {
       type: 'string',
       description: 'App bundle id. Use with configurations that desire a specific bundle id to be set.',
+    },
+    combineWithConfig: {
+      type: 'string',
+      description: 'Used with targets to share build configurations and avoid duplicating configurations across multiple targets.',
     },
   },
 };

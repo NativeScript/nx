@@ -26,7 +26,7 @@ export const debugSchema = {
   properties: <KeysOfProperty<DebugSchema>>{
     command: {
       type: 'string',
-      description: 'Platform to run on',
+      description: 'NativeScript CLI command to invoke',
       default: 'debug',
     },
     debug: {

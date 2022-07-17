@@ -26,7 +26,7 @@ export const runSchema = {
   properties: <KeysOfProperty<RunSchema>>{
     command: {
       type: 'string',
-      description: 'Platform to run on',
+      description: 'NativeScript CLI command to invoke',
       default: 'run',
     },
 
