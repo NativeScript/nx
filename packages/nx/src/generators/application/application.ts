@@ -1,4 +1,5 @@
 import { readJson, Tree, updateJson, addProjectConfiguration, generateFiles, joinPathFragments, installPackagesTask } from '@nrwl/devkit';
+import { platform } from 'os';
 import { getAppName, getDefaultTemplateOptions, getFrontendFramework, getPrefix, missingArgument, PluginHelpers, prerun, updateNxProjects, updatePackageScripts } from '../../utils';
 import { angularVersion, nsAngularVersion, nsWebpackVersion, nsNgToolsVersion, nsCoreVersion, typescriptVersion, rxjsVersion, zonejsVersion, nsIOSRuntimeVersion, nsAndroidRuntimeVersion } from '../../utils/versions';
 import { appResources } from '../app-resources/app-resources';
@@ -31,20 +32,30 @@ export async function applicationGenerator(tree: Tree, options: Schema) {
     case 'angular':
       frontendFrameworkConfig = {
         build: {
-          builder: '@nativescript/nx:build',
+          executor: '@nativescript/nx:build',
           options: {
             noHmr: true,
             production: true,
             uglify: true,
             release: true,
             forDevice: true,
+            android: {
+              copyTo: './dist/build.apk',
+              keyStorePath: 'path/to/android.keystore',
+              keyStoreAlias: 'alias',
+              keyStorePassword: 'pass',
+              keyStoreAliasPassword: 'pass',
+            },
+            ios: {
+              copyTo: './dist/build.ipa',
+            },
           },
           configurations: {
-            prod: {
+            production: {
               fileReplacements: [
                 {
-                  replace: `./src/environments/environment.ts`,
-                  with: `./src/environments/environment.prod.ts`,
+                  replace: './src/environments/environment.ts',
+                  with: './src/environments/environment.prod.ts',
                 },
               ],
             },
@@ -59,52 +70,47 @@ export async function applicationGenerator(tree: Tree, options: Schema) {
     projectType: 'application',
     targets: {
       ...frontendFrameworkConfig,
-      ios: {
-        builder: '@nativescript/nx:build',
+      prepare: {
+        executor: '@nativescript/nx:prepare',
         options: {
-          platform: 'ios',
-        },
-        configurations: {
-          build: {
-            copyTo: './dist/build.ipa',
-          },
-          prod: {
-            combineWithConfig: 'build:prod',
-          },
+          noHmr: true,
+          production: true,
+          uglify: true,
+          release: true,
+          forDevice: true,
+          platform: 'ios'
         },
       },
-      android: {
-        builder: '@nativescript/nx:build',
+      debug: {
+        executor: '@nativescript/nx:debug',
         options: {
-          platform: 'android',
-        },
-        configurations: {
-          build: {
-            copyTo: './dist/build.apk',
-          },
-          prod: {
-            combineWithConfig: 'build:prod',
-          },
+          noHmr: true,
         },
       },
       clean: {
-        builder: '@nativescript/nx:build',
-        options: {
-          clean: true,
-        },
+        executor: '@nativescript/nx:clean',
+        options: {},
       },
       lint: {
-        builder: '@nrwl/linter:eslint',
+        executor: '@nrwl/linter:eslint',
         options: {
           lintFilePatterns: [`${appPath}/**/*.ts`, `${appPath}/src/**/*.html`],
         },
+      },
+      test: {
+        executor: '@nativescript/nx:test',
+        outputs: [`coverage/${appPath}`],
+        options: {
+          coverage: true,
+        },
+        configurations: {},
       },
     },
   });
 
   return () => {
     installPackagesTask(tree);
-  }
+  };
 }
 
 function addAppFiles(tree: Tree, options: Schema, appName: string, extra: string = '') {
