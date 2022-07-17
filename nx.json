@@ -18,14 +18,11 @@
     "default": {
       "runner": "nx/tasks-runners/default",
       "options": {
-        "cacheableOperations": [
-          "build",
-          "lint",
-          "test",
-          "e2e"
-        ],
-        "parallel": 1
-      }
+				"cacheableOperations": ["build", "lint", "test", "e2e"],
+				"runtimeCacheInputs": ["node -v"],
+				"parallel": 1,
+				"useDaemonProcess": false
+			}
     }
   },
   "workspaceLayout": {
