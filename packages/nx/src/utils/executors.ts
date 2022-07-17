@@ -1,7 +1,7 @@
 import { ExecutorContext, readProjectConfiguration } from '@nx/devkit';
 import * as childProcess from 'child_process';
 import { readFileSync, writeFileSync } from 'fs-extra';
-import { prompt } from 'inquirer';
+import * as enquirer from 'enquirer';
 import { resolve as nodeResolve } from 'path';
 import { build, parse } from 'plist';
 import { Builder, parseString } from 'xml2js';
@@ -28,12 +28,11 @@ export function commonExecutor(options: ExecutorSchema, context: ExecutorContext
       let isAndroid = platformCheck.some((overrides) => overrides === 'android');
 
       if (!isSilent && !isIos && !isAndroid) {
-        const { platform } = await prompt({
-          type: 'list',
+        const { platform } = <{ platform: string}>await enquirer.default.prompt({
+          type: 'select',
           name: 'platform',
           message: 'Which platform do you want to target?',
-          choices: ['iOS', 'Android'],
-          filter: (value) => value.toLowerCase(),
+          choices: [ { name: 'ios' }, { name: 'android' }],
         });
         isIos = platform === 'ios';
         isAndroid = platform === 'android';
@@ -62,8 +61,8 @@ export function commonExecutor(options: ExecutorSchema, context: ExecutorContext
       mergeDeep(options, targetOptions);
 
       if (!isSilent && !targetConfigurationName && targetConfigurations?.length) {
-        const { configurationName } = await prompt({
-          type: 'list',
+        const { configurationName } = <{ configurationName: string}>await enquirer.default.prompt({
+          type: 'select',
           name: 'configurationName',
           message: 'No configuration was provided. Did you mean to select one of these configurations?',
           choices: ['No', ...Object.keys(targetConfigurations)],
