@@ -25,6 +25,11 @@
       "implementation": "./src/executors/build/executor",
       "schema": "./src/executors/build/test.schema.json",
       "description": "Start the NativeScript unit test runner"
+    },
+    "clean": {
+      "implementation": "./src/executors/build/executor",
+      "schema": "./src/executors/build/clean.schema.json",
+      "description": "NativeScript clean executor"
     }
   },
   "builders": {
@@ -52,6 +57,11 @@
       "implementation": "./src/executors/build/builder",
       "schema": "./src/executors/build/test.schema.json",
       "description": "NativeScript test builder"
+    },
+    "clean": {
+      "implementation": "./src/executors/build/builder",
+      "schema": "./src/executors/build/clean.schema.json",
+      "description": "NativeScript clean builder"
     }
   }
 }

@@ -8,6 +8,7 @@ import { iosSchema } from '../schemas/ios-properties.schema';
 import { prepareSchema } from '../schemas/prepare.schema';
 import { runSchema } from '../schemas/run.schema';
 import { testSchema } from '../schemas/test.schema';
+import { cleanSchema } from '../schemas/clean.schema';
 
 (async () => {
   const outputDirectory = join(__dirname, '..', 'executors', 'build');
@@ -18,6 +19,7 @@ import { testSchema } from '../schemas/test.schema';
     { name: 'prepare', schemas: [baseSchema, androidSchema, iosSchema, prepareSchema] },
     { name: 'run', schemas: [baseSchema, androidSchema, iosSchema, runSchema] },
     { name: 'test', schemas: [baseSchema, androidSchema, iosSchema, testSchema] },
+    { name: 'clean', schemas: [cleanSchema] },
   ];
 
   for (const output of outputs) {
