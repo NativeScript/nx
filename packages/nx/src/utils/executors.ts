@@ -27,7 +27,7 @@ export function commonExecutor(options: ExecutorSchema, context: ExecutorContext
       let isIos = platformCheck.some((overrides) => overrides === 'ios');
       let isAndroid = platformCheck.some((overrides) => overrides === 'android');
 
-      if (!isSilent && !isIos && !isAndroid) {
+      if (!isClean && !isSilent && !isIos && !isAndroid) {
         const { platform } = <{ platform: string }>await enquirer.default.prompt({
           type: 'select',
           name: 'platform',
@@ -38,13 +38,15 @@ export function commonExecutor(options: ExecutorSchema, context: ExecutorContext
         isAndroid = platform === 'android';
       }
 
-      if (isAndroid) {
-        options.platform = 'android';
-      } else if (isIos) {
-        options.platform = 'ios';
-      } else {
-        options.platform = 'ios';
-        console.warn('No platform was specified. Defaulting to iOS.');
+      if (!isClean) {
+        if (isAndroid) {
+          options.platform = 'android';
+        } else if (isIos) {
+          options.platform = 'ios';
+        } else {
+          options.platform = 'ios';
+          console.warn('No platform was specified. Defaulting to iOS.');
+        }
       }
 
       const projectConfig = context.workspace.projects[context.projectName];
@@ -60,7 +62,7 @@ export function commonExecutor(options: ExecutorSchema, context: ExecutorContext
       // fix for nx overwriting android and ios sub properties
       mergeDeep(options, targetOptions);
 
-      if (!isSilent && !targetConfigurationName && targetConfigurations?.length) {
+      if (!isClean && !isSilent && !targetConfigurationName && targetConfigurations?.length) {
         const { configurationName } = <{ configurationName: string }>await enquirer.default.prompt({
           type: 'select',
           name: 'configurationName',
