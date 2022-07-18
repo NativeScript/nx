@@ -70,7 +70,7 @@ export function commonExecutor(options: ExecutorSchema, context: ExecutorContext
           choices: ['No', ...Object.keys(targetConfigurations)],
         });
         if (configurationName == 'No') {
-          console.warn('Continuing with no configuration. Specify configuration with -c/--configuration= or :configuration ');
+          console.warn(`Continuing with no configuration. Specify with --configuration=prod, -c=prod, or :prod`);
         } else {
           targetConfigurationName = configurationName;
         }
@@ -100,14 +100,14 @@ export function commonExecutor(options: ExecutorSchema, context: ExecutorContext
         options.copyTo && nsOptions.push(`--copy-to=${options.copyTo}`);
         options.force !== false && nsOptions.push('--force');
 
-        if (isAndroid) {
+        if (isAndroid && options.android) {
           options.android.aab && nsOptions.push('--aab');
           options.android.keyStorePath && nsOptions.push(`--key-store-path=${options.android.keyStorePath}`);
           options.android.keyStorePassword && nsOptions.push(`--key-store-password=${options.android.keyStorePassword}`);
           options.android.keyStoreAlias && nsOptions.push(`--key-store-alias=${options.android.keyStoreAlias}`);
           options.android.keyStoreAliasPassword && nsOptions.push(`--key-store-alias-password=${options.android.keyStoreAliasPassword}`);
         }
-        if (isIos) {
+        if (isIos && options.ios) {
           options.ios.provision && nsOptions.push(`--provision=${options.ios.provision}`);
         }
 
@@ -239,7 +239,7 @@ export function commonExecutor(options: ExecutorSchema, context: ExecutorContext
       if (options.clean) {
         runCommand();
       } else {
-        const plistKeys = Object.keys(options.ios.plistUpdates || {});
+        const plistKeys = Object.keys(options.ios?.plistUpdates || {});
         if (plistKeys.length) {
           for (const filepath of plistKeys) {
             let plistPath: string;
@@ -281,7 +281,7 @@ export function commonExecutor(options: ExecutorSchema, context: ExecutorContext
           }
         }
 
-        const xmlKeys = Object.keys(options.android.xmlUpdates || {});
+        const xmlKeys = Object.keys(options.android?.xmlUpdates || {});
         if (xmlKeys.length) {
           for (const filepath of xmlKeys) {
             let xmlPath: string;
