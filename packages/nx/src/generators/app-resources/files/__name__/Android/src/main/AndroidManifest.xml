@@ -2,7 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	package="__PACKAGE__"
 	android:versionCode="10000"
-	android:versionName="1.0">
+	android:versionName="1.0"
+	 xmlns:tools="http://schemas.android.com/tools">
 
 	<supports-screens
 		android:smallScreens="true"
@@ -19,13 +20,29 @@
 		android:allowBackup="true"
 		android:icon="@mipmap/ic_launcher"
 		android:label="@string/app_name"
-		android:theme="@style/AppTheme">
+		android:theme="@style/AppTheme"
+		android:hardwareAccelerated="true">
+
+		<provider
+		android:name="androidx.core.content.FileProvider"
+		android:authorities="${applicationId}.fileprovider"
+		android:exported="false"
+		android:grantUriPermissions="true"
+		tools:replace="android:authorities">
+		<meta-data
+			android:name="android.support.FILE_PROVIDER_PATHS"
+			android:resource="@xml/file_paths"
+			tools:replace="android:resource"></meta-data>
+		</provider>
 
 		<activity
 			android:name="com.tns.NativeScriptActivity"
 			android:label="@string/title_activity_kimera"
 			android:configChanges="keyboard|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|locale|uiMode"
-			android:theme="@style/LaunchScreenTheme">
+			android:theme="@style/LaunchScreenTheme"
+			android:hardwareAccelerated="true"
+			android:launchMode="singleTask"
+			android:exported="true">
 
 			<meta-data android:name="SET_THEME_ON_LAUNCH" android:resource="@style/AppTheme" />
 
