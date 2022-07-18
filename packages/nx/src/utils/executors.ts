@@ -62,7 +62,7 @@ export function commonExecutor(options: ExecutorSchema, context: ExecutorContext
       // fix for nx overwriting android and ios sub properties
       mergeDeep(options, targetOptions);
 
-      if (!isClean && !isSilent && !targetConfigurationName && targetConfigurations?.length) {
+      if (!isClean && !isSilent && !targetConfigurationName && Object.keys(targetConfigurations || {}).length) {
         const { configurationName } = <{ configurationName: string }>await enquirer.default.prompt({
           type: 'select',
           name: 'configurationName',
