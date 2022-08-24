@@ -1,3 +1,12 @@
+## [4.0.2](https://github.com/NativeScript/nx/compare/4.0.1...4.0.2) (2022-08-24)
+
+
+### Bug Fixes
+
+* executor with target configurations ([1b6c0cd](https://github.com/NativeScript/nx/commit/1b6c0cde65806034a723bcbd39da0a129e988e1e))
+
+
+
 ## [4.0.1](https://github.com/NativeScript/nx/compare/4.0.0...4.0.1) (2022-06-22)
 
 
