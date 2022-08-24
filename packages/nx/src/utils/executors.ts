@@ -1,4 +1,4 @@
-import { ExecutorContext } from '@nrwl/devkit';
+import { ExecutorContext, readProjectConfiguration } from '@nrwl/devkit';
 import * as childProcess from 'child_process';
 import { resolve as nodeResolve } from 'path';
 import { parse, build } from 'plist';
@@ -47,11 +47,12 @@ export function commonExecutor(options: BuildExecutorSchema | TestExecutorSchema
   return new Promise((resolve, reject) => {
     try {
       const projectConfig = context.workspace.projects[context.projectName];
+      const activeTarget = projectConfig.targets[context.targetName];
+      const buildTarget = projectConfig.targets['build'];
       // determine if running or building only
       const isBuild = context.targetName === 'build' || process.argv.find((a) => a === 'build' || a.endsWith(':build'));
       if (isBuild) {
         // allow build options to override run target options
-        const buildTarget = projectConfig.targets['build'];
         if (buildTarget && buildTarget.options) {
           options = {
             ...options,
@@ -77,14 +78,16 @@ export function commonExecutor(options: BuildExecutorSchema | TestExecutorSchema
       const projectTargetCmdIndex = process.argv.findIndex((c) => c === projectTargetCmd);
 
       const nsCliFileReplacements: Array<string> = [];
+
+
       let configOptions;
-      if (context.target.configurations) {
-        configOptions = context.target.configurations[targetConfigName];
+      if (activeTarget.configurations) {
+        configOptions = activeTarget.configurations[targetConfigName];
         // console.log('configOptions:', configOptions)
 
         if (isBuild) {
           // merge any custom build options for the target
-          const targetBuildConfig = context.target.configurations['build'];
+          const targetBuildConfig = activeTarget.configurations['build'];
           if (targetBuildConfig) {
             options = {
               ...options,
