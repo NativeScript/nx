@@ -81,7 +81,7 @@ export function commonExecutor(options: BuildExecutorSchema | TestExecutorSchema
 
 
       let configOptions;
-      if (activeTarget.configurations) {
+      if (activeTarget && activeTarget.configurations) {
         configOptions = activeTarget.configurations[targetConfigName];
         // console.log('configOptions:', configOptions)
 
