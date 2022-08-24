@@ -6,7 +6,7 @@ describe('init', () => {
   let tree: Tree;
 
   beforeEach(() => {
-    tree = createTreeWithEmptyWorkspace(2);
+    tree = createTreeWithEmptyWorkspace();
   });
 
   it('should add nativescript dependencies', async () => {
@@ -32,7 +32,7 @@ describe('init', () => {
 
   describe('defaultCollection', () => {
     beforeEach(() => {
-      tree = createTreeWithEmptyWorkspace(2);
+      tree = createTreeWithEmptyWorkspace();
     });
 
     it('should be set if none was set before', async () => {

@@ -8,7 +8,7 @@ describe('app', () => {
   let appTree: Tree;
 
   beforeEach(() => {
-      appTree = createTreeWithEmptyWorkspace(2);
+      appTree = createTreeWithEmptyWorkspace();
   });
 
   it('should update workspace.json', async () => {
