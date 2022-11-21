@@ -1,13 +1,13 @@
-export const nxVersion = '^14.0.0';
+export const nxVersion = '^15.0.0';
 
 export const nsNxPluginVersion = '~4.0.0';
-export const nsCoreVersion = '~8.2.0';
-export const nsTypesVersion = '~8.2.0';
+export const nsCoreVersion = '~8.3.0';
+export const nsTypesVersion = '~8.3.0';
 export const nsThemeVersion = '~1.0.4';
 export const nsWebpackVersion = '~5.0.0';
 export const sassVersion = '^1.32.0';
-export const nsIOSRuntimeVersion = '~8.2.0';
-export const nsAndroidRuntimeVersion = '~8.2.1';
+export const nsIOSRuntimeVersion = '~8.3.0';
+export const nsAndroidRuntimeVersion = '~8.3.0';
 
 
 // Frontend frameworks
