@@ -16,24 +16,26 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [Getting started](#getting-started)
-  - [Create a new Nx workspace](#create-a-new-nx-workspace)
-  - [Install NativeScript plugin](#install-nativescript-plugin)
-  - [Create an app](#create-an-app)
-    - [`--framework [angular]`](#--framework-angular)
-    - [`--groupByName`](#--groupbyname)
-    - [Develop on simulators and devices](#develop-on-simulators-and-devices)
-    - [Configuration options](#configuration-options)
-    - [Run with a specific configuration](#run-with-a-specific-configuration)
-    - [Run tests](#run-tests)
-    - [Create a build](#create-a-build)
-    - [Clean](#clean)
-- [Create NativeScript library](#create-nativescript-library)
-  - [`--groupByName`](#--groupbyname-1)
-- [Using NativeScript plugins](#using-nativescript-plugins)
-  - [Installing NativeScript plugins at app-level](#installing-nativescript-plugins-at-app-level)
-  - [Installing NativeScript plugins at workspace-level](#installing-nativescript-plugins-at-workspace-level)
-  - [Known issues](#known-issues)
+- [NativeScript Plugin for Nx](#nativescript-plugin-for-nx)
+  - [Table of Contents](#table-of-contents)
+  - [Getting started](#getting-started)
+    - [Create a new Nx workspace](#create-a-new-nx-workspace)
+    - [Install NativeScript plugin](#install-nativescript-plugin)
+    - [Create an app](#create-an-app)
+      - [`--framework [angular|vanilla]`](#--framework-angularvanilla)
+      - [`--groupByName`](#--groupbyname)
+      - [Develop on simulators and devices](#develop-on-simulators-and-devices)
+      - [Configuration options](#configuration-options)
+      - [Run with a specific configuration](#run-with-a-specific-configuration)
+      - [Run tests](#run-tests)
+      - [Create a build](#create-a-build)
+      - [Clean](#clean)
+  - [Create NativeScript library](#create-nativescript-library)
+    - [`--groupByName`](#--groupbyname-1)
+  - [Using NativeScript plugins](#using-nativescript-plugins)
+    - [Installing NativeScript plugins at app-level](#installing-nativescript-plugins-at-app-level)
+    - [Installing NativeScript plugins at workspace-level](#installing-nativescript-plugins-at-workspace-level)
+    - [Known issues](#known-issues)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -53,16 +55,26 @@ Now create a Nx workspace using the yarn command expression in the following sec
 
 ```sh
 # Using npm
-npx create-nx-workspace@latest --cli=nx --preset=empty
+npx create-nx-workspace@latest
 
 # Using yarn
-yarn create nx-workspace --cli=nx --preset=empty --packageManager=yarn
+yarn create-nx-workspace@latest
 ```
 
 If you run into any issue with latest Nx workspace version you may want to try the last known stable version with the following:
 
 ```sh
-npx create-nx-workspace@12.4 --cli=nx --preset=empty
+npx create-nx-workspace@15.1.1
+
+Need to install the following packages:
+  create-nx-workspace@15.1.1
+Ok to proceed? (y) y
+
+ >  NX   Let's create a new workspace [https://nx.dev/getting-started/intro]
+
+✔ Choose your style                     · integrated
+✔ What to create in the new workspace   · apps
+✔ Enable distributed caching to make your CI faster · No
 ```
 
 ### Install NativeScript plugin
