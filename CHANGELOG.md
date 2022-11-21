@@ -1,3 +1,12 @@
+# [4.1.0](https://github.com/NativeScript/nx/compare/4.0.2...4.1.0) (2022-11-21)
+
+
+### Features
+
+* Nx 15 support ([#60](https://github.com/NativeScript/nx/issues/60)) ([fca0298](https://github.com/NativeScript/nx/commit/fca02982696ef5c61e8a9e75ff5030c8ce34bd6b))
+
+
+
 ## [4.0.2](https://github.com/NativeScript/nx/compare/4.0.1...4.0.2) (2022-08-24)
 
 
