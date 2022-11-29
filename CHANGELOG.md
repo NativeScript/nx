@@ -1,3 +1,12 @@
+## [4.1.1](https://github.com/NativeScript/nx/compare/4.1.0...4.1.1) (2022-11-29)
+
+
+### Features
+
+* support timeout option ([5d66647](https://github.com/NativeScript/nx/commit/5d66647956840d1c6255f03d9f2c1b0c082bcd3b))
+
+
+
 # [4.1.0](https://github.com/NativeScript/nx/compare/4.0.2...4.1.0) (2022-11-21)
 
 
