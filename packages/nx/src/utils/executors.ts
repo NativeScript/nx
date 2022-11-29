@@ -11,6 +11,7 @@ export interface BuildExecutorSchema {
   emulator?: boolean;
   clean?: boolean;
   noHmr?: boolean;
+  timeout?: number;
   uglify?: boolean;
   verbose?: boolean;
   release?: boolean;
@@ -168,6 +169,9 @@ export function commonExecutor(options: BuildExecutorSchema | TestExecutorSchema
         }
         if (options.noHmr) {
           nsOptions.push('--no-hmr');
+        }
+        if (options.timeout && options.timeout > -1) {
+          nsOptions.push(`--timeout=${options.timeout}`);
         }
         if (options.uglify) {
           nsOptions.push('--env.uglify');

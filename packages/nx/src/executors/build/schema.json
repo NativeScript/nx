@@ -40,6 +40,11 @@
       "default": false,
       "description": "Enable verbose logging"
     },
+    "timeout": {
+      "type": "number",
+      "default": -1,
+      "description": "Increase the default 90s timeout to connect to a device/simulator"
+    },
     "release": {
       "type": "boolean",
       "default": false,
