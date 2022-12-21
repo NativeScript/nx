@@ -64,10 +64,10 @@ yarn create-nx-workspace@latest
 If you run into any issue with latest Nx workspace version you may want to try the last known stable version with the following:
 
 ```sh
-npx create-nx-workspace@15.1.1
+npx create-nx-workspace@15.3.3
 
 Need to install the following packages:
-  create-nx-workspace@15.1.1
+  create-nx-workspace@15.3.3
 Ok to proceed? (y) y
 
  >  NX   Let's create a new workspace [https://nx.dev/getting-started/intro]
