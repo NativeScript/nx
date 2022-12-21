@@ -7,7 +7,6 @@ import {
   getDefaultTemplateOptions,
   getFrontendFramework,
   getGroupByName,
-  getJsonFromFile,
   getPrefix,
   IPluginSettings,
   isXplatWorkspace,
@@ -385,7 +384,7 @@ export namespace PluginHelpers {
     }
   ) {
     const packagePath = 'package.json';
-    let packageJson = getJsonFromFile(tree, packagePath);
+    let packageJson = readJson(tree, packagePath);
 
     if (packageJson) {
       // could introduce another json config file but trying to avoid too much extra overhead so just store in package.json for now

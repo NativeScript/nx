@@ -22,15 +22,6 @@ export async function init(tree: Tree, options: Schema) {
 
     return json;
   });
-  const config = readWorkspaceConfiguration(tree);
-  if (!config.cli?.defaultCollection) {
-    updateWorkspaceConfiguration(tree, {
-      version: 2,
-      cli: {
-        defaultCollection: '@nativescript/nx'
-      }
-    });
-  }
 }
 
 export default init;

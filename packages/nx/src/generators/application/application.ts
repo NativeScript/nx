@@ -1,4 +1,4 @@
-import { readJson, Tree, updateJson, addProjectConfiguration, generateFiles, joinPathFragments, installPackagesTask } from '@nrwl/devkit';
+import { Tree, addProjectConfiguration, generateFiles, joinPathFragments, installPackagesTask } from '@nrwl/devkit';
 import { getAppName, getDefaultTemplateOptions, getFrontendFramework, getPrefix, missingArgument, PluginHelpers, prerun, updateNxProjects, updatePackageScripts } from '../../utils';
 import { angularVersion, nsAngularVersion, nsWebpackVersion, nsNgToolsVersion, nsCoreVersion, typescriptVersion, rxjsVersion, zonejsVersion, nsIOSRuntimeVersion, nsAndroidRuntimeVersion } from '../../utils/versions';
 import { appResources } from '../app-resources/app-resources';
@@ -31,7 +31,7 @@ export async function applicationGenerator(tree: Tree, options: Schema) {
     case 'angular':
       frontendFrameworkConfig = {
         build: {
-          builder: '@nativescript/nx:build',
+          executor: '@nativescript/nx:build',
           options: {
             noHmr: true,
             production: true,
@@ -60,7 +60,7 @@ export async function applicationGenerator(tree: Tree, options: Schema) {
     targets: {
       ...frontendFrameworkConfig,
       ios: {
-        builder: '@nativescript/nx:build',
+        executor: '@nativescript/nx:build',
         options: {
           platform: 'ios',
         },
@@ -74,7 +74,7 @@ export async function applicationGenerator(tree: Tree, options: Schema) {
         },
       },
       android: {
-        builder: '@nativescript/nx:build',
+        executor: '@nativescript/nx:build',
         options: {
           platform: 'android',
         },
@@ -88,13 +88,13 @@ export async function applicationGenerator(tree: Tree, options: Schema) {
         },
       },
       clean: {
-        builder: '@nativescript/nx:build',
+        executor: '@nativescript/nx:build',
         options: {
           clean: true,
         },
       },
       lint: {
-        builder: '@nrwl/linter:eslint',
+        executor: '@nrwl/linter:eslint',
         options: {
           lintFilePatterns: [`${appPath}/**/*.ts`, `${appPath}/src/**/*.html`],
         },
