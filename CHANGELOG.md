@@ -1,3 +1,11 @@
+## [4.2.0](https://github.com/NativeScript/nx/compare/4.1.1...4.2.0) (2022-12-20)
+
+
+### Features
+
+* feat: Nx 15.3+ with NativeScript 8.4+ ([d511987](https://github.com/NativeScript/nx/commit/d511987774b0cb9d81e9b4fd3e211b88bf0fa839))
+
+
 ## [4.1.1](https://github.com/NativeScript/nx/compare/4.1.0...4.1.1) (2022-11-29)
 
 
