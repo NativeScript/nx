@@ -1,6 +1,4 @@
 {
-  "version": 2,
-  "outputCapture": "direct-nodejs",
   "$schema": "http://json-schema.org/schema",
   "title": "NativeScript builder",
   "description": "",
@@ -39,6 +37,11 @@
     "id": {
       "type": "string",
       "description": "App bundle id. Use with configurations that desire a specific bundle id to be set."
+    },
+    "timeout": {
+      "type": "number",
+      "default": -1,
+      "description": "Increase the default 90s timeout to connect to a device/simulator"
     },
     "combineWithConfig": {
       "type": "string",
