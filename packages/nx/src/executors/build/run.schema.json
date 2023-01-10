@@ -1,4 +1,6 @@
 {
+  "version": 2,
+  "outputCapture": "direct-nodejs",
   "$schema": "http://json-schema.org/schema",
   "title": "NativeScript builder",
   "description": "",
@@ -96,6 +98,11 @@
       "type": "boolean",
       "default": false,
       "description": "Enable uglify during the webpack build"
+    },
+    "timeout": {
+      "type": "number",
+      "default": -1,
+      "description": "Increase the default 90s timeout to connect to a device/simulator"
     },
     "release": {
       "type": "boolean",

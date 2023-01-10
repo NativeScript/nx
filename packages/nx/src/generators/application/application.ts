@@ -1,5 +1,4 @@
-import { readJson, Tree, updateJson, addProjectConfiguration, generateFiles, joinPathFragments, installPackagesTask } from '@nrwl/devkit';
-import { platform } from 'os';
+import { Tree, addProjectConfiguration, generateFiles, joinPathFragments, installPackagesTask } from '@nrwl/devkit';
 import { getAppName, getDefaultTemplateOptions, getFrontendFramework, getPrefix, missingArgument, PluginHelpers, prerun, updateNxProjects, updatePackageScripts } from '../../utils';
 import { angularVersion, nsAngularVersion, nsWebpackVersion, nsNgToolsVersion, nsCoreVersion, typescriptVersion, rxjsVersion, zonejsVersion, nsIOSRuntimeVersion, nsAndroidRuntimeVersion } from '../../utils/versions';
 import { appResources } from '../app-resources/app-resources';

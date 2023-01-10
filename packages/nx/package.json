@@ -28,9 +28,11 @@
     "migrations": "./migrations.json"
   },
   "dependencies": {
-    "@angular-devkit/architect": "^0.1400.0",
-    "@angular-devkit/core": "^14.0.0",
-    "@angular-devkit/schematics": "^14.0.0",
+    "@angular-devkit/architect": "^0.1500.0",
+    "@angular-devkit/core": "^15.0.0",
+    "@angular-devkit/schematics": "^15.0.0",
+    "@nrwl/devkit": "^15.0.0",
+    "@nrwl/jest": "^15.0.0",
     "enquirer": "~2.3.6",
     "fs-extra": "^10.1.0",
     "ignore": "^5.0.4",

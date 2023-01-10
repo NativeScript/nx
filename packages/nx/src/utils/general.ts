@@ -1,4 +1,4 @@
-import { Tree, parseJson, serializeJson, getWorkspacePath, readJson } from '@nrwl/devkit';
+import { Tree, serializeJson, getWorkspacePath, readJson } from '@nrwl/devkit';
 import { stringUtils as nxStringUtils, updateWorkspaceInTree } from '@nrwl/workspace';
 
 export interface IPluginSettings {
@@ -120,7 +120,7 @@ export function prerun(tree: Tree, options?: any, init?: boolean) {
       npmScope = nxJson.npmScope || 'workspace';
     }
     // console.log('npmScope:', npmScope);
-    const packageJson = getJsonFromFile(tree, 'package.json');
+    const packageJson = readJson(tree, 'package.json');
 
     let frameworkChoice: string;
     if (options && options.framework) {
@@ -180,19 +180,6 @@ export function prerun(tree: Tree, options?: any, init?: boolean) {
 
 }
 
-export function jsonParse(content: string) {
-  if (content) {
-    // ensure comments are stripped when parsing (otherwise will fail)
-    return parseJson(content);
-  }
-  return {};
-}
-
-export function getJsonFromFile(tree: Tree, path: string) {
-  // console.log('getJsonFromFile:', path)
-  return jsonParse(tree.read(path).toString('utf-8'));
-}
-
 export function updateJsonFile(tree: Tree, path: string, jsonData: any) {
   try {
     tree.write(path, serializeJson(jsonData));
@@ -216,7 +203,7 @@ export function updateFile(tree: Tree, path: string, content: string) {
 
 export function updatePackageScripts(tree: Tree, scripts: any) {
   const path = 'package.json';
-  const packageJson = getJsonFromFile(tree, path);
+  const packageJson = readJson(tree, path);
   const scriptsMap = Object.assign({}, packageJson.scripts);
   packageJson.scripts = Object.assign(scriptsMap, scripts);
   return updateJsonFile(tree, path, packageJson);
@@ -240,14 +227,14 @@ export function updateWorkspace(updates: any) {
 
 export function updateNxProjects(tree: Tree, projects: any) {
   const path = 'nx.json';
-  const nxJson = getJsonFromFile(tree, path);
+  const nxJson = readJson(tree, path);
   const projectsMap = Object.assign({}, nxJson.projects);
   nxJson.projects = Object.assign(projectsMap, projects);
   return updateJsonFile(tree, path, nxJson);
 }
 
 export function getNxWorkspaceConfig(tree: Tree): any {
-  const nxConfig = getJsonFromFile(tree, 'nx.json');
+  const nxConfig = readJson(tree, 'nx.json');
   const hasWorkspaceDirs = tree.exists('libs') || tree.exists('packages');
 
   // determine if Nx workspace

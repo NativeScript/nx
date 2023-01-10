@@ -15,7 +15,7 @@ describe('app', () => {
     await applicationGenerator(appTree, { name: 'myApp' });
     const config = readProjectConfiguration(appTree, 'nativescript-my-app');
 
-    expect(config.root).toEqual('apps/nativescript-my-app/');
+    expect(config.root).toEqual('apps/nativescript-my-app');
   });
 
   it('should generate files', async () => {

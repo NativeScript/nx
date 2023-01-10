@@ -1,3 +1,29 @@
+## [4.2.0](https://github.com/NativeScript/nx/compare/4.1.1...4.2.0) (2022-12-20)
+
+
+### Features
+
+* feat: Nx 15.3+ with NativeScript 8.4+ ([d511987](https://github.com/NativeScript/nx/commit/d511987774b0cb9d81e9b4fd3e211b88bf0fa839))
+
+
+## [4.1.1](https://github.com/NativeScript/nx/compare/4.1.0...4.1.1) (2022-11-29)
+
+
+### Features
+
+* support timeout option ([5d66647](https://github.com/NativeScript/nx/commit/5d66647956840d1c6255f03d9f2c1b0c082bcd3b))
+
+
+
+# [4.1.0](https://github.com/NativeScript/nx/compare/4.0.2...4.1.0) (2022-11-21)
+
+
+### Features
+
+* Nx 15 support ([#60](https://github.com/NativeScript/nx/issues/60)) ([fca0298](https://github.com/NativeScript/nx/commit/fca02982696ef5c61e8a9e75ff5030c8ce34bd6b))
+
+
+
 ## [4.0.2](https://github.com/NativeScript/nx/compare/4.0.1...4.0.2) (2022-08-24)
 
 

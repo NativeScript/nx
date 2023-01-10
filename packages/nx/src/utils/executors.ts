@@ -139,7 +139,9 @@ export function commonExecutor(options: ExecutorSchema, context: ExecutorContext
         for (const r of options?.fileReplacements) {
           nsCliFileReplacements.push(`${r.replace.replace(projectCwd, './')}:${r.with.replace(projectCwd, './')}`);
         }
-        nsCliFileReplacements.length && nsOptions.push(`--env.replace="${nsCliFileReplacements.join(',')}"`);
+        if (nsCliFileReplacements.length) {
+          nsOptions.push(`--env.replace="${nsCliFileReplacements.join(',')}"`);
+        }
       }
 
       // some options should never be duplicated
