@@ -21,7 +21,7 @@
       }
     },
     "prepare": {
-      "builder": "@nrwl/workspace:run-commands",
+      "builder": "nx:run-commands",
       "options": {
         "commands": [
           {
