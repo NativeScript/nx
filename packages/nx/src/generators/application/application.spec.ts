@@ -1,80 +1,82 @@
 
-import { readJson, readProjectConfiguration, readWorkspaceConfiguration, Tree } from '@nrwl/devkit';
+import { readJson, readProjectConfiguration, Tree } from '@nrwl/devkit';
 import { createTreeWithEmptyWorkspace } from '@nrwl/devkit/testing';
 import { applicationGenerator } from './application';
 import { angularVersion, nsAngularVersion, rxjsVersion, zonejsVersion } from '../../utils/versions';
 
 describe('app', () => {
-  let appTree: Tree;
+  let tree: Tree;
 
   beforeEach(() => {
-      appTree = createTreeWithEmptyWorkspace();
+    tree = createTreeWithEmptyWorkspace({ layout: 'apps-libs' });
+    tree.write('/apps/.gitignore', '');
+    tree.write('/libs/.gitignore', '');
   });
 
-  it('should update workspace.json', async () => {
-    await applicationGenerator(appTree, { name: 'myApp' });
-    const config = readProjectConfiguration(appTree, 'nativescript-my-app');
+  it('should update project.json', async () => {
+    await applicationGenerator(tree, { name: 'myApp' });
+    const config = readProjectConfiguration(tree, 'nativescript-my-app');
 
     expect(config.root).toEqual('apps/nativescript-my-app');
   });
 
   it('should generate files', async () => {
-    await applicationGenerator(appTree, { name: 'myApp', framework: 'vanilla' });
+    await applicationGenerator(tree, { name: 'myApp', framework: 'vanilla' });
     const appPath = 'apps/nativescript-my-app';
-    expect(appTree.exists(`${appPath}/src/app-root.xml`)).toBeTruthy();
-    expect(appTree.exists(`${appPath}/src/main-page.ts`)).toBeTruthy();
-    checkFiles(appTree, appPath);
+    expect(tree.exists(`${appPath}/src/app-root.xml`)).toBeTruthy();
+    expect(tree.exists(`${appPath}/src/main-page.ts`)).toBeTruthy();
+    checkFiles(tree, appPath);
   });
 
   it('nested in directory: should generate files', async () => {
-    await applicationGenerator(appTree, { name: 'myApp', directory: 'mobile', framework: 'vanilla' });
+    await applicationGenerator(tree, { name: 'myApp', directory: 'mobile', framework: 'vanilla' });
     const appPath = 'apps/mobile/nativescript-my-app';
-    expect(appTree.exists(`${appPath}/src/app-root.xml`)).toBeTruthy();
-    expect(appTree.exists(`${appPath}/src/main-page.ts`)).toBeTruthy();
+    expect(tree.exists(`${appPath}/src/app-root.xml`)).toBeTruthy();
+    expect(tree.exists(`${appPath}/src/main-page.ts`)).toBeTruthy();
 
-    checkFiles(appTree, appPath, '../../../');
+    checkFiles(tree, appPath, '../../../');
   });
 
   it('Angular with Routing: should generate files', async () => {
-    await applicationGenerator(appTree, { name: 'myApp', framework: 'angular', routing: true });
+    await applicationGenerator(tree, { name: 'myApp', framework: 'angular', routing: true });
     const appPath = 'apps/nativescript-my-app';
-    checkAngularFiles(appTree, appPath);
+    checkAngularFiles(tree, appPath);
 
-    expect(appTree.exists(`${appPath}/src/app.routing.ts`)).toBeTruthy();
-    expect(appTree.exists(`${appPath}/src/features/home/home.module.ts`)).toBeTruthy();
+    expect(tree.exists(`${appPath}/src/app.routing.ts`)).toBeTruthy();
+    expect(tree.exists(`${appPath}/src/features/home/home.module.ts`)).toBeTruthy();
 
     // should also save framework as default in plugin settings
-    const packageJson = readJson(appTree, `package.json`);
+    const packageJson = readJson(tree, `package.json`);
     expect(packageJson['nativescript-nx'].framework).toEqual('angular');
 
-    checkFiles(appTree, appPath);
+    checkFiles(tree, appPath);
   });
 
   it('Angular without Routing: should generate files', async () => {
-    await applicationGenerator(appTree, { name: 'myApp', framework: 'angular', routing: false });
+    await applicationGenerator(tree, { name: 'myApp', framework: 'angular', routing: false });
     const appPath = 'apps/nativescript-my-app';
-    checkAngularFiles(appTree, appPath);
+    checkAngularFiles(tree, appPath);
 
-    expect(appTree.exists(`${appPath}/src/app.routing.ts`)).toBeFalsy();
-    expect(appTree.exists(`${appPath}/src/features/home/home.module.ts`)).toBeFalsy();
+    expect(tree.exists(`${appPath}/src/app.routing.ts`)).toBeFalsy();
+    expect(tree.exists(`${appPath}/src/features/home/home.module.ts`)).toBeFalsy();
 
-    checkFiles(appTree, appPath);
+    checkFiles(tree, appPath);
   });
 
   it('Angular nested in directory: should generate files', async () => {
-    await applicationGenerator(appTree, { name: 'myApp', framework: 'angular', directory: 'mobile', routing: true });
+    await applicationGenerator(tree, { name: 'myApp', framework: 'angular', directory: 'mobile', routing: true });
     const appPath = 'apps/mobile/nativescript-my-app';
-    checkAngularFiles(appTree, appPath);
+    checkAngularFiles(tree, appPath);
 
-    expect(appTree.exists(`${appPath}/src/app.routing.ts`)).toBeTruthy();
-    expect(appTree.exists(`${appPath}/src/features/home/home.module.ts`)).toBeTruthy();
+    expect(tree.exists(`${appPath}/src/app.routing.ts`)).toBeTruthy();
+    expect(tree.exists(`${appPath}/src/features/home/home.module.ts`)).toBeTruthy();
 
-    checkFiles(appTree, appPath, '../../../');
+    checkFiles(tree, appPath, '../../../');
   });
 
   it('should add angular dependencies when framework is angular', async () => {
-    await applicationGenerator(appTree, { name: 'myApp', framework: 'angular' });
-    const packageJson = readJson(appTree, `package.json`);
+    await applicationGenerator(tree, { name: 'myApp', framework: 'angular' });
+    const packageJson = readJson(tree, `package.json`);
 
     expect(packageJson['dependencies']['@angular/animations']).toEqual(angularVersion);
     expect(packageJson['dependencies']['@angular/common']).toEqual(angularVersion);
@@ -90,8 +92,8 @@ describe('app', () => {
   });
 
   it('should not add angular dependencies when framework is not angular', async () => {
-    await applicationGenerator(appTree, { name: 'myApp', framework: '' });
-    const packageJson = readJson(appTree, `package.json`);
+    await applicationGenerator(tree, { name: 'myApp', framework: '' });
+    const packageJson = readJson(tree, `package.json`);
 
     expect(packageJson['dependencies']['@angular/animations']).toBeFalsy();
     expect(packageJson['dependencies']['@angular/common']).toBeFalsy();

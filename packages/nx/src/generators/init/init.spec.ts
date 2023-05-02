@@ -1,4 +1,4 @@
-import { readJson, readWorkspaceConfiguration, Tree, updateWorkspaceConfiguration } from '@nrwl/devkit';
+import { readJson, readNxJson, readProjectConfiguration, Tree, updateNxJson, updateProjectConfiguration } from '@nrwl/devkit';
 import { createTreeWithEmptyWorkspace } from '@nrwl/devkit/testing';
 import { init } from './init';
 
@@ -6,7 +6,9 @@ describe('init', () => {
   let tree: Tree;
 
   beforeEach(() => {
-    tree = createTreeWithEmptyWorkspace();
+    tree = createTreeWithEmptyWorkspace({ layout: 'apps-libs' });
+    tree.write('/apps/.gitignore', '');
+    tree.write('/libs/.gitignore', '');
   });
 
   it('should add nativescript dependencies', async () => {
@@ -28,24 +30,5 @@ describe('init', () => {
     const content = tree.read('/.gitignore').toString();
 
     expect(content).toMatch(/# NativeScript/);
-  });
-
-  describe('defaultCollection', () => {
-    beforeEach(() => {
-      tree = createTreeWithEmptyWorkspace();
-    });
-
-    it('should be set if none was set before', async () => {
-      let workspaceJson = readWorkspaceConfiguration(tree);
-      updateWorkspaceConfiguration(tree, {
-        version: 2,
-        cli: {
-          defaultCollection: null,
-        },
-      });
-      await init(tree, {});
-      workspaceJson = readWorkspaceConfiguration(tree);
-      expect(workspaceJson.cli.defaultCollection).toEqual('@nativescript/nx');
-    });
   });
 });

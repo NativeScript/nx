@@ -1,13 +1,17 @@
 import { generateFiles, joinPathFragments, Tree, readJson } from '@nrwl/devkit';
 import { getDefaultTemplateOptions, PluginHelpers, prerun, updateJsonFile } from '../../utils';
-import { libraryGenerator } from '@nrwl/workspace';
+import { initGenerator, libraryGenerator } from '@nrwl/js';
 
-export function library(tree: Tree, options: any) {
+export async function library(tree: Tree, options: any) {
   prerun(tree, options, true);
   PluginHelpers.applyAppNamingConvention(tree, options, 'nativescript');
-  libraryGenerator(tree, options);
-
-  console.log(tree.children('libs'));
+  await initGenerator(tree, {
+    skipFormat: true,
+  });
+  await libraryGenerator(tree, {
+    name: options.name,
+    directory: options.directory,
+  });
 
   // add extra files
   const directory = options.directory ? `${options.directory}/` : '';

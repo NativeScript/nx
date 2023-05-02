@@ -1,4 +1,4 @@
-import { readJson, readProjectConfiguration, readWorkspaceConfiguration, Tree, updateJson, updateWorkspaceConfiguration } from '@nrwl/devkit';
+import { readJson, readProjectConfiguration, Tree, updateJson } from '@nrwl/devkit';
 import { createTreeWithEmptyWorkspace } from '@nrwl/devkit/testing';
 import { library } from './library';
 
@@ -6,12 +6,14 @@ describe('lib', () => {
   let tree: Tree;
 
   beforeEach(() => {
-    tree = createTreeWithEmptyWorkspace();
+    tree = createTreeWithEmptyWorkspace({ layout: 'apps-libs' });
+    tree.write('/apps/.gitignore', '');
+    tree.write('/libs/.gitignore', '');
   });
 
   describe('not nested', () => {
-    it('should update workspace.json', async () => {
-      await library(tree, { name: 'myLib' });
+    it('should update project.json', async () => {
+      await library(tree, { name: 'myLib', unitTestRunner: 'none' });
       const libName = `nativescript-my-lib`;
 
       expect(tree.exists(`libs/${libName}/tsconfig.json`)).toBeTruthy();
@@ -34,7 +36,7 @@ describe('lib', () => {
     });
 
     it('groupByName: should update workspace.json', async () => {
-      await library(tree, { name: 'myLib', groupByName: true });
+      await library(tree, { name: 'myLib', groupByName: true, unitTestRunner: 'none' });
       const libName = `my-lib-nativescript`;
       const projectConfig = readProjectConfiguration(tree, libName);
 

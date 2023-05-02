@@ -1,6 +1,6 @@
-import { readJson, updateJson, Tree, addProjectConfiguration, installPackagesTask, generateFiles } from '@nrwl/devkit';
+import { readJson, Tree, installPackagesTask, generateFiles } from '@nrwl/devkit';
 import { createSourceFile, ScriptTarget } from 'typescript';
-import { addGlobal, insert } from '@nrwl/workspace';
+import { addGlobal } from '@nrwl/js';
 import { generateOptionError, unsupportedFrameworkError } from './errors';
 import {
   FrameworkTypes,
@@ -22,7 +22,6 @@ import {
 } from './general';
 import { sassVersion, angularVersion, nsAngularVersion, nsTypesVersion, nsCoreVersion, nsNgToolsVersion, nsNxPluginVersion, rxjsVersion, nsThemeVersion, zonejsVersion, nsWebpackVersion } from './versions';
 import { applicationGenerator } from '../generators/application/application';
-import { insertChange } from './ast';
 
 export namespace PluginHelpers {
   export interface Schema {
@@ -684,24 +683,24 @@ export namespace PluginFeatureHelpers {
     // console.log('tree.exists(indexFilePath):', tree.exists(indexFilePath));
     const indexSource = tree.read(indexFilePath)!.toString('utf-8');
     const indexSourceFile = createSourceFile(indexFilePath, indexSource, ScriptTarget.Latest, true);
-    const indexChanges = addGlobal(indexSourceFile, indexFilePath, `export * from './${options.name.toLowerCase()}';`);
-    const orderedChanges = indexChanges.sort((a, b) => b.order - a.order) as any;
+    const indexChanges = addGlobal(tree, indexSourceFile, indexFilePath, `export * from './${options.name.toLowerCase()}';`);
+    // const orderedChanges = indexChanges.sort((a, b) => b.order - a.order) as any;
 
-    for (const change of orderedChanges) {
-      if (change.type == 'insert') {
-        insertChange(tree, indexSourceFile, indexFilePath, change.pos, change.toAdd);
-        // recorder.insertLeft(change.pos, change.toAdd);
-      } else if (change.type == 'remove') {
-        // recorder.remove(change.pos - 1, change.toRemove.length + 1);
-      } else if (change.type == 'replace') {
-        // recorder.remove(change.pos, change.oldText.length);
-        // recorder.insertLeft(change.pos, change.newText);
-      } else if (change.type === 'noop') {
-        // do nothing
-      } else {
-        throw new Error(`Unexpected Change '${change.constructor.name}'`);
-      }
-    }
+    // for (const change of orderedChanges) {
+    //   if (change.type == 'insert') {
+    //     insertChange(tree, indexSourceFile, indexFilePath, change.pos, change.toAdd);
+    //     // recorder.insertLeft(change.pos, change.toAdd);
+    //   } else if (change.type == 'remove') {
+    //     // recorder.remove(change.pos - 1, change.toRemove.length + 1);
+    //   } else if (change.type == 'replace') {
+    //     // recorder.remove(change.pos, change.oldText.length);
+    //     // recorder.insertLeft(change.pos, change.newText);
+    //   } else if (change.type === 'noop') {
+    //     // do nothing
+    //   } else {
+    //     throw new Error(`Unexpected Change '${change.constructor.name}'`);
+    //   }
+    // }
   }
 
   export function getTemplateOptions(options: Schema, platform: string, framework?: FrameworkTypes) {

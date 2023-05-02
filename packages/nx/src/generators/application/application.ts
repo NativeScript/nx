@@ -1,4 +1,5 @@
 import { Tree, addProjectConfiguration, generateFiles, joinPathFragments, installPackagesTask } from '@nrwl/devkit';
+import { initGenerator } from '@nrwl/js';
 import { getAppName, getDefaultTemplateOptions, getFrontendFramework, getPrefix, missingArgument, PluginHelpers, prerun, updateNxProjects, updatePackageScripts } from '../../utils';
 import { angularVersion, nsAngularVersion, nsWebpackVersion, nsNgToolsVersion, nsCoreVersion, typescriptVersion, rxjsVersion, zonejsVersion, nsIOSRuntimeVersion, nsAndroidRuntimeVersion } from '../../utils/versions';
 import { appResources } from '../app-resources/app-resources';
@@ -11,6 +12,10 @@ export async function applicationGenerator(tree: Tree, options: Schema) {
 
   prerun(tree, options, true);
   PluginHelpers.applyAppNamingConvention(tree, options, 'nativescript');
+
+  await initGenerator(tree, {
+    skipFormat: true,
+  });
   addAppFiles(tree, options, options.name);
   // add extra files per options
   if (options.routing && ['angular'].includes(options.framework)) {

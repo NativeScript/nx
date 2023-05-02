@@ -1,5 +1,5 @@
-import { Tree, serializeJson, getWorkspacePath, readJson } from '@nrwl/devkit';
-import { stringUtils as nxStringUtils, updateWorkspaceInTree } from '@nrwl/workspace';
+import { Tree, serializeJson, readJson } from '@nrwl/devkit';
+import { stringUtils as nxStringUtils } from '@nrwl/workspace';
 
 export interface IPluginSettings {
   prefix?: string;
@@ -110,6 +110,7 @@ export function getDefaultTemplateOptions() {
     npmScope: getNpmScope(),
     prefix: getPrefix(),
     dot: '.',
+    standaloneAsDefault: false
   };
 }
 
@@ -207,22 +208,6 @@ export function updatePackageScripts(tree: Tree, scripts: any) {
   const scriptsMap = Object.assign({}, packageJson.scripts);
   packageJson.scripts = Object.assign(scriptsMap, scripts);
   return updateJsonFile(tree, path, packageJson);
-}
-
-export function readWorkspaceJson(tree: Tree) {
-  return readJson(tree, getWorkspacePath(tree));
-}
-
-export function updateWorkspace(updates: any) {
-  return <any>updateWorkspaceInTree((json) => {
-    for (const key in updates) {
-      json[key] = {
-        ...(json[key] || {}),
-        ...updates[key],
-      };
-    }
-    return json;
-  });
 }
 
 export function updateNxProjects(tree: Tree, projects: any) {
