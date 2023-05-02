@@ -1,3 +1,12 @@
+## [15.0.0](https://github.com/NativeScript/nx/compare/4.2.0...15.0.0) (2023-05-01)
+
+Matching major version to Nx major which is officially supported going forward.
+
+### Features
+
+* feat: Nx 15.9+ with NativeScript 8.5+ ([d511987](https://github.com/NativeScript/nx/commit/d511987774b0cb9d81e9b4fd3e211b88bf0fa839))
+  
+
 ## [4.2.0](https://github.com/NativeScript/nx/compare/4.1.1...4.2.0) (2022-12-20)
 
 
