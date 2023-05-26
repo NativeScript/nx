@@ -1,5 +1,5 @@
-import { readJson, readNxJson, readProjectConfiguration, Tree, updateNxJson, updateProjectConfiguration } from '@nrwl/devkit';
-import { createTreeWithEmptyWorkspace } from '@nrwl/devkit/testing';
+import { readJson, readNxJson, readProjectConfiguration, Tree, updateNxJson, updateProjectConfiguration } from '@nx/devkit';
+import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import { init } from './init';
 
 describe('init', () => {

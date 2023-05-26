@@ -1,5 +1,5 @@
-import { readJson, readProjectConfiguration, Tree, updateJson } from '@nrwl/devkit';
-import { createTreeWithEmptyWorkspace } from '@nrwl/devkit/testing';
+import { readJson, readProjectConfiguration, Tree, updateJson } from '@nx/devkit';
+import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import { library } from './library';
 
 describe('lib', () => {
@@ -27,7 +27,7 @@ describe('lib', () => {
       expect(projectConfig.root).toEqual(`libs/${libName}`);
       expect(projectConfig.targets.build).toBeUndefined();
       expect(projectConfig.targets.lint).toEqual({
-        executor: '@nrwl/linter:eslint',
+        executor: '@nx/linter:eslint',
         options: {
           lintFilePatterns: [`libs/${libName}/**/*.ts`],
         },
@@ -43,7 +43,7 @@ describe('lib', () => {
       expect(projectConfig.root).toEqual(`libs/${libName}`);
       expect(projectConfig.targets.build).toBeUndefined();
       expect(projectConfig.targets.lint).toEqual({
-        executor: '@nrwl/linter:eslint',
+        executor: '@nx/linter:eslint',
         options: {
           lintFilePatterns: [`libs/${libName}/**/*.ts`],
         },

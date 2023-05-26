@@ -1,6 +1,6 @@
-import { readJson, Tree, installPackagesTask, generateFiles } from '@nrwl/devkit';
+import { readJson, Tree, installPackagesTask, generateFiles } from '@nx/devkit';
 import { createSourceFile, ScriptTarget } from 'typescript';
-import { addGlobal } from '@nrwl/js';
+import { addGlobal } from '@nx/js';
 import { generateOptionError, unsupportedFrameworkError } from './errors';
 import {
   FrameworkTypes,

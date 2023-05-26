@@ -1,4 +1,4 @@
-import { ExecutorContext, readProjectConfiguration } from '@nrwl/devkit';
+import { ExecutorContext, readProjectConfiguration } from '@nx/devkit';
 import * as childProcess from 'child_process';
 import { resolve as nodeResolve } from 'path';
 import { parse, build } from 'plist';
@@ -80,7 +80,6 @@ export function commonExecutor(options: BuildExecutorSchema | TestExecutorSchema
 
       const nsCliFileReplacements: Array<string> = [];
 
-
       let configOptions;
       if (activeTarget && activeTarget.configurations) {
         configOptions = activeTarget.configurations[targetConfigName];
@@ -159,7 +158,7 @@ export function commonExecutor(options: BuildExecutorSchema | TestExecutorSchema
           nsOptions.push(options.platform);
         }
         if ((<TestExecutorSchema>options).coverage) {
-            nsOptions.push('--env.codeCoverage');
+          nsOptions.push('--env.codeCoverage');
         }
         if (options.device && !options.emulator) {
           nsOptions.push(`--device=${options.device}`);

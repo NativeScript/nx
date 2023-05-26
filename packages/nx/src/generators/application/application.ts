@@ -1,5 +1,5 @@
-import { Tree, addProjectConfiguration, generateFiles, joinPathFragments, installPackagesTask } from '@nrwl/devkit';
-import { initGenerator } from '@nrwl/js';
+import { Tree, addProjectConfiguration, generateFiles, joinPathFragments, installPackagesTask } from '@nx/devkit';
+import { initGenerator } from '@nx/js';
 import { getAppName, getDefaultTemplateOptions, getFrontendFramework, getPrefix, missingArgument, PluginHelpers, prerun, updateNxProjects, updatePackageScripts } from '../../utils';
 import { angularVersion, nsAngularVersion, nsWebpackVersion, nsNgToolsVersion, nsCoreVersion, typescriptVersion, rxjsVersion, zonejsVersion, nsIOSRuntimeVersion, nsAndroidRuntimeVersion } from '../../utils/versions';
 import { appResources } from '../app-resources/app-resources';
@@ -99,7 +99,7 @@ export async function applicationGenerator(tree: Tree, options: Schema) {
         },
       },
       lint: {
-        executor: '@nrwl/linter:eslint',
+        executor: '@nx/linter:eslint',
         options: {
           lintFilePatterns: [`${appPath}/**/*.ts`, `${appPath}/src/**/*.html`],
         },
@@ -109,7 +109,7 @@ export async function applicationGenerator(tree: Tree, options: Schema) {
 
   return () => {
     installPackagesTask(tree);
-  }
+  };
 }
 
 function addAppFiles(tree: Tree, options: Schema, appName: string, extra: string = '') {
