@@ -1,5 +1,5 @@
-import { Tree, serializeJson, readJson } from '@nrwl/devkit';
-import { stringUtils as nxStringUtils } from '@nrwl/workspace';
+import { Tree, serializeJson, readJson } from '@nx/devkit';
+import { stringUtils as nxStringUtils } from '@nx/workspace';
 
 export interface IPluginSettings {
   prefix?: string;
@@ -8,9 +8,7 @@ export interface IPluginSettings {
 }
 
 export type PlatformTypes = 'nativescript';
-export const supportedPlatforms: Array<PlatformTypes> = [
-  'nativescript',
-];
+export const supportedPlatforms: Array<PlatformTypes> = ['nativescript'];
 export type FrameworkTypes = 'angular';
 // TODO: support react, svelte, vue
 // | 'react'
@@ -23,8 +21,8 @@ export const supportedSandboxPlatforms: Array<PlatformTypes> = ['nativescript'];
 // this plugin works under the hood of xplat as well
 export const packageSettingKeys = {
   nativescriptNx: 'nativescript-nx',
-  xplat: 'xplat'
-}
+  xplat: 'xplat',
+};
 
 let npmScope: string;
 // selector prefix to use when generating various boilerplate components
@@ -52,36 +50,25 @@ export function getGroupByName() {
 }
 
 export function getAppName(options: any, platform: PlatformTypes) {
-  return groupByName
-    ? options.name.replace(`-${platform}`, '')
-    : options.name.replace(`${platform}-`, '');
+  return groupByName ? options.name.replace(`-${platform}`, '') : options.name.replace(`${platform}-`, '');
 }
 
 export function isXplatWorkspace() {
   return usingXplatWorkspace;
 }
 
-export function applyAppNamingConvention(
-  options: any,
-  platform: PlatformTypes
-) {
-    const { name, directory } = getAppNamingConvention(options, platform);
-    options.name = name;
-    options.directory = directory;
+export function applyAppNamingConvention(options: any, platform: PlatformTypes) {
+  const { name, directory } = getAppNamingConvention(options, platform);
+  options.name = name;
+  options.directory = directory;
 }
 
-export function getAppNamingConvention(
-  options: any,
-  platform: PlatformTypes
-) {
+export function getAppNamingConvention(options: any, platform: PlatformTypes) {
   let name = '';
   let directory = '';
   if (options.directory) {
     directory = toFileName(options.directory);
-    if (
-      directory === platform &&
-      supportedPlatforms.includes(<PlatformTypes>directory)
-    ) {
+    if (directory === platform && supportedPlatforms.includes(<PlatformTypes>directory)) {
       name = toFileName(options.name);
     } else {
       name = getPlatformName(options.name, platform);
@@ -97,9 +84,7 @@ export function getAppNamingConvention(
 
 export function getPlatformName(name: string, platform: PlatformTypes) {
   const nameSanitized = toFileName(name);
-  return getGroupByName()
-    ? `${nameSanitized}-${platform}`
-    : `${platform}-${nameSanitized}`;
+  return getGroupByName() ? `${nameSanitized}-${platform}` : `${platform}-${nameSanitized}`;
 }
 
 export function getDefaultTemplateOptions() {
@@ -110,75 +95,72 @@ export function getDefaultTemplateOptions() {
     npmScope: getNpmScope(),
     prefix: getPrefix(),
     dot: '.',
-    standaloneAsDefault: false
+    standaloneAsDefault: false,
   };
 }
 
 export function prerun(tree: Tree, options?: any, init?: boolean) {
+  const nxJson = getNxWorkspaceConfig(tree);
+  if (nxJson) {
+    npmScope = nxJson.npmScope || 'workspace';
+  }
+  // console.log('npmScope:', npmScope);
+  const packageJson = readJson(tree, 'package.json');
 
-    const nxJson = getNxWorkspaceConfig(tree);
-    if (nxJson) {
-      npmScope = nxJson.npmScope || 'workspace';
-    }
-    // console.log('npmScope:', npmScope);
-    const packageJson = readJson(tree, 'package.json');
+  let frameworkChoice: string;
+  if (options && options.framework) {
+    // can actually specify comma delimited list of frameworks to generate support for
+    // most common to generate 1 at a time but we allow multiple
+    const frameworks = sanitizeCommaDelimitedArg(options.framework);
+    // always default framework choice to first in list when multiple
+    // when it's just one (most common) will be first already
+    frameworkChoice = frameworks[0];
+  }
+  // console.log('frameworkChoice:', frameworkChoice);
 
-    let frameworkChoice: string;
-    if (options && options.framework) {
-      // can actually specify comma delimited list of frameworks to generate support for
-      // most common to generate 1 at a time but we allow multiple
-      const frameworks = sanitizeCommaDelimitedArg(options.framework);
-      // always default framework choice to first in list when multiple
-      // when it's just one (most common) will be first already
-      frameworkChoice = frameworks[0];
-    }
-    // console.log('frameworkChoice:', frameworkChoice);
+  if (packageJson) {
+    prefix = '';
+    const pluginSettings = packageJson[packageSettingKeys.nativescriptNx] || packageJson[packageSettingKeys.xplat];
+    if (pluginSettings) {
+      usingXplatWorkspace = !!packageJson[packageSettingKeys.xplat];
+      // use persisted settings
+      prefix = pluginSettings.prefix || npmScope; // (if not prefix, default to npmScope)
+      frontendFramework = pluginSettings.framework;
 
-    if (packageJson) {
-      prefix = '';
-      const pluginSettings = packageJson[packageSettingKeys.nativescriptNx] || packageJson[packageSettingKeys.xplat];
-      if (pluginSettings) {
-        usingXplatWorkspace = !!packageJson[packageSettingKeys.xplat];
-        // use persisted settings
-        prefix = pluginSettings.prefix || npmScope; // (if not prefix, default to npmScope)
-        frontendFramework = pluginSettings.framework;
-
-        if (options) {
-          if (options.prefix) {
-            // always use explicit prefix user passed in
-            prefix = options.prefix;
-          } else {
-            // ensure options are updated
-            options.prefix = prefix;
-          }
-          if (frameworkChoice) {
-            // always override default framework when user has explicitly passed framework option in
-            frontendFramework = <FrameworkTypes>frameworkChoice;
-          }
-        }
-        // grouping
-        groupByName =
-        pluginSettings.groupByName || (options ? options.groupByName : false);
-      } else if (options) {
-        groupByName = options.groupByName;
+      if (options) {
         if (options.prefix) {
-          if (!prefix && init) {
-            // initializing for first time
-            prefix = options.prefix;
-          }
+          // always use explicit prefix user passed in
+          prefix = options.prefix;
         } else {
-          // default to npmScope for prefix
-          options.prefix = npmScope;
+          // ensure options are updated
+          options.prefix = prefix;
         }
         if (frameworkChoice) {
-          if (!frontendFramework && init) {
-            frontendFramework = <FrameworkTypes>frameworkChoice;
-          }
+          // always override default framework when user has explicitly passed framework option in
+          frontendFramework = <FrameworkTypes>frameworkChoice;
+        }
+      }
+      // grouping
+      groupByName = pluginSettings.groupByName || (options ? options.groupByName : false);
+    } else if (options) {
+      groupByName = options.groupByName;
+      if (options.prefix) {
+        if (!prefix && init) {
+          // initializing for first time
+          prefix = options.prefix;
+        }
+      } else {
+        // default to npmScope for prefix
+        options.prefix = npmScope;
+      }
+      if (frameworkChoice) {
+        if (!frontendFramework && init) {
+          frontendFramework = <FrameworkTypes>frameworkChoice;
         }
       }
     }
-    // console.log('prefix:', prefix);
-
+  }
+  // console.log('prefix:', prefix);
 }
 
 export function updateJsonFile(tree: Tree, path: string, jsonData: any) {
@@ -228,9 +210,7 @@ export function getNxWorkspaceConfig(tree: Tree): any {
       return nxConfig;
     }
   }
-  throw new Error(
-    '@nativescript/nx must be used inside an Nx workspace. Create a workspace first. https://nx.dev'
-  );
+  throw new Error('@nativescript/nx must be used inside an Nx workspace. Create a workspace first. https://nx.dev');
 }
 
 export function sanitizeCommaDelimitedArg(input: string): Array<string> {

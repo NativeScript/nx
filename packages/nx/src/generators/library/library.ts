@@ -1,6 +1,6 @@
-import { generateFiles, joinPathFragments, Tree, readJson } from '@nrwl/devkit';
+import { generateFiles, joinPathFragments, Tree, readJson } from '@nx/devkit';
 import { getDefaultTemplateOptions, PluginHelpers, prerun, updateJsonFile } from '../../utils';
-import { initGenerator, libraryGenerator } from '@nrwl/js';
+import { initGenerator, libraryGenerator } from '@nx/js';
 
 export async function library(tree: Tree, options: any) {
   prerun(tree, options, true);

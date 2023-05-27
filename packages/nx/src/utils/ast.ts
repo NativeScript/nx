@@ -1,11 +1,7 @@
-import type { Tree } from '@nrwl/devkit';
+import type { Tree } from '@nx/devkit';
 import * as ts from 'typescript';
 
-function updateTsSourceFile(
-  host: Tree,
-  sourceFile: ts.SourceFile,
-  filePath: string
-): ts.SourceFile {
+function updateTsSourceFile(host: Tree, sourceFile: ts.SourceFile, filePath: string): ts.SourceFile {
   const newFileContents = host.read(filePath).toString('utf-8');
   return sourceFile.update(newFileContents, {
     newLength: newFileContents.length,
@@ -16,13 +12,7 @@ function updateTsSourceFile(
   });
 }
 
-export function insertChange(
-  host: Tree,
-  sourceFile: ts.SourceFile,
-  filePath: string,
-  insertPosition: number,
-  contentToInsert: string
-): ts.SourceFile {
+export function insertChange(host: Tree, sourceFile: ts.SourceFile, filePath: string, insertPosition: number, contentToInsert: string): ts.SourceFile {
   const content = host.read(filePath).toString();
   const prefix = content.substring(0, insertPosition);
   const suffix = content.substring(insertPosition);

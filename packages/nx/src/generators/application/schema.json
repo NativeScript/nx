@@ -27,8 +27,14 @@
         "message": "What frontend framework would you like to use with this NativeScript app?",
         "type": "list",
         "items": [
-          { "value": "angular", "label": "Angular  [ https://angular.io   ]" },
-          { "value": "vanilla", "label": "Vanilla (.xml view files)" }
+          {
+            "value": "angular",
+            "label": "Angular  [ https://angular.io   ]"
+          },
+          {
+            "value": "vanilla",
+            "label": "Vanilla (.xml view files)"
+          }
         ]
       }
     },

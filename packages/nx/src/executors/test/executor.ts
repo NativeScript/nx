@@ -1,4 +1,4 @@
-import { ExecutorContext } from '@nrwl/devkit';
+import { ExecutorContext } from '@nx/devkit';
 import { TestExecutorSchema, commonExecutor } from '../../utils';
 
 export default async function testExecutor(options: TestExecutorSchema, context: ExecutorContext) {
