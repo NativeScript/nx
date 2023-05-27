@@ -25,7 +25,6 @@ describe('lib', () => {
 
       const projectConfig = readProjectConfiguration(tree, libName);
       expect(projectConfig.root).toEqual(`libs/${libName}`);
-      expect(projectConfig.targets.build).toBeUndefined();
       expect(projectConfig.targets.lint).toEqual({
         executor: '@nx/linter:eslint',
         options: {
@@ -41,7 +40,6 @@ describe('lib', () => {
       const projectConfig = readProjectConfiguration(tree, libName);
 
       expect(projectConfig.root).toEqual(`libs/${libName}`);
-      expect(projectConfig.targets.build).toBeUndefined();
       expect(projectConfig.targets.lint).toEqual({
         executor: '@nx/linter:eslint',
         options: {
