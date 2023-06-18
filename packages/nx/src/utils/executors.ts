@@ -57,7 +57,7 @@ export function commonExecutor(options: ExecutorSchema, context: ExecutorContext
       const targetPlatformOptions = targetOptions[options.platform];
       const targetConfigurations = target.configurations;
       let targetConfigurationName = context.configurationName;
-      const targetDescription = JSON.parse(process.argv.find((arg) => arg.indexOf('targetDescription') !== -1));
+      // const targetDescription = JSON.parse(process.argv.find((arg) => arg.indexOf('targetDescription') !== -1));
 
       // fix for nx overwriting android and ios sub properties
       mergeDeep(options, targetOptions);
@@ -144,24 +144,24 @@ export function commonExecutor(options: ExecutorSchema, context: ExecutorContext
       }
 
       // some options should never be duplicated
-      const enforceSingularOptions = ['provision', 'device', 'copy-to'];
+      // const enforceSingularOptions = ['provision', 'device', 'copy-to'];
 
       // additional cli flags
-      const overrides = { ...targetDescription.overrides };
-      // remove nx unparsed overrides
-      for (const override of Object.keys(overrides)) {
-        if (override.indexOf('_') === 0) delete overrides[override];
-      }
-      const additionalArgs = normalizeExtraFlags(overrides);
+      // const overrides = { ...targetDescription.overrides };
+      // // remove nx unparsed overrides
+      // for (const override of Object.keys(overrides)) {
+      //   if (override.indexOf('_') === 0) delete overrides[override];
+      // }
+      const additionalArgs = [];//normalizeExtraFlags(overrides);
 
-      if (!isClean) {
-        for (const flag of additionalArgs) {
-          const optionName = parseOptionName(flag);
-          if (!nsOptions.includes(flag) && !additionalArgs.includes(flag) && !enforceSingularOptions.includes(optionName)) {
-            additionalArgs.push(flag);
-          }
-        }
-      }
+      // if (!isClean) {
+      //   for (const flag of additionalArgs) {
+      //     const optionName = parseOptionName(flag);
+      //     if (!nsOptions.includes(flag) && !additionalArgs.includes(flag) && !enforceSingularOptions.includes(optionName)) {
+      //       additionalArgs.push(flag);
+      //     }
+      //   }
+      // }
 
       const runCommand = function () {
         let icon = '';
