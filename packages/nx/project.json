@@ -18,7 +18,7 @@
       }
     },
     "prepare": {
-      "builder": "nx:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           {
