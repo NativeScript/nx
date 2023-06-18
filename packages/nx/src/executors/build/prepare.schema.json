@@ -145,6 +145,11 @@
       "default": true,
       "description": "Use 'ns debug' instead of 'ns run'. Defaults to true"
     },
+    "timeout": {
+      "type": "number",
+      "default": -1,
+      "description": "Increase the default 90s timeout to connect to a device/simulator"
+    },
     "copyTo": {
       "type": "string",
       "description": "When building, copy the package to this location."

@@ -16,6 +16,7 @@ export interface DebugSchema {
   production: boolean;
   release: boolean;
   uglify: boolean;
+  timeout: number;
 }
 
 export const debugSchema = {
@@ -54,7 +55,11 @@ export const debugSchema = {
       default: false,
       description: 'Enable uglify during the webpack build',
     },
-
+    timeout: {
+      type: 'number',
+      default: -1,
+      description: 'Increase the default 90s timeout to connect to a device/simulator',
+    },
     release: {
       type: 'boolean',
       default: false,
