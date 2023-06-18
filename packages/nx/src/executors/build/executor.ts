@@ -1,4 +1,4 @@
-import { ExecutorContext } from '@nrwl/devkit';
+import { ExecutorContext } from '@nx/devkit';
 import { commonExecutor } from '../../utils';
 import { ExecutorSchema } from '../../utils/types';
 

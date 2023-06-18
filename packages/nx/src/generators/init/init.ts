@@ -1,9 +1,13 @@
-import { readWorkspaceConfiguration, Tree, updateJson, updateWorkspaceConfiguration } from '@nrwl/devkit';
+import { Tree, updateJson } from '@nx/devkit';
+import { initGenerator } from '@nx/js';
 import { nsCoreVersion, nsTypesVersion, nsThemeVersion } from '../../utils/versions';
 import { Schema } from './schema';
 
 export async function init(tree: Tree, options: Schema) {
-  updateJson(tree, 'package.json', json => {
+  initGenerator(tree, {
+    skipFormat: true,
+  });
+  updateJson(tree, 'package.json', (json) => {
     if (!json.dependencies) {
       json.dependencies = {};
     }

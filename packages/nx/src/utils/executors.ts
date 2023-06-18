@@ -1,4 +1,4 @@
-import { ExecutorContext } from '@nrwl/devkit';
+import { ExecutorContext } from '@nx/devkit';
 import * as childProcess from 'child_process';
 import { readFileSync, writeFileSync } from 'fs-extra';
 import * as enquirer from 'enquirer';

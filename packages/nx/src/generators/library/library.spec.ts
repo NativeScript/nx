@@ -1,17 +1,19 @@
-import { readJson, readProjectConfiguration, readWorkspaceConfiguration, Tree, updateJson, updateWorkspaceConfiguration } from '@nrwl/devkit';
-import { createTreeWithEmptyWorkspace } from '@nrwl/devkit/testing';
+import { readJson, readProjectConfiguration, Tree, updateJson } from '@nx/devkit';
+import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import { library } from './library';
 
 describe('lib', () => {
   let tree: Tree;
 
   beforeEach(() => {
-    tree = createTreeWithEmptyWorkspace();
+    tree = createTreeWithEmptyWorkspace({ layout: 'apps-libs' });
+    tree.write('/apps/.gitignore', '');
+    tree.write('/libs/.gitignore', '');
   });
 
   describe('not nested', () => {
-    it('should update workspace.json', async () => {
-      await library(tree, { name: 'myLib' });
+    it('should update project.json', async () => {
+      await library(tree, { name: 'myLib', unitTestRunner: 'none' });
       const libName = `nativescript-my-lib`;
 
       expect(tree.exists(`libs/${libName}/tsconfig.json`)).toBeTruthy();
@@ -23,9 +25,8 @@ describe('lib', () => {
 
       const projectConfig = readProjectConfiguration(tree, libName);
       expect(projectConfig.root).toEqual(`libs/${libName}`);
-      expect(projectConfig.targets.build).toBeUndefined();
       expect(projectConfig.targets.lint).toEqual({
-        executor: '@nrwl/linter:eslint',
+        executor: '@nx/linter:eslint',
         options: {
           lintFilePatterns: [`libs/${libName}/**/*.ts`],
         },
@@ -34,14 +35,13 @@ describe('lib', () => {
     });
 
     it('groupByName: should update workspace.json', async () => {
-      await library(tree, { name: 'myLib', groupByName: true });
+      await library(tree, { name: 'myLib', groupByName: true, unitTestRunner: 'none' });
       const libName = `my-lib-nativescript`;
       const projectConfig = readProjectConfiguration(tree, libName);
 
       expect(projectConfig.root).toEqual(`libs/${libName}`);
-      expect(projectConfig.targets.build).toBeUndefined();
       expect(projectConfig.targets.lint).toEqual({
-        executor: '@nrwl/linter:eslint',
+        executor: '@nx/linter:eslint',
         options: {
           lintFilePatterns: [`libs/${libName}/**/*.ts`],
         },

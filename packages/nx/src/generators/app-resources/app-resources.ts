@@ -1,8 +1,4 @@
-import {
-  Tree,
-  generateFiles,
-  joinPathFragments
-} from '@nrwl/devkit';
+import { Tree, generateFiles, joinPathFragments } from '@nx/devkit';
 import { PluginHelpers, getDefaultTemplateOptions } from '../../utils';
 
 import { Schema as AppResourcesSchema } from './schema';
