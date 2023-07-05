@@ -21,7 +21,6 @@
       "factory": "./src/generators/library/library",
       "schema": "./src/generators/library/schema.json",
       "description": "Create a library",
-      "aliases": ["lib"],
       "x-type": "library"
     },
     "app-resources": {
@@ -50,7 +49,6 @@
       "factory": "./src/generators/library/compat",
       "schema": "./src/generators/library/schema.json",
       "description": "Create a library",
-      "aliases": ["lib"],
       "x-type": "library"
     },
     "app-resources": {
