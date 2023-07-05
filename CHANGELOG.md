@@ -1,3 +1,12 @@
+## [16.5.2](https://github.com/NativeScript/nx/compare/16.5.1...16.5.2) (2023-07-05)
+
+
+### Bug Fixes
+
+* remove collision on lib alias ([c499461](https://github.com/NativeScript/nx/commit/c499461f3cd4d2552e0b0e3e022550c2a680dfda))
+
+
+
 # [16.5.1](https://github.com/NativeScript/nx/compare/16.5.0...16.5.1) (2023-07-05)
 
 
