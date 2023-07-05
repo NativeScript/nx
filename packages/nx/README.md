@@ -20,6 +20,7 @@
   - [Table of Contents](#table-of-contents)
   - [Getting started](#getting-started)
     - [Create a new Nx workspace](#create-a-new-nx-workspace)
+    - [Init workspace](#init-workspace)
     - [Install NativeScript plugin](#install-nativescript-plugin)
     - [Create an app](#create-an-app)
       - [`--framework [angular|vanilla]`](#--framework-angularvanilla)
@@ -41,16 +42,6 @@
 
 ## Getting started
 
-Prior to executing any commands, ensure that the node package manager you're going to use is set for NativeScript (more info at ['Package Managers'](https://docs.nativescript.org/development-workflow.html#package-managers) section of docs) and Nx (more info at ['Nx DevKit - Module'](https://nx.dev/nx-devkit/index#package-manager-type-aliases-1) section of docs).
-
-For an example, setting Yarn as your package manager, do the following:
-
-```sh
-ns package-manager set yarn
-```
-
-Now create a Nx workspace using the yarn command expression in the following section.
-
 ### Create a new Nx workspace
 
 ```sh
@@ -61,20 +52,38 @@ npx create-nx-workspace@latest
 yarn create-nx-workspace@latest
 ```
 
-If you run into any issue with latest Nx workspace version you may want to try the last known stable version with the following:
+At the prompts, you can use:
 
 ```sh
-npx create-nx-workspace@15.3.3
+✔ Where would you like to create your workspace? · {your-workspace-name}
 
-Need to install the following packages:
-  create-nx-workspace@15.3.3
-Ok to proceed? (y) y
+# Choose "None"
 
- >  NX   Let's create a new workspace [https://nx.dev/getting-started/intro]
+? Which stack do you want to use? … 
+None:          Configures a minimal structure without specific frameworks or technologies.
 
-✔ Choose your style                     · integrated
-✔ What to create in the new workspace   · apps
-✔ Enable distributed caching to make your CI faster · No
+# Choose "Integrated"
+
+? Package-based or integrated? … 
+Integrated:    Nx creates a workspace structure most suitable for building apps.
+```
+
+### Init workspace
+
+Install the @nx/js plugin.
+
+```sh
+# Using npm
+npm install --save-dev @nx/js
+
+# Using yarn
+yarn add -D @nx/js
+```
+
+Now initialize -- This will ensure a `tsconfig.base.json` is created to begin building your workspace.
+
+```sh
+npx nx g @nx/js:init
 ```
 
 ### Install NativeScript plugin
