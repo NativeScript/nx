@@ -1,3 +1,13 @@
+# [16.5.0](https://github.com/NativeScript/nx/compare/15.0.0...16.5.0) (2023-07-05)
+
+
+### Features
+
+* update to nx 16.5 ([4329627](https://github.com/NativeScript/nx/commit/4329627cc8628a41595b1acd52feb77ffb276971))
+* update to nx 16.2 ([#70](https://github.com/NativeScript/nx/issues/70)) ([15b0f8c](https://github.com/NativeScript/nx/commit/15b0f8c6dcf92ab4405d4783b58f824fb9b10ce4))
+
+
+
 ## [15.0.0](https://github.com/NativeScript/nx/compare/4.2.0...15.0.0) (2023-05-01)
 
 Matching major version to Nx major which is officially supported going forward.
