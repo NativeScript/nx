@@ -1,6 +1,6 @@
 {
   "name": "@nativescript/nx",
-  "version": "16.5.0",
+  "version": "16.5.1",
   "description": "NativeScript Plugin for Nx",
   "repository": {
     "type": "git",
