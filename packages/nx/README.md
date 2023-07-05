@@ -425,7 +425,7 @@ npx nx run <app-name>:clean
 You can create a library of NativeScript components or plugins or whatever you'd like.
 
 ```sh
-npx nx g @nativescript/nx:lib buttons
+npx nx g @nativescript/nx:library buttons
 ```
 
 This will generate a `nativescript-buttons` library where you could build out an entire suite of button behaviors and styles for your NativeScript apps.
@@ -441,7 +441,7 @@ The NativeScript Nx plugin will prefix libraries by default to help distinguish 
 If you prefer you can also provide a flag to suffix instead:
 
 ```sh
-npx nx g @nativescript/nx:lib buttons --groupByName
+npx nx g @nativescript/nx:library buttons --groupByName
 ```
 
 Which would generate a `buttons-nativescript` library.
