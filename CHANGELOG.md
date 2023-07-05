@@ -1,3 +1,10 @@
+# [16.5.1](https://github.com/NativeScript/nx/compare/16.5.0...16.5.1) (2023-07-05)
+
+
+### Fix
+
+* readme intructions, npmScope utility and removal of ngcc usage
+  
 # [16.5.0](https://github.com/NativeScript/nx/compare/15.0.0...16.5.0) (2023-07-05)
 
 
