@@ -1,4 +1,4 @@
-import { Tree, serializeJson, readJson } from '@nx/devkit';
+import { Tree, serializeJson, readJson, readNxJson } from '@nx/devkit';
 import { stringUtils as nxStringUtils } from '@nx/workspace';
 
 export interface IPluginSettings {
@@ -33,8 +33,26 @@ let frontendFramework: FrameworkTypes;
 let groupByName = false;
 let usingXplatWorkspace = false;
 
-export function getNpmScope() {
-  return npmScope;
+export function getNpmScope(tree?: Tree) {
+  if (npmScope) {
+    return npmScope;
+  }
+  const nxJson = readNxJson(tree);
+
+  // TODO(v17): Remove reading this from nx.json
+  if (nxJson.npmScope) {
+    npmScope = nxJson.npmScope;
+    return npmScope;
+  }
+
+  const { name } = tree.exists('package.json')
+    ? readJson<{ name?: string }>(tree, 'package.json')
+    : { name: null };
+
+  if (name?.startsWith('@')) {
+    npmScope = name.split('/')[0].substring(1);
+    return npmScope;
+  }
 }
 
 export function getPrefix() {
