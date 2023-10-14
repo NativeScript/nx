@@ -249,7 +249,17 @@ export function commonExecutor(options: BuildExecutorSchema | TestExecutorSchema
       }
 
       const runCommand = function () {
-        console.log(`――――――――――――――――――――――――${options.clean ? '' : options.platform === 'ios' ? ' ' : ' 🤖'}`);
+        let icon = '';
+        if (!options.clean) {
+          if (options.platform === 'ios') {
+            icon = '';
+          } else if (options.platform === 'android') {
+            icon = '🤖';
+          } else if (['vision', 'visionos'].includes(options.platform)) {
+            icon = '🥽';
+          }
+        }
+        console.log(`―――――――――――――――――――――――― ${icon}`);
         console.log(`Running NativeScript ${isTesting ? 'unit tests' : 'CLI'} within ${projectCwd}`);
         console.log(' ');
         console.log([`ns`, ...nsOptions, ...additionalArgs].join(' '));
