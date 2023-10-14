@@ -1,3 +1,13 @@
+# [16.6.0](https://github.com/NativeScript/nx/compare/16.5.2...16.6.0) (2023-10-14)
+
+
+### Features
+
+* support {N} 8.6 ([2c45649](https://github.com/NativeScript/nx/commit/2c45649c4007d6cea41a318cc29a16ad149277ac))
+* use visionos emoji when targeting that platform ([f247d86](https://github.com/NativeScript/nx/commit/f247d86facdca45f93c6096a2be71915d2d35a1b))
+
+
+
 ## [16.5.2](https://github.com/NativeScript/nx/compare/16.5.1...16.5.2) (2023-07-05)
 
 
