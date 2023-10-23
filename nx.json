@@ -1,16 +1,6 @@
 {
-  "npmScope": "nativescript",
   "affected": {
     "defaultBase": "master"
-  },
-  "tasksRunnerOptions": {
-    "default": {
-      "runner": "nx/tasks-runners/default",
-      "options": {
-        "cacheableOperations": ["build", "lint", "test", "e2e"],
-        "parallel": 1
-      }
-    }
   },
   "workspaceLayout": {
     "appsDir": "e2e",
@@ -20,15 +10,24 @@
   "targetDefaults": {
     "build": {
       "dependsOn": ["^build"],
-      "inputs": ["production", "^production"]
+      "inputs": ["production", "^production"],
+      "cache": true
     },
     "test": {
-      "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"]
+      "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"],
+      "cache": true
+    },
+    "lint": {
+      "cache": true
+    },
+    "e2e": {
+      "cache": true
     }
   },
   "namedInputs": {
     "default": ["{projectRoot}/**/*", "sharedGlobals"],
     "sharedGlobals": ["{workspaceRoot}/workspace.json", "{workspaceRoot}/tsconfig.base.json", "{workspaceRoot}/tslint.json", "{workspaceRoot}/nx.json"],
     "production": ["default", "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)", "!{projectRoot}/tsconfig.spec.json", "!{projectRoot}/jest.config.[jt]s", "!{projectRoot}/src/test-setup.[jt]s"]
-  }
+  },
+  "parallel": 1
 }

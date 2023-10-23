@@ -9,7 +9,7 @@
 
 </div>
 
-> Requires at least NativeScript CLI v8.x.x or higher. You can confirm your CLI version by running `ns --version`.
+> Requires at least NativeScript CLI v8.x.x or higher. You can confirm your CLI version by running `ns -v`.
 
 ## Table of Contents
 
@@ -64,23 +64,13 @@ None:          Configures a minimal structure without specific frameworks or tec
 
 # Choose "Integrated"
 
-? Package-based or integrated? … 
-Integrated:    Nx creates a workspace structure most suitable for building apps.
+? Package-based monorepo, integrated monorepo, or standalone project?
+Integrated Monorepo:        Nx creates a monorepo that contains multiple projects.
 ```
 
 ### Init workspace
 
-Install the @nx/js plugin.
-
-```sh
-# Using npm
-npm install --save-dev @nx/js
-
-# Using yarn
-yarn add -D @nx/js
-```
-
-Now initialize -- This will ensure a `tsconfig.base.json` is created to begin building your workspace.
+Initialize a TypeScript project -- This will ensure a `tsconfig.base.json` is created to begin building your workspace.
 
 ```sh
 npx nx g @nx/js:init

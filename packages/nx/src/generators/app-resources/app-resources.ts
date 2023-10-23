@@ -5,7 +5,7 @@ import { Schema as AppResourcesSchema } from './schema';
 
 export function appResources(tree: Tree, options: AppResourcesSchema) {
   generateFiles(tree, joinPathFragments(__dirname, 'files'), options.path, {
-    ...getDefaultTemplateOptions(),
+    ...getDefaultTemplateOptions(tree),
     name: options.name || 'App_Resources',
     libFolderName: PluginHelpers.getLibFoldername('nativescript'),
   });
