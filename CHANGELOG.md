@@ -1,3 +1,12 @@
+# [17.0.0](https://github.com/NativeScript/nx/compare/16.6.0...17.0.0) (2023-10-23)
+
+
+### Features
+
+* Support Nx 17+ ([#72](https://github.com/NativeScript/nx/issues/72)) ([5019eba](https://github.com/NativeScript/nx/commit/5019eba3cbbbddc8f1414dd00e1bdb2f6e05cb79))
+
+
+
 # [16.6.0](https://github.com/NativeScript/nx/compare/16.5.2...16.6.0) (2023-10-14)
 
 

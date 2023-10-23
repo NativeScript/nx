@@ -1,6 +1,6 @@
 {
   "name": "nativescript-nx-plugins",
-  "version": "16.6.0",
+  "version": "17.0.0",
   "license": "MIT",
   "scripts": {
     "nx": "nx",
