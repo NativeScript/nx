@@ -1,6 +1,6 @@
-export const nxVersion = '^16.3.0';
+export const nxVersion = '^17.0.0';
 
-export const nsNxPluginVersion = '^16.3.0';
+export const nsNxPluginVersion = '^17.0.0';
 export const nsCoreVersion = '~8.6.0';
 export const nsTypesVersion = '~8.6.0';
 export const nsThemeVersion = '~1.0.4';

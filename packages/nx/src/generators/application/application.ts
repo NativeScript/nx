@@ -99,7 +99,7 @@ export async function applicationGenerator(tree: Tree, options: Schema) {
         },
       },
       lint: {
-        executor: '@nx/linter:eslint',
+        executor: '@nx/eslint:eslint',
         options: {
           lintFilePatterns: [`${appPath}/**/*.ts`, `${appPath}/src/**/*.html`],
         },
@@ -122,7 +122,7 @@ function addAppFiles(tree: Tree, options: Schema, appName: string, extra: string
   }
   generateFiles(tree, joinPathFragments(__dirname, `files${framework ? '_' + framework : ''}${extra ? '_' + extra : ''}`), `apps/${directory}${appName}`, {
     ...(options as any),
-    ...getDefaultTemplateOptions(),
+    ...getDefaultTemplateOptions(tree),
     appname,
     directoryAppPath: `${directory}${options.name}`,
     pathOffset: directory ? '../../../' : '../../',
