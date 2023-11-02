@@ -176,7 +176,7 @@ export function commonExecutor(options: BuildExecutorSchema | TestExecutorSchema
           nsOptions.push('--env.uglify');
         }
         if (options.verbose) {
-          nsOptions.push('--env.verbose');
+          nsOptions.push('--log=trace');
         }
         if (options.production) {
           nsOptions.push('--env.production');
