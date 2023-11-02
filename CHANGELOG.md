@@ -1,3 +1,12 @@
+## [17.0.1](https://github.com/NativeScript/nx/compare/17.0.0...17.0.1) (2023-11-02)
+
+
+### Features
+
+* use log trace with verbose flag ([d34808e](https://github.com/NativeScript/nx/commit/d34808e8a3fd9e9f5fbdf12f42c33e230f979fe0))
+
+
+
 # [17.0.0](https://github.com/NativeScript/nx/compare/16.6.0...17.0.0) (2023-10-23)
 
 
