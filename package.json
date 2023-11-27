@@ -1,11 +1,11 @@
 {
   "name": "nativescript-nx-plugins",
-  "version": "17.1.0",
+  "version": "17.1.0-dev.0",
   "license": "MIT",
   "scripts": {
     "nx": "nx",
     "start": "nx serve",
-    "build": "nx build nx",
+    "build": "nx prepare nx",
     "test": "nx run-many --target=test --all --parallel",
     "lint": "nx workspace-lint && nx lint",
     "e2e": "nx e2e",
@@ -46,6 +46,7 @@
     "cz-conventional-changelog": "^3.3.0",
     "doctoc": "^2.0.0",
     "dotenv": "~16.3.1",
+    "enquirer": "~2.4.1",
     "eslint": "8.46.0",
     "eslint-config-prettier": "9.0.0",
     "fs-extra": "^11.1.0",
