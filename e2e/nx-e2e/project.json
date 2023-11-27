@@ -10,7 +10,8 @@
         "npmPackageName": "@nativescript/nx",
         "pluginOutputPath": "dist/packages/nx",
         "jestConfig": "e2e/nx-e2e/jest.config.js",
-        "runInBand": true
+        "runInBand": true,
+        "passWithNoTests": false
       },
       "dependsOn": ["nx:build"]
     }

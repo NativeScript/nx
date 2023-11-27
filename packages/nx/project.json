@@ -16,8 +16,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/packages/nx"],
       "options": {
-        "jestConfig": "packages/nx/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "packages/nx/jest.config.ts"
       }
     },
     "build": {
@@ -56,8 +55,7 @@
             "glob": "migrations.json",
             "output": "."
           }
-        ],
-        "updateBuildableProjectDepsInPackageJson": true
+        ]
       }
     }
   },
