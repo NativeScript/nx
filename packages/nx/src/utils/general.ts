@@ -1,5 +1,6 @@
 import { Tree, serializeJson, readJson, readNxJson } from '@nx/devkit';
-import { stringUtils as nxStringUtils } from '@nx/workspace';
+import * as nxStringUtils from '@nx/devkit/src/utils/string-utils';
+import { getNpmScope } from '@nx/js/src/utils/package-json/get-npm-scope';
 
 export interface IPluginSettings {
   prefix?: string;
@@ -24,7 +25,6 @@ export const packageSettingKeys = {
   xplat: 'xplat',
 };
 
-let npmScope: string;
 // selector prefix to use when generating various boilerplate components
 let prefix: string;
 // user preferred default framework
@@ -32,28 +32,6 @@ let frontendFramework: FrameworkTypes;
 // Group by app name (appname-platform) instead of the default (platform-appname)
 let groupByName = false;
 let usingXplatWorkspace = false;
-
-export function getNpmScope(tree?: Tree) {
-  if (npmScope) {
-    return npmScope;
-  }
-  const nxJson = readNxJson(tree);
-
-  // TODO(v17): Remove reading this from nx.json
-  if (nxJson.npmScope) {
-    npmScope = nxJson.npmScope;
-    return npmScope;
-  }
-
-  const { name } = tree.exists('package.json')
-    ? readJson<{ name?: string }>(tree, 'package.json')
-    : { name: null };
-
-  if (name?.startsWith('@')) {
-    npmScope = name.split('/')[0].substring(1);
-    return npmScope;
-  }
-}
 
 export function getPrefix() {
   return prefix;
@@ -105,12 +83,12 @@ export function getPlatformName(name: string, platform: PlatformTypes) {
   return getGroupByName() ? `${nameSanitized}-${platform}` : `${platform}-${nameSanitized}`;
 }
 
-export function getDefaultTemplateOptions() {
+export function getDefaultTemplateOptions(tree: Tree) {
   // console.log('getDefaultTemplateOptions getPrefix:', getPrefix());
   return {
     tmpl: '',
     utils: stringUtils,
-    npmScope: getNpmScope(),
+    npmScope: getNpmScope(tree),
     prefix: getPrefix(),
     dot: '.',
     standaloneAsDefault: false,
@@ -118,11 +96,7 @@ export function getDefaultTemplateOptions() {
 }
 
 export function prerun(tree: Tree, options?: any, init?: boolean) {
-  const nxJson = getNxWorkspaceConfig(tree);
-  if (nxJson) {
-    npmScope = nxJson.npmScope || 'workspace';
-  }
-  // console.log('npmScope:', npmScope);
+
   const packageJson = readJson(tree, 'package.json');
 
   let frameworkChoice: string;
@@ -142,7 +116,7 @@ export function prerun(tree: Tree, options?: any, init?: boolean) {
     if (pluginSettings) {
       usingXplatWorkspace = !!packageJson[packageSettingKeys.xplat];
       // use persisted settings
-      prefix = pluginSettings.prefix || npmScope; // (if not prefix, default to npmScope)
+      prefix = pluginSettings.prefix || getNpmScope(tree); // (if not prefix, default to npmScope)
       frontendFramework = pluginSettings.framework;
 
       if (options) {
@@ -169,7 +143,7 @@ export function prerun(tree: Tree, options?: any, init?: boolean) {
         }
       } else {
         // default to npmScope for prefix
-        options.prefix = npmScope;
+        options.prefix = getNpmScope(tree);
       }
       if (frameworkChoice) {
         if (!frontendFramework && init) {
@@ -216,19 +190,6 @@ export function updateNxProjects(tree: Tree, projects: any) {
   const projectsMap = Object.assign({}, nxJson.projects);
   nxJson.projects = Object.assign(projectsMap, projects);
   return updateJsonFile(tree, path, nxJson);
-}
-
-export function getNxWorkspaceConfig(tree: Tree): any {
-  const nxConfig = readJson(tree, 'nx.json');
-  const hasWorkspaceDirs = tree.exists('libs') || tree.exists('packages');
-
-  // determine if Nx workspace
-  if (nxConfig) {
-    if (nxConfig.npmScope || hasWorkspaceDirs) {
-      return nxConfig;
-    }
-  }
-  throw new Error('@nativescript/nx must be used inside an Nx workspace. Create a workspace first. https://nx.dev');
 }
 
 export function sanitizeCommaDelimitedArg(input: string): Array<string> {

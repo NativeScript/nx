@@ -1,3 +1,31 @@
+## [17.0.1](https://github.com/NativeScript/nx/compare/17.0.0...17.0.1) (2023-11-02)
+
+
+### Features
+
+* use log trace with verbose flag ([d34808e](https://github.com/NativeScript/nx/commit/d34808e8a3fd9e9f5fbdf12f42c33e230f979fe0))
+
+
+
+# [17.0.0](https://github.com/NativeScript/nx/compare/16.6.0...17.0.0) (2023-10-23)
+
+
+### Features
+
+* Support Nx 17+ ([#72](https://github.com/NativeScript/nx/issues/72)) ([5019eba](https://github.com/NativeScript/nx/commit/5019eba3cbbbddc8f1414dd00e1bdb2f6e05cb79))
+
+
+
+# [16.6.0](https://github.com/NativeScript/nx/compare/16.5.2...16.6.0) (2023-10-14)
+
+
+### Features
+
+* support {N} 8.6 ([2c45649](https://github.com/NativeScript/nx/commit/2c45649c4007d6cea41a318cc29a16ad149277ac))
+* use visionos emoji when targeting that platform ([f247d86](https://github.com/NativeScript/nx/commit/f247d86facdca45f93c6096a2be71915d2d35a1b))
+
+
+
 ## [16.5.2](https://github.com/NativeScript/nx/compare/16.5.1...16.5.2) (2023-07-05)
 
 

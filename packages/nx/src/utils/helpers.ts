@@ -674,8 +674,8 @@ export namespace PluginFeatureHelpers {
     // console.log('target:', target);
     // console.log('addFiles moveTo:', moveTo);
     // console.log('add files from:', `${workingDirectory}/${extra}_files`);
-    generateFiles(tree, `./${extra}_files`, moveTo, getTemplateOptions(options, target, framework));
-    // return branchAndMerge(mergeWith(apply(url(`./${extra}_files`), [template(getTemplateOptions(options, target, framework)), move(moveTo)])));
+    generateFiles(tree, `./${extra}_files`, moveTo, getTemplateOptions(tree, options, target, framework));
+    // return branchAndMerge(mergeWith(apply(url(`./${extra}_files`), [template(getTemplateOptions(tree, options, target, framework)), move(moveTo)])));
   }
 
   export function adjustBarrelIndex(tree: Tree, options: Schema, indexFilePath: string) {
@@ -703,7 +703,7 @@ export namespace PluginFeatureHelpers {
     // }
   }
 
-  export function getTemplateOptions(options: Schema, platform: string, framework?: FrameworkTypes) {
+  export function getTemplateOptions(tree: Tree, options: Schema, platform: string, framework?: FrameworkTypes) {
     const nameParts = options.name.split('-');
     let endingDashName = nameParts[0];
     if (nameParts.length > 1) {
@@ -712,7 +712,7 @@ export namespace PluginFeatureHelpers {
     const libFolderName = PluginHelpers.getLibFoldername(<PlatformTypes>platform, framework);
     return {
       ...(options as any),
-      ...getDefaultTemplateOptions(),
+      ...getDefaultTemplateOptions(tree),
       name: options.name.toLowerCase(),
       endingDashName,
       libFolderName,

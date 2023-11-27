@@ -26,9 +26,9 @@ describe('lib', () => {
       const projectConfig = readProjectConfiguration(tree, libName);
       expect(projectConfig.root).toEqual(`libs/${libName}`);
       expect(projectConfig.targets.lint).toEqual({
-        executor: '@nx/linter:eslint',
+        executor: '@nx/eslint:lint',
         options: {
-          lintFilePatterns: [`libs/${libName}/**/*.ts`],
+          lintFilePatterns: [`libs/${libName}/**/*.ts`, `libs/${libName}/package.json`],
         },
         outputs: ['{options.outputFile}'],
       });
@@ -41,9 +41,9 @@ describe('lib', () => {
 
       expect(projectConfig.root).toEqual(`libs/${libName}`);
       expect(projectConfig.targets.lint).toEqual({
-        executor: '@nx/linter:eslint',
+        executor: '@nx/eslint:lint',
         options: {
-          lintFilePatterns: [`libs/${libName}/**/*.ts`],
+          lintFilePatterns: [`libs/${libName}/**/*.ts`, `libs/${libName}/package.json`],
         },
         outputs: ['{options.outputFile}'],
       });

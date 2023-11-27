@@ -92,7 +92,8 @@ export function commonExecutor(options: ExecutorSchema, context: ExecutorContext
         options.emulator && nsOptions.push('--emulator');
         options.noHmr && nsOptions.push('--no-hmr');
         options.uglify && nsOptions.push('--env.uglify');
-        options.verbose && nsOptions.push('--env.verbose');
+        options.timeout && options.timeout > -1 && nsOptions.push(`--timeout=${options.timeout}`);
+        options.verbose && nsOptions.push('--log=trace');
         options.production && nsOptions.push('--env.production');
         options.forDevice && nsOptions.push('--for-device');
         options.release && nsOptions.push('--release');
@@ -165,7 +166,17 @@ export function commonExecutor(options: ExecutorSchema, context: ExecutorContext
       // }
 
       const runCommand = function () {
-        console.log(`――――――――――――――――――――――――${options.clean ? '' : options.platform === 'ios' ? ' ' : ' 🤖'}`);
+        let icon = '';
+        if (!options.clean) {
+          if (options.platform === 'ios') {
+            icon = '';
+          } else if (options.platform === 'android') {
+            icon = '🤖';
+          } else if (['vision', 'visionos'].includes(options.platform)) {
+            icon = '🥽';
+          }
+        }
+        console.log(`―――――――――――――――――――――――― ${icon}`);
         console.log(`Running NativeScript ${isTest ? 'unit tests' : 'CLI'} within ${projectCwd}`);
         console.log(' ');
         console.log([`ns`, ...nsOptions, ...additionalArgs].join(' '));

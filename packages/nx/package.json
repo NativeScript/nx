@@ -1,6 +1,6 @@
 {
   "name": "@nativescript/nx",
-  "version": "16.5.2-dev.0",
+  "version": "17.1.0-dev.0",
   "description": "NativeScript Plugin for Nx",
   "repository": {
     "type": "git",
@@ -34,10 +34,10 @@
     "enquirer": "~2.3.6",
     "fs-extra": "^11.1.0",
     "ignore": "^5.2.4",
-    "plist": "^3.0.1",
+    "plist": "^3.1.0",
     "xml2js": "~0.6.0",
-    "@nx/devkit": "^16.0.0",
-    "@nx/js": "^16.0.0",
-    "@nx/jest": "^16.0.0"
+    "@nx/devkit": "^17.0.0",
+    "@nx/js": "^17.0.0",
+    "@nx/jest": "^17.0.0"
   }
 }

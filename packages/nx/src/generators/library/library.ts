@@ -8,18 +8,22 @@ export async function library(tree: Tree, options: any) {
   await initGenerator(tree, {
     skipFormat: true,
   });
+  const defaultDirectory = tree.exists('libs') ? 'libs' : (tree.exists('packages') ? 'packages' : '')
   await libraryGenerator(tree, {
     name: options.name,
-    directory: options.directory,
+    // ensure placed in starting location
+    directory: defaultDirectory ? options.directory : (options.directory ? `libs/${options.directory}` : 'libs'),
   });
 
   // add extra files
   const directory = options.directory ? `${options.directory}/` : '';
   generateFiles(tree, joinPathFragments(__dirname, 'files'), `libs/${directory}${options.name}`, {
     ...(options as any),
-    ...getDefaultTemplateOptions(),
+    ...getDefaultTemplateOptions(tree),
     pathOffset: directory ? '../../../' : '../../',
   });
+
+  console.log(tree.listChanges().map(c => `${c.path}\n`))
 
   // update library tsconfig for {N} development
   const tsConfigPath = `libs/${directory}${options.name}/tsconfig.json`;
