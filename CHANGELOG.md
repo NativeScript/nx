@@ -1,3 +1,12 @@
+# [17.1.0](https://github.com/NativeScript/nx/compare/17.0.1...17.1.0) (2023-11-27)
+
+
+### Features
+
+* Angular 17 support with Nx 17.1+ ([7d7574f](https://github.com/NativeScript/nx/commit/7d7574f79cbdf541944db877425d954ee22098fe))
+
+
+
 ## [17.0.1](https://github.com/NativeScript/nx/compare/17.0.0...17.0.1) (2023-11-02)
 
 
