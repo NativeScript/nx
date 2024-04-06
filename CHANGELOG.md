@@ -1,3 +1,12 @@
+# [18.0.0](https://github.com/NativeScript/nx/compare/17.1.0...18.0.0) (2024-04-06)
+
+
+### Features
+
+* Nx 18+ ([27e2e16](https://github.com/NativeScript/nx/commit/27e2e1629c909da57d5fed9bdb99e0d56e355090))
+
+
+
 # [17.1.0](https://github.com/NativeScript/nx/compare/17.0.1...17.1.0) (2023-11-27)
 
 
