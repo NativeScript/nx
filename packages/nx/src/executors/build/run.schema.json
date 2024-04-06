@@ -29,11 +29,6 @@
       "default": false,
       "description": "Enable verbose logging"
     },
-    "timeout": {
-      "type": "number",
-      "default": -1,
-      "description": "Increase the default 90s timeout to connect to a device/simulator"
-    },
     "id": {
       "type": "string",
       "description": "App bundle id. Use with configurations that desire a specific bundle id to be set."

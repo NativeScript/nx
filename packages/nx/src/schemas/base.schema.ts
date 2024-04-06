@@ -8,7 +8,6 @@ export interface BaseSchema {
   platform: 'ios' | 'android';
   silent: boolean;
   verbose: boolean;
-  timeout: number;
 }
 
 export const baseSchema = {
