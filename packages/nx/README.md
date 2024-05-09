@@ -46,10 +46,10 @@
 
 ```sh
 # Using npm
-npx create-nx-workspace@latest
+npx create-nx-workspace@18.3.4
 
 # Using yarn
-yarn create-nx-workspace@latest
+yarn create-nx-workspace@18.3.4
 ```
 
 At the prompts, you can use:
