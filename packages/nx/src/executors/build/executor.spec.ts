@@ -1,8 +1,6 @@
-import { ExecutorContext } from '@nx/devkit';
-import { BuildExecutorSchema } from '../../utils';
-import runExecutor from './executor';
+import { ExecutorSchema } from '../../utils/types';
 
-const options: BuildExecutorSchema = {
+const options: Partial<ExecutorSchema> = {
   noHmr: true,
   prepare: true,
   platform: 'ios',
