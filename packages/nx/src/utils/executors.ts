@@ -272,6 +272,7 @@ export function commonExecutor(options: BuildExecutorSchema | TestExecutorSchema
         const child = childProcess.spawn(/^win/.test(process.platform) ? 'ns.cmd' : 'ns', [...nsOptions, ...additionalArgs], {
           cwd: projectCwd,
           stdio: 'inherit',
+          shell: process.platform === 'win32',
         });
         child.on('close', (code) => {
           console.log(`Done.`);
@@ -284,6 +285,7 @@ export function commonExecutor(options: BuildExecutorSchema | TestExecutorSchema
         return new Promise((resolve) => {
           const child = childProcess.spawn(/^win/.test(process.platform) ? 'ns.cmd' : 'ns', ['config', 'get', `id`], {
             cwd: projectCwd,
+            shell: process.platform === 'win32',
           });
           child.stdout.setEncoding('utf8');
           child.stdout.on('data', function (data) {
@@ -307,6 +309,7 @@ export function commonExecutor(options: BuildExecutorSchema | TestExecutorSchema
               const child = childProcess.spawn(/^win/.test(process.platform) ? 'ns.cmd' : 'ns', ['config', 'set', `${options.platform}.id`, options.id], {
                 cwd: projectCwd,
                 stdio: 'inherit',
+                shell: process.platform === 'win32',
               });
               child.on('close', (code) => {
                 child.kill('SIGKILL');
