@@ -733,3 +733,29 @@ export namespace PluginFeatureHelpers {
     return moveTo;
   }
 }
+
+// Copied from: https://github.com/NativeScript/nativescript-cli/blob/16064affee98c837e8cbe0865254dcb5b81f0bbe/lib/common/helpers.ts#L246C1-L268C2
+// For https://github.com/NativeScript/nativescript-cli/pull/5808
+function bashQuote(s: string): string {
+  if (s[0] === "'" && s[s.length - 1] === "'") {
+    return s;
+  }
+  // replace ' with '"'"' and wrap in ''
+  return "'" + s.replace(/'/g, "'\"'\"'") + "'";
+}
+
+function cmdQuote(s: string): string {
+  if (s[0] === '"' && s[s.length - 1] === '"') {
+    return s;
+  }
+  // replace " with \" and wrap in ""
+  return '"' + s.replace(/"/g, '\\"') + '"';
+}
+
+export function quoteString(s: string): string {
+  if (!s) {
+    return s;
+  }
+
+  return process.platform === 'win32' ? cmdQuote(s) : bashQuote(s);
+}
