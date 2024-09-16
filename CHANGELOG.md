@@ -1,3 +1,12 @@
+## [19.0.1](https://github.com/NativeScript/nx/compare/19.0.0...19.0.1) (2024-09-16)
+
+
+### Bug Fixes
+
+* windows node spawn einval error ([#77](https://github.com/NativeScript/nx/issues/77)) ([a789738](https://github.com/NativeScript/nx/commit/a789738eca092eff74b839c2670e1d20209e6e67))
+
+
+
 # [19.0.0](https://github.com/NativeScript/nx/compare/18.0.0...19.0.0) (2024-05-26)
 
 
