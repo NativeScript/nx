@@ -1,7 +1,7 @@
 import { NativeScriptConfig } from '@nativescript/core';
 
 export default {
-	id: 'org.nativescript.<%= utils.sanitize(appname) %>',
+	id: 'org.nativescript.<%= utils.sanitize(baseName) %>',
 	appResourcesPath: 'App_Resources',
 	android: {
 		v8Flags: '--expose_gc',

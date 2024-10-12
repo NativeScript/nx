@@ -1,2 +1,2 @@
-/// <reference path="<%= pathOffset %>node_modules/@nativescript/types-ios/index.d.ts" />
-/// <reference path="<%= pathOffset %>node_modules/@nativescript/types-android/lib/android-21.d.ts" />
+/// <reference path="<%= projectRootOffset %>node_modules/@nativescript/types-ios/index.d.ts" />
+/// <reference path="<%= projectRootOffset %>node_modules/@nativescript/types-android/lib/android-21.d.ts" />

@@ -1,6 +1,9 @@
 import { readJson, readProjectConfiguration, Tree, updateJson } from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import { library } from './library';
+import { normalizeOptions } from './normalized-options';
+import { getAppNamingConvention, preRun, UnitTestRunner } from '../../utils';
+import { LibrarySchema } from './schema';
 
 describe('lib', () => {
   let tree: Tree;
@@ -12,60 +15,94 @@ describe('lib', () => {
   });
 
   describe('not nested', () => {
-    it('should update project.json', async () => {
-      await library(tree, { name: 'myLib', unitTestRunner: 'none' });
+    it('should create library', async () => {
+      const options: LibrarySchema = { directory: 'libs/my-lib', unitTestRunner: 'none' };
+      await library(tree, options);
+      const optionsWithNamingConvention = { ...options, ...getAppNamingConvention(options, 'nativescript') };
+      const normalizedOptions = await normalizeOptions(tree, optionsWithNamingConvention);
+
       const libName = `nativescript-my-lib`;
 
-      expect(tree.exists(`libs/${libName}/tsconfig.json`)).toBeTruthy();
-      expect(tree.exists(`libs/${libName}/references.d.ts`)).toBeTruthy();
+      const projectConfig = readProjectConfiguration(tree, normalizedOptions.projectName);
+      const tsconfig = readJson(tree, `${normalizedOptions.projectRoot}/tsconfig.json`);
 
-      const tsconfig = readJson(tree, `libs/${libName}/tsconfig.json`);
+      expect(projectConfig.name).toEqual(libName);
+      expect(projectConfig.root).toMatch(new RegExp(`\/${libName}$`));
+      expect(tree.exists(`${normalizedOptions.projectRoot}/tsconfig.json`)).toBeTruthy();
+      expect(tree.exists(`${normalizedOptions.projectRoot}/references.d.ts`)).toBeTruthy();
       expect(tsconfig.files).toEqual(['./references.d.ts']);
       expect(tsconfig.include).toEqual(['**/*.ts']);
-
-      const projectConfig = readProjectConfiguration(tree, libName);
-      expect(projectConfig.root).toEqual(`libs/${libName}`);
+      expect(projectConfig.root).toEqual(normalizedOptions.projectRoot);
       expect(projectConfig.targets.lint).toEqual({
-        executor: '@nx/eslint:lint',
-        options: {
-          lintFilePatterns: [`libs/${libName}/**/*.ts`, `libs/${libName}/package.json`],
-        },
-        outputs: ['{options.outputFile}'],
+        executor: normalizedOptions.lintExecutor,
       });
     });
 
-    it('groupByName: should update workspace.json', async () => {
-      await library(tree, { name: 'myLib', groupByName: true, unitTestRunner: 'none' });
+    it('should create library w/ --groupByName=true', async () => {
+      const options: LibrarySchema = { directory: 'libs/my-lib', unitTestRunner: 'none', groupByName: true };
+      await library(tree, options);
+      const optionsWithNamingConvention = { ...options, ...getAppNamingConvention(options, 'nativescript') };
+      const normalizedOptions = await normalizeOptions(tree, optionsWithNamingConvention);
+
       const libName = `my-lib-nativescript`;
-      const projectConfig = readProjectConfiguration(tree, libName);
 
-      expect(projectConfig.root).toEqual(`libs/${libName}`);
+      const projectConfig = readProjectConfiguration(tree, normalizedOptions.projectName);
+      const tsconfig = readJson(tree, `${normalizedOptions.projectRoot}/tsconfig.json`);
+
+      expect(projectConfig.name).toEqual(libName);
+      expect(projectConfig.root).toMatch(new RegExp(`\/${libName}$`));
+      expect(tree.exists(`${normalizedOptions.projectRoot}/tsconfig.json`)).toBeTruthy();
+      expect(tree.exists(`${normalizedOptions.projectRoot}/references.d.ts`)).toBeTruthy();
+      expect(tsconfig.files).toEqual(['./references.d.ts']);
+      expect(tsconfig.include).toEqual(['**/*.ts']);
+      expect(projectConfig.root).toEqual(normalizedOptions.projectRoot);
       expect(projectConfig.targets.lint).toEqual({
-        executor: '@nx/eslint:lint',
-        options: {
-          lintFilePatterns: [`libs/${libName}/**/*.ts`, `libs/${libName}/package.json`],
-        },
-        outputs: ['{options.outputFile}'],
+        executor: normalizedOptions.lintExecutor,
       });
     });
 
-    it('should update root tsconfig.json', async () => {
-      await library(tree, { name: 'myLib' });
+    it('should update root tsconfig.base.json paths', async () => {
+      const options: LibrarySchema = { directory: 'libs/my-lib' };
+      await library(tree, options);
+      const optionsWithNamingConvention = { ...options, ...getAppNamingConvention(options, 'nativescript') };
+      const normalizedOptions = await normalizeOptions(tree, optionsWithNamingConvention);
+
       const libName = `nativescript-my-lib`;
+
       const tsconfigJson = readJson(tree, '/tsconfig.base.json');
-      expect(tsconfigJson.compilerOptions.paths[`@proj/${libName}`]).toEqual([`libs/${libName}/src/index.ts`]);
+
+      expect(tsconfigJson.compilerOptions.paths[`@proj/${libName}`]).toEqual([`${normalizedOptions.projectSourceRoot}/index.ts`]);
     });
 
-    it('should update root tsconfig.json (no existing path mappings)', async () => {
+    it('should update root tsconfig.base.json paths w/ --groupByName=true', async () => {
+      const options: LibrarySchema = { directory: 'libs/my-lib', groupByName: true };
+      await library(tree, options);
+      const optionsWithNamingConvention = { ...options, ...getAppNamingConvention(options, 'nativescript') };
+      const normalizedOptions = await normalizeOptions(tree, optionsWithNamingConvention);
+
+      const libName = `my-lib-nativescript`;
+
+      const tsconfigJson = readJson(tree, '/tsconfig.base.json');
+
+      expect(tsconfigJson.compilerOptions.paths[`@proj/${libName}`]).toEqual([`${normalizedOptions.projectSourceRoot}/index.ts`]);
+    });
+
+    it('should update root tsconfig.base.json paths (when no existing path mappings)', async () => {
       updateJson(tree, 'tsconfig.base.json', (json) => {
         json.compilerOptions.paths = undefined;
         return json;
       });
 
-      await library(tree, { name: 'myLib' });
+      const options: LibrarySchema = { directory: 'libs/my-lib' };
+      await library(tree, options);
+      const optionsWithNamingConvention = { ...options, ...getAppNamingConvention(options, 'nativescript') };
+      const normalizedOptions = await normalizeOptions(tree, optionsWithNamingConvention);
+
       const libName = `nativescript-my-lib`;
+
       const tsconfigJson = readJson(tree, '/tsconfig.base.json');
-      expect(tsconfigJson.compilerOptions.paths[`@proj/${libName}`]).toEqual([`libs/${libName}/src/index.ts`]);
+
+      expect(tsconfigJson.compilerOptions.paths[`@proj/${libName}`]).toEqual([`${normalizedOptions.projectSourceRoot}/index.ts`]);
     });
   });
 });

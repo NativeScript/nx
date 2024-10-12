@@ -1,42 +1,94 @@
-import { Tree, addProjectConfiguration, generateFiles, joinPathFragments, installPackagesTask } from '@nx/devkit';
+import {
+  Tree,
+  addProjectConfiguration,
+  generateFiles,
+  joinPathFragments,
+  ProjectConfiguration,
+  runTasksInSerial,
+  GeneratorCallback,
+  offsetFromRoot,
+  formatFiles,
+} from '@nx/devkit';
 import { initGenerator } from '@nx/js';
-import { getAppName, getDefaultTemplateOptions, getFrontendFramework, getPrefix, missingArgument, PluginHelpers, prerun, updateNxProjects, updatePackageScripts } from '../../utils';
-import { angularVersion, nsAngularVersion, nsWebpackVersion, nsNgToolsVersion, nsCoreVersion, typescriptVersion, rxjsVersion, zonejsVersion, nsIOSRuntimeVersion, nsAndroidRuntimeVersion } from '../../utils/versions';
+import {
+  getBaseName,
+  getAppNamingConvention,
+  getDefaultTemplateOptions,
+  getFrontendFramework,
+  missingArgument,
+  preRun,
+  updatePluginDependencies,
+  updatePluginSettings,
+} from '../../utils';
+import {
+  angularVersion,
+  nsAngularVersion,
+  nsWebpackVersion,
+  nsNgToolsVersion,
+  nsCoreVersion,
+  typescriptVersion,
+  rxjsVersion,
+  zonejsVersion,
+  nsIOSRuntimeVersion,
+  nsAndroidRuntimeVersion,
+} from '../../utils/versions';
 import { appResources } from '../app-resources/app-resources';
-import { Schema } from './schema';
+import { assertNotUsingTsSolutionSetup } from '@nx/js/src/utils/typescript/ts-solution-setup';
+import { normalizeOptions } from './normalized-options';
+import { NormalizedSchema } from './normalized-schema';
+import { addBuildTargetDefaults } from '@nx/devkit/src/generators/target-defaults-utils';
+import { logShowProjectCommand } from '@nx/devkit/src/utils/log-show-project-command';
+import { ApplicationSchema } from './schema';
 
-export async function applicationGenerator(tree: Tree, options: Schema) {
-  if (!options.name) {
-    throw new Error(missingArgument('name', 'Provide a name for your NativeScript app.', 'nx g @nativescript/nx:app name'));
+export async function applicationGenerator(tree: Tree, options: NormalizedSchema) {
+  assertNotUsingTsSolutionSetup(tree, 'nativescript', 'application');
+  if (!options.directory) {
+    throw new Error(missingArgument('name', 'Provide a directory for your NativeScript app.', 'nx g @nativescript/nx:app <directory>'));
   }
+  const commonOptions = preRun(tree, options, true);
+  options = { ...options, ...getAppNamingConvention(options, 'nativescript') };
 
-  prerun(tree, options, true);
-  PluginHelpers.applyAppNamingConvention(tree, options, 'nativescript');
+  options = await normalizeOptions(tree, options);
 
-  await initGenerator(tree, {
-    skipFormat: true,
-  });
-  addAppFiles(tree, options, options.name);
+  const tasks: GeneratorCallback[] = [];
+
+  tasks.push(
+    await initGenerator(tree, {
+      skipFormat: true,
+    })
+  );
+
+  addBuildTargetDefaults(tree, options.buildExecutor);
+  addProjectConfiguration(tree, options.name, getAppProjectConfiguration(options));
+
+  createAppFiles(tree, options);
   // add extra files per options
   if (options.routing && ['angular'].includes(options.framework)) {
-    addAppFiles(tree, options, options.name, 'routing');
+    createAppFiles(tree, options, 'routing');
   }
   // add app resources
   appResources(tree, {
-    path: `apps/${options.directory ? options.directory + '/' : ''}${options.name}`,
+    path: options.projectRoot,
   });
-  PluginHelpers.updateRootDeps(tree, options);
-  // PluginHelpers.updatePrettierIgnore(),
-  // PluginHelpers.addPackageInstallTask(tree, options);
 
-  const directory = options.directory ? `${options.directory}/` : '';
-  const appPath = `apps/${directory}${options.name}`;
-  let frontendFrameworkConfig: any = {};
+  updatePluginSettings(tree, options);
+  tasks.push(updatePluginDependencies(tree, options));
+
+  if (!options.skipFormat) {
+    await formatFiles(tree);
+  }
+
+  tasks.push(() => logShowProjectCommand(options.name));
+
+  return runTasksInSerial(...tasks);
+}
+
+function getFrontendFrameworkTargets(options: NormalizedSchema) {
   switch (options.framework) {
     case 'angular':
-      frontendFrameworkConfig = {
+      return {
         build: {
-          executor: '@nativescript/nx:build',
+          executor: options.buildExecutor,
           options: {
             noHmr: true,
             production: true,
@@ -56,16 +108,20 @@ export async function applicationGenerator(tree: Tree, options: Schema) {
           },
         },
       };
-      break;
+    default:
+      return {};
   }
-  addProjectConfiguration(tree, options.name, {
-    root: `${appPath}/`,
-    sourceRoot: `${appPath}/src`,
+}
+
+function getAppProjectConfiguration(options: NormalizedSchema): ProjectConfiguration {
+  return {
+    root: options.projectRoot,
+    sourceRoot: options.projectSourceRoot,
     projectType: 'application',
     targets: {
-      ...frontendFrameworkConfig,
+      ...getFrontendFrameworkTargets(options),
       ios: {
-        executor: '@nativescript/nx:build',
+        executor: options.buildExecutor,
         options: {
           platform: 'ios',
         },
@@ -79,7 +135,7 @@ export async function applicationGenerator(tree: Tree, options: Schema) {
         },
       },
       android: {
-        executor: '@nativescript/nx:build',
+        executor: options.buildExecutor,
         options: {
           platform: 'android',
         },
@@ -93,40 +149,27 @@ export async function applicationGenerator(tree: Tree, options: Schema) {
         },
       },
       clean: {
-        executor: '@nativescript/nx:build',
+        executor: options.buildExecutor,
         options: {
           clean: true,
         },
       },
       lint: {
-        executor: '@nx/eslint:eslint',
-        options: {
-          lintFilePatterns: [`${appPath}/**/*.ts`, `${appPath}/src/**/*.html`],
-        },
+        executor: options.lintExecutor,
       },
     },
-  });
-
-  return () => {
-    installPackagesTask(tree);
   };
 }
 
-function addAppFiles(tree: Tree, options: Schema, appName: string, extra: string = '') {
-  const appname = getAppName(options, 'nativescript');
-  const directory = options.directory ? `${options.directory}/` : '';
+function createAppFiles(tree: Tree, options: ApplicationSchema & Partial<NormalizedSchema>, extra: string = '') {
   const framework = options.framework || getFrontendFramework() || 'angular';
   if (typeof options.routing === 'undefined') {
     // ensure it's at least defined
     options.routing = false;
   }
-  generateFiles(tree, joinPathFragments(__dirname, `files${framework ? '_' + framework : ''}${extra ? '_' + extra : ''}`), `apps/${directory}${appName}`, {
-    ...(options as any),
+  generateFiles(tree, joinPathFragments(__dirname, `files${framework ? '_' + framework : ''}${extra ? '_' + extra : ''}`), options.projectRoot, {
+    ...options,
     ...getDefaultTemplateOptions(tree),
-    appname,
-    directoryAppPath: `${directory}${options.name}`,
-    pathOffset: directory ? '../../../' : '../../',
-    libFolderName: PluginHelpers.getLibFoldername('nativescript'),
     angularVersion,
     nsAngularVersion,
     nsCoreVersion,
