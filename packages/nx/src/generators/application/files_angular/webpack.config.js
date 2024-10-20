@@ -1,8 +1,8 @@
-const webpack = require("@nativescript/webpack");
+const webpack = require('@nativescript/webpack');
 
 module.exports = (env) => {
-	webpack.init(env);
-	webpack.useConfig('angular');
+  webpack.init(env);
+  webpack.useConfig('angular');
 
-	return webpack.resolveConfig();
+  return webpack.resolveConfig();
 };

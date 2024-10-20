@@ -1,25 +1,11 @@
-import {
-  formatFiles,
-  generateFiles,
-  GeneratorCallback,
-  joinPathFragments,
-  offsetFromRoot,
-  readProjectConfiguration,
-  runTasksInSerial,
-  Tree,
-  updateJson,
-} from '@nx/devkit';
+import { formatFiles, generateFiles, GeneratorCallback, joinPathFragments, runTasksInSerial, Tree, updateJson } from '@nx/devkit';
 import { getAppNamingConvention, getDefaultTemplateOptions, missingArgument, preRun, TsConfigJson } from '../../utils';
-import { libraryGenerator } from '@nx/js';
-import { determineProjectNameAndRootOptions } from '@nx/devkit/src/generators/project-name-and-root-utils';
-import { ProjectType } from '@nx/workspace';
+import { libraryGenerator as jsLibraryGenerator } from '@nx/js';
 import { assertNotUsingTsSolutionSetup } from '@nx/js/src/utils/typescript/ts-solution-setup';
-import { normalizeOptions } from './normalized-options';
-import { NormalizedSchema } from './normalized-schema';
-import { logShowProjectCommand } from '@nx/devkit/src/utils/log-show-project-command';
-import { LibrarySchema } from './schema';
+import { normalizeOptions } from './lib/normalize-options';
+import { LibrarySchema, NormalizedSchema } from './schema';
 
-export async function library(tree: Tree, options: LibrarySchema & Partial<NormalizedSchema>) {
+export async function libraryGenerator(tree: Tree, options: LibrarySchema & Partial<NormalizedSchema>) {
   assertNotUsingTsSolutionSetup(tree, 'nativescript', 'library');
 
   if (!options.directory) {
@@ -32,7 +18,7 @@ export async function library(tree: Tree, options: LibrarySchema & Partial<Norma
 
   const tasks: GeneratorCallback[] = [];
 
-  const jsLibGeneratorOptions: Parameters<typeof libraryGenerator>[1] = {
+  const jsLibGeneratorOptions: Parameters<typeof jsLibraryGenerator>[1] = {
     directory: options.directory,
     name: options.name,
     skipTsConfig: options.skipTsConfig,
@@ -45,7 +31,7 @@ export async function library(tree: Tree, options: LibrarySchema & Partial<Norma
     pascalCaseFiles: options.pascalCaseFiles,
     js: options.js,
   };
-  tasks.push(await libraryGenerator(tree, jsLibGeneratorOptions));
+  tasks.push(await jsLibraryGenerator(tree, jsLibGeneratorOptions));
 
   // add extra files
   generateFiles(tree, joinPathFragments(__dirname, 'files'), options.projectRoot, {
@@ -74,4 +60,4 @@ export async function library(tree: Tree, options: LibrarySchema & Partial<Norma
   return runTasksInSerial(...tasks);
 }
 
-export default library;
+export default libraryGenerator;

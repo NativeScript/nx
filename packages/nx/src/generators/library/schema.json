@@ -17,11 +17,13 @@
         "$source": "argv",
         "index": 0
       },
+      "alias": "d",
       "x-prompt": "What directory would you like to use for the library? (full path - eg. libs/my-lib)"
     },
     "name": {
       "type": "string",
-      "description": "Library name"
+      "description": "Library name",
+      "alias": "n"
     },
     "groupByName": {
       "description": "Group by lib name (libname-platform) instead of the default (platform-libname)",

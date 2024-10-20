@@ -1,5 +1,5 @@
 import { convertNxGenerator } from '@nx/devkit';
 
-import { library } from './library';
+import { libraryGenerator } from './library';
 
-export default convertNxGenerator(library);
+export default convertNxGenerator(libraryGenerator);
