@@ -8,73 +8,63 @@ describe('app', () => {
 
   beforeEach(() => {
     tree = createTreeWithEmptyWorkspace({ layout: 'apps-libs' });
-    tree.write('/apps/.gitignore', '');
-    tree.write('/libs/.gitignore', '');
   });
 
   it('should update project.json', async () => {
-    await applicationGenerator(tree, { name: 'myApp' });
+    await applicationGenerator(tree, { directory: 'apps/my-app' });
     const config = readProjectConfiguration(tree, 'nativescript-my-app');
 
     expect(config.root).toEqual('apps/nativescript-my-app');
   });
 
   it('should generate files', async () => {
-    await applicationGenerator(tree, { name: 'myApp', framework: 'vanilla' });
-    const appPath = 'apps/nativescript-my-app';
-    expect(tree.exists(`${appPath}/src/app-root.xml`)).toBeTruthy();
-    expect(tree.exists(`${appPath}/src/main-page.ts`)).toBeTruthy();
-    checkFiles(tree, appPath);
+    await applicationGenerator(tree, { directory: 'apps/my-app', framework: 'vanilla' });
+
+    expect(tree.exists(`apps/nativescript-my-app/src/app-root.xml`)).toBeTruthy();
+    expect(tree.exists(`apps/nativescript-my-app/src/main-page.ts`)).toBeTruthy();
+    checkFiles(tree, 'apps/nativescript-my-app');
   });
 
   it('nested in directory: should generate files', async () => {
-    await applicationGenerator(tree, { name: 'myApp', directory: 'mobile', framework: 'vanilla' });
-    const appPath = 'apps/mobile/nativescript-my-app';
-    expect(tree.exists(`${appPath}/src/app-root.xml`)).toBeTruthy();
-    expect(tree.exists(`${appPath}/src/main-page.ts`)).toBeTruthy();
+    await applicationGenerator(tree, { directory: 'apps/mobile/my-app', framework: 'vanilla' });
 
-    checkFiles(tree, appPath, '../../../');
+    expect(tree.exists(`apps/mobile/nativescript-my-app/src/app-root.xml`)).toBeTruthy();
+    expect(tree.exists(`apps/mobile/nativescript-my-app/src/main-page.ts`)).toBeTruthy();
+    checkFiles(tree, 'apps/mobile/nativescript-my-app', '../../../');
   });
 
   it('Angular with Routing: should generate files', async () => {
-    await applicationGenerator(tree, { name: 'myApp', framework: 'angular', routing: true });
-    const appPath = 'apps/nativescript-my-app';
-    checkAngularFiles(tree, appPath);
-
-    expect(tree.exists(`${appPath}/src/app.routing.ts`)).toBeTruthy();
-    expect(tree.exists(`${appPath}/src/features/home/home.module.ts`)).toBeTruthy();
-
-    // should also save framework as default in plugin settings
+    await applicationGenerator(tree, { directory: 'apps/my-app', framework: 'angular', routing: true });
     const packageJson = readJson(tree, `package.json`);
-    expect(packageJson['nativescript-nx'].framework).toEqual('angular');
 
-    checkFiles(tree, appPath);
+    checkAngularFiles(tree, 'apps/nativescript-my-app');
+    expect(tree.exists(`apps/nativescript-my-app/src/app.routing.ts`)).toBeTruthy();
+    expect(tree.exists(`apps/nativescript-my-app/src/features/home/home.module.ts`)).toBeTruthy();
+    // should also save framework as default in plugin settings
+    expect(packageJson['nativescript-nx'].framework).toEqual('angular');
+    checkFiles(tree, 'apps/nativescript-my-app');
   });
 
   it('Angular without Routing: should generate files', async () => {
-    await applicationGenerator(tree, { name: 'myApp', framework: 'angular', routing: false });
-    const appPath = 'apps/nativescript-my-app';
-    checkAngularFiles(tree, appPath);
+    await applicationGenerator(tree, { directory: 'apps/my-app', framework: 'angular', routing: false });
 
-    expect(tree.exists(`${appPath}/src/app.routing.ts`)).toBeFalsy();
-    expect(tree.exists(`${appPath}/src/features/home/home.module.ts`)).toBeFalsy();
-
-    checkFiles(tree, appPath);
+    checkAngularFiles(tree, 'apps/nativescript-my-app');
+    expect(tree.exists(`apps/nativescript-my-app/src/app.routing.ts`)).toBeFalsy();
+    expect(tree.exists(`apps/nativescript-my-app/src/features/home/home.module.ts`)).toBeFalsy();
+    checkFiles(tree, 'apps/nativescript-my-app');
   });
 
   it('Angular nested in directory: should generate files', async () => {
-    await applicationGenerator(tree, { name: 'myApp', framework: 'angular', directory: 'mobile', routing: true });
-    const appPath = 'apps/mobile/nativescript-my-app';
-    checkAngularFiles(tree, appPath);
+    await applicationGenerator(tree, { directory: 'apps/mobile/my-app', framework: 'angular', routing: true });
 
-    expect(tree.exists(`${appPath}/src/app.routing.ts`)).toBeTruthy();
-    expect(tree.exists(`${appPath}/src/features/home/home.module.ts`)).toBeTruthy();
-
-    checkFiles(tree, appPath, '../../../');
+    checkAngularFiles(tree, 'apps/mobile/nativescript-my-app');
+    expect(tree.exists(`apps/mobile/nativescript-my-app/src/app.routing.ts`)).toBeTruthy();
+    expect(tree.exists(`apps/mobile/nativescript-my-app/src/features/home/home.module.ts`)).toBeTruthy();
+    checkFiles(tree, 'apps/mobile/nativescript-my-app', '../../../');
   });
 
   it('should add angular dependencies when framework is angular', async () => {
-    await applicationGenerator(tree, { name: 'myApp', framework: 'angular' });
+    await applicationGenerator(tree, { directory: 'apps/my-app', framework: 'angular' });
     const packageJson = readJson(tree, `package.json`);
 
     expect(packageJson['dependencies']['@angular/animations']).toEqual(angularVersion);
@@ -91,7 +81,7 @@ describe('app', () => {
   });
 
   it('should not add angular dependencies when framework is not angular', async () => {
-    await applicationGenerator(tree, { name: 'myApp', framework: '' });
+    await applicationGenerator(tree, { directory: 'apps/my-app', framework: void 0 });
     const packageJson = readJson(tree, `package.json`);
 
     expect(packageJson['dependencies']['@angular/animations']).toBeFalsy();
@@ -109,7 +99,6 @@ describe('app', () => {
 });
 
 const checkFiles = (tree: Tree, appPath: string, relativeToRootPath = '../../') => {
-  // console.log('appPath', tree.listChanges().map(c => c.path))
   expect(tree.exists(`${appPath}/App_Resources/Android/app.gradle`)).toBeTruthy();
   expect(tree.exists(`${appPath}/App_Resources/iOS/Info.plist`)).toBeTruthy();
 
