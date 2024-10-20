@@ -1,5 +1,5 @@
 import { Tree, addProjectConfiguration, runTasksInSerial, GeneratorCallback, formatFiles } from '@nx/devkit';
-import { initGenerator } from '@nx/js';
+import { initGenerator as jsInitGenerator } from '@nx/js';
 import { getAppNamingConvention, missingArgument, preRun, updatePluginDependencies, updatePluginSettings } from '../../utils';
 import { appResources } from '../app-resources/app-resources';
 import { assertNotUsingTsSolutionSetup } from '@nx/js/src/utils/typescript/ts-solution-setup';
@@ -9,6 +9,7 @@ import { logShowProjectCommand } from '@nx/devkit/src/utils/log-show-project-com
 import { ApplicationSchema } from './schema';
 import { createFiles } from './lib/create-files';
 import { getProjectConfiguration } from './lib/project-json';
+import { addLinting } from './lib/add-linting';
 
 export async function applicationGenerator(tree: Tree, schema: ApplicationSchema) {
   assertNotUsingTsSolutionSetup(tree, 'nativescript', 'application');
@@ -23,7 +24,7 @@ export async function applicationGenerator(tree: Tree, schema: ApplicationSchema
   const tasks: GeneratorCallback[] = [];
 
   tasks.push(
-    await initGenerator(tree, {
+    await jsInitGenerator(tree, {
       skipFormat: true,
     })
   );
@@ -40,6 +41,8 @@ export async function applicationGenerator(tree: Tree, schema: ApplicationSchema
   appResources(tree, {
     path: options.projectRoot,
   });
+
+  tasks.push(await addLinting(tree, options));
 
   updatePluginSettings(tree, options);
   tasks.push(updatePluginDependencies(tree, options));

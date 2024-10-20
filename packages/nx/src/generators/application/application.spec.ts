@@ -17,6 +17,26 @@ describe('app', () => {
     expect(config.root).toEqual('apps/nativescript-my-app');
   });
 
+  it('should generate eslint config file', async () => {
+    await applicationGenerator(tree, { directory: 'apps/my-app' });
+    const config = readProjectConfiguration(tree, 'nativescript-my-app');
+
+    expect(tree.exists(`${config.root}/.eslintrc.json`)).toBeTruthy();
+    expect(tree.exists(`${config.root}/eslint.config.js`)).toBeFalsy();
+  });
+
+  it('should generate eslint config file for the flat config', async () => {
+    process.env.ESLINT_USE_FLAT_CONFIG = 'true';
+
+    await applicationGenerator(tree, { directory: 'apps/my-app' });
+    const config = readProjectConfiguration(tree, 'nativescript-my-app');
+
+    expect(tree.exists(`${config.root}/.eslintrc.json`)).toBeFalsy();
+    expect(tree.exists(`${config.root}/eslint.config.js`)).toBeTruthy();
+
+    delete process.env.ESLINT_USE_FLAT_CONFIG;
+  });
+
   it('should generate files', async () => {
     await applicationGenerator(tree, { directory: 'apps/my-app', framework: 'vanilla' });
 
@@ -104,8 +124,6 @@ const checkFiles = (tree: Tree, appPath: string, relativeToRootPath = '../../') 
 
   const tsconfig = readJson(tree, `${appPath}/tsconfig.json`);
   expect(tsconfig.extends).toEqual(`${relativeToRootPath}tsconfig.base.json`);
-
-  expect(tree.exists(`${appPath}/.eslintrc.json`)).toBeTruthy();
 };
 
 const checkAngularFiles = (tree: Tree, appPath: string) => {

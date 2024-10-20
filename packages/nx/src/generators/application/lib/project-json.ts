@@ -72,9 +72,6 @@ export function getProjectConfiguration(options: NormalizedSchema): ProjectConfi
           clean: true,
         },
       },
-      lint: {
-        executor: options.lintExecutor,
-      },
     },
   };
 }

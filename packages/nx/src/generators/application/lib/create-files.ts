@@ -13,8 +13,9 @@ import {
   typescriptVersion,
   zonejsVersion,
 } from '../../../utils/versions';
+import { useFlatConfig } from '@nx/eslint/src/utils/flat-config';
 
-export function createFiles(tree: Tree, options: ApplicationSchema & Partial<NormalizedSchema>, extra = '') {
+export function createFiles(tree: Tree, options: NormalizedSchema, extra = '') {
   const framework = options.framework || getFrontendFramework() || 'angular';
   if (typeof options.routing === 'undefined') {
     // ensure it's at least defined

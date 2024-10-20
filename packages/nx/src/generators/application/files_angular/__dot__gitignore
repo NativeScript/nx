@@ -6,6 +6,7 @@ platforms/
 # NativeScript Template
 *.js.map
 *.js
+!eslint.config.js
 !ngcc.config.js
 !webpack.config.js
 !jest.config.js
