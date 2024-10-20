@@ -42,5 +42,5 @@
   "parallel": 1,
   "useInferencePlugins": false,
   "defaultBase": "main",
-  "useLegacyCache": false
+  "useLegacyCache": true
 }
