@@ -18,7 +18,7 @@ describe('app', () => {
   });
 
   it('should generate eslint config file', async () => {
-    await applicationGenerator(tree, { directory: 'apps/my-app' });
+    await applicationGenerator(tree, { directory: 'apps/my-app', linter: 'eslint' });
     const config = readProjectConfiguration(tree, 'nativescript-my-app');
 
     expect(tree.exists(`${config.root}/.eslintrc.json`)).toBeTruthy();
@@ -28,7 +28,7 @@ describe('app', () => {
   it('should generate eslint config file for the flat config', async () => {
     process.env.ESLINT_USE_FLAT_CONFIG = 'true';
 
-    await applicationGenerator(tree, { directory: 'apps/my-app' });
+    await applicationGenerator(tree, { directory: 'apps/my-app', linter: 'eslint' });
     const config = readProjectConfiguration(tree, 'nativescript-my-app');
 
     expect(tree.exists(`${config.root}/.eslintrc.json`)).toBeFalsy();
