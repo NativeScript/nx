@@ -24,6 +24,6 @@ export async function normalizeOptions(host: Tree, options: LibrarySchema): Prom
     projectRootOffset: offsetFromRoot(projectRoot),
     projectSourceRootOffset: offsetFromRoot(projectSourceRoot),
     parsedTags,
-    outputPath: joinPathFragments('dist', projectRoot)
+    outputPath: joinPathFragments('dist', projectRoot),
   };
 }
