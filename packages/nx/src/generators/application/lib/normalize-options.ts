@@ -26,6 +26,5 @@ export async function normalizeOptions(host: Tree, options: ApplicationSchema): 
     parsedTags,
     outputPath: joinPathFragments('dist', projectRoot),
     buildExecutor: '@nativescript/nx:build',
-    lintExecutor: '@nx/eslint:lint',
   };
 }

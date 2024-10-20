@@ -23,5 +23,4 @@ export interface NormalizedSchema extends ApplicationSchema {
   parsedTags: string[];
   outputPath: string;
   buildExecutor: '@nativescript/nx:build';
-  lintExecutor: '@nx/eslint:lint';
 }

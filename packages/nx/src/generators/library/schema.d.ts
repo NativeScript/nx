@@ -26,5 +26,4 @@ export interface NormalizedSchema extends LibrarySchema {
   projectSourceRootOffset: string;
   parsedTags: string[];
   outputPath: string;
-  lintExecutor: '@nx/eslint:lint';
 }

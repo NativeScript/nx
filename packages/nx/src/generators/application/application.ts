@@ -13,6 +13,7 @@ import { addLinting } from './lib/add-linting';
 
 export async function applicationGenerator(tree: Tree, schema: ApplicationSchema) {
   assertNotUsingTsSolutionSetup(tree, 'nativescript', 'application');
+
   if (!schema.directory) {
     throw new Error(missingArgument('name', 'Provide a directory for your NativeScript app.', 'nx g @nativescript/nx:app <directory>'));
   }
@@ -25,6 +26,7 @@ export async function applicationGenerator(tree: Tree, schema: ApplicationSchema
 
   tasks.push(
     await jsInitGenerator(tree, {
+      ...options,
       skipFormat: true,
     })
   );

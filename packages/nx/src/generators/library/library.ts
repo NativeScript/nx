@@ -1,20 +1,22 @@
-import { formatFiles, generateFiles, GeneratorCallback, joinPathFragments, runTasksInSerial, Tree, updateJson } from '@nx/devkit';
-import { getAppNamingConvention, getDefaultTemplateOptions, missingArgument, preRun, TsConfigJson } from '../../utils';
+import { formatFiles, GeneratorCallback, joinPathFragments, runTasksInSerial, Tree, updateJson } from '@nx/devkit';
+import { getAppNamingConvention, missingArgument, preRun, TsConfigJson } from '../../utils';
 import { libraryGenerator as jsLibraryGenerator } from '@nx/js';
 import { assertNotUsingTsSolutionSetup } from '@nx/js/src/utils/typescript/ts-solution-setup';
 import { normalizeOptions } from './lib/normalize-options';
 import { LibrarySchema, NormalizedSchema } from './schema';
+import { createFiles } from './lib/create-files';
+import { updateTsConfig } from './lib/update-ts-config';
 
-export async function libraryGenerator(tree: Tree, options: LibrarySchema & Partial<NormalizedSchema>) {
+export async function libraryGenerator(tree: Tree, schema: LibrarySchema & Partial<NormalizedSchema>) {
   assertNotUsingTsSolutionSetup(tree, 'nativescript', 'library');
 
-  if (!options.directory) {
+  if (!schema.directory) {
     throw new Error(missingArgument('name', 'Provide a directory for your NativeScript lib.', 'nx g @nativescript/nx:lib <directory>'));
   }
-  const commonOptions = preRun(tree, options, true);
-  options = { ...options, ...getAppNamingConvention(options, 'nativescript') };
+  const commonOptions = preRun(tree, schema, true);
+  schema = { ...schema, ...getAppNamingConvention(schema, 'nativescript') };
 
-  options = await normalizeOptions(tree, options);
+  const options = await normalizeOptions(tree, schema);
 
   const tasks: GeneratorCallback[] = [];
 
@@ -33,25 +35,8 @@ export async function libraryGenerator(tree: Tree, options: LibrarySchema & Part
   };
   tasks.push(await jsLibraryGenerator(tree, jsLibGeneratorOptions));
 
-  // add extra files
-  generateFiles(tree, joinPathFragments(__dirname, 'files'), options.projectRoot, {
-    ...options,
-    ...getDefaultTemplateOptions(tree),
-  });
-
-  // update library tsconfig for {N} development
-  updateJson(tree, joinPathFragments(options.projectRoot, 'tsconfig.json'), (tsConfigJson: TsConfigJson) => {
-    const updatedTsConfigJson: TsConfigJson = {
-      ...tsConfigJson,
-    };
-    if (updatedTsConfigJson.files) {
-      updatedTsConfigJson.files.push('./references.d.ts');
-    }
-    if (updatedTsConfigJson.include) {
-      updatedTsConfigJson.include.push('**/*.ts');
-    }
-    return updatedTsConfigJson;
-  });
+  createFiles(tree, options);
+  updateTsConfig(tree, options);
 
   if (!options.skipFormat) {
     await formatFiles(tree);
