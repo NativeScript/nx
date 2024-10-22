@@ -1,6 +1,6 @@
 {
   "name": "@nativescript/nx",
-  "version": "20.0.0-alpha.0",
+  "version": "20.0.0",
   "description": "NativeScript Plugin for Nx",
   "repository": {
     "type": "git",
@@ -18,7 +18,16 @@
   "types": "src/index.d.ts",
   "schematics": "./generators.json",
   "builders": "./executors.json",
-  "author": "NativeScript TSC",
+  "author": {
+    "name": "NativeScript",
+    "email": "oss@nativescript.org"
+  },
+  "contributors": [
+    {
+      "name": "Jake Ihasz",
+      "url": "https://github.com/JakeAi"
+    }
+  ],
   "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/nativescript/nx/issues"
@@ -28,9 +37,10 @@
     "migrations": "./migrations.json"
   },
   "dependencies": {
+    "enquirer": "^2.4.1",
+    "fast-xml-parser": "^4.5.0",
     "fs-extra": "^11.2.0",
-    "plist": "^3.1.0",
-    "xml2js": "~0.6.0"
+    "plist": "^3.1.0"
   },
   "peerDependencies": {
     "@nx/devkit": "^20.0.0",

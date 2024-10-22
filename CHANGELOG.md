@@ -1,3 +1,17 @@
+# [20.0.0](https://github.com/NativeScript/nx/compare/19.0.1...20.0.0) (2024-10-22)
+
+
+### Features
+
+* Nx 20 support ([#79](https://github.com/NativeScript/nx/issues/79)) ([0327592](https://github.com/NativeScript/nx/commit/032759292d1520c3c053960bf2cebd77fcfca258))
+* standardize commands ([#57](https://github.com/NativeScript/nx/issues/57)) ([8ca3429](https://github.com/NativeScript/nx/commit/8ca34296017ea641c9e017bbc01983e4007ee93c))
+
+### BREAKING CHANGES
+
+This release brings forward long awaited standardization to Nx commands and ergonomics.
+See [the migration guide here](https://github.com/NativeScript/nx/wiki/Migrate-guide-for-Nx-19-to-20) to view the adjustments you can make to your NativeScript app's project.json.
+
+
 ## [19.0.1](https://github.com/NativeScript/nx/compare/19.0.0...19.0.1) (2024-09-16)
 
 
