@@ -1,3 +1,12 @@
+## [20.0.3](https://github.com/NativeScript/nx/compare/20.0.1...20.0.3) (2024-10-22)
+
+
+### Features
+
+* visionos helpers ([f535002](https://github.com/NativeScript/nx/commit/f535002b9e7d799a29e39b6f4f44f444398fb52a))
+
+
+
 ## [20.0.1](https://github.com/NativeScript/nx/compare/20.0.0...20.0.1) (2024-10-22)
 
 
