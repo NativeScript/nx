@@ -5,6 +5,7 @@ import { baseSchema } from '../schemas/base.schema';
 import { buildSchema } from '../schemas/build.schema';
 import { debugSchema } from '../schemas/debug.schema';
 import { iosSchema } from '../schemas/ios-properties.schema';
+import { visionOSSchema } from '../schemas/visionos-properties.schema';
 import { prepareSchema } from '../schemas/prepare.schema';
 import { runSchema } from '../schemas/run.schema';
 import { testSchema } from '../schemas/test.schema';
@@ -14,11 +15,11 @@ import { cleanSchema } from '../schemas/clean.schema';
   const outputDirectory = join(__dirname, '..', 'executors', 'build');
 
   const outputs = [
-    { name: 'build', schemas: [baseSchema, androidSchema, iosSchema, buildSchema] },
-    { name: 'debug', schemas: [baseSchema, androidSchema, iosSchema, debugSchema] },
-    { name: 'prepare', schemas: [baseSchema, androidSchema, iosSchema, prepareSchema] },
-    { name: 'run', schemas: [baseSchema, androidSchema, iosSchema, runSchema] },
-    { name: 'test', schemas: [baseSchema, androidSchema, iosSchema, testSchema] },
+    { name: 'build', schemas: [baseSchema, androidSchema, iosSchema, visionOSSchema, buildSchema] },
+    { name: 'debug', schemas: [baseSchema, androidSchema, iosSchema, visionOSSchema, debugSchema] },
+    { name: 'prepare', schemas: [baseSchema, androidSchema, iosSchema, visionOSSchema, prepareSchema] },
+    { name: 'run', schemas: [baseSchema, androidSchema, iosSchema, visionOSSchema, runSchema] },
+    { name: 'test', schemas: [baseSchema, androidSchema, iosSchema, visionOSSchema, testSchema] },
     { name: 'clean', schemas: [cleanSchema] },
   ];
 

@@ -6,6 +6,7 @@ import { IosSchema } from '../schemas/ios-properties.schema';
 import { PrepareSchema } from '../schemas/prepare.schema';
 import { RunSchema } from '../schemas/run.schema';
 import { TestSchema } from '../schemas/test.schema';
+import { visionOSSchema } from '../schemas/visionos-properties.schema';
 
 export type KeysOfProperty<T> = {
   [P in keyof T]: Property;
@@ -21,4 +22,5 @@ export interface Property {
 export interface ExecutorSchema extends BaseSchema, BuildSchema, DebugSchema, PrepareSchema, RunSchema, TestSchema {
   android: AndroidSchema;
   ios: IosSchema;
+  visionos: visionOSSchema;
 }

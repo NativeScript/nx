@@ -114,7 +114,12 @@ export function commonExecutor(options: ExecutorSchema, context: ExecutorContext
 
   function prepareNsOptions(options: ExecutorSchema, projectCwd: string) {
     const nsOptions: string[] = [];
-    nsOptions.push(options.command);
+    if (options.platform === 'visionos') {
+      // visionos does not support debug with chrome devtools yet
+      nsOptions.push('run');
+    } else {
+      nsOptions.push(options.command);
+    }
 
     // early exit for `ns clean`
     if (options.command === COMMANDS.CLEAN) return nsOptions;
