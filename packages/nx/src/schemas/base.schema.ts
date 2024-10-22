@@ -1,7 +1,7 @@
 import { COMMANDS } from '../utils/commands';
 import { KeysOfProperty } from '../utils/types';
 
-export type Platform = 'ios' | 'android';
+export type Platform = 'ios' | 'android' | 'visionos';
 
 export interface BaseSchema {
   command: COMMANDS;

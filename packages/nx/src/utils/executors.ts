@@ -30,15 +30,17 @@ export function commonExecutor(options: ExecutorSchema, context: ExecutorContext
       const platformCheck = [context.configurationName, options.platform].concat(options?.['_']);
       let isIos = platformCheck.some((overrides) => overrides === 'ios');
       let isAndroid = platformCheck.some((overrides) => overrides === 'android');
+      let isVision = platformCheck.some((overrides) => overrides === 'vision' || overrides === 'visionos');
 
-      if (!isClean && !isSilent && !isIos && !isAndroid) {
+      if (!isClean && !isSilent && !isIos && !isAndroid && !isVision) {
         const platform = await selectPlatform(options);
         isIos = platform === 'ios';
         isAndroid = platform === 'android';
+        isVision = platform === 'visionos';
       }
 
       if (!isClean) {
-        options.platform = isAndroid ? 'android' : 'ios';
+        options.platform = isAndroid ? 'android' : (isIos ? 'ios' : 'visionos');
       }
 
       const projectConfig = context.projectsConfigurations.projects[context.projectName];
@@ -64,7 +66,7 @@ export function commonExecutor(options: ExecutorSchema, context: ExecutorContext
       }
 
       if (options.android?.xmlUpdates) updateXml(options.android.xmlUpdates, 'android');
-      if (options.ios?.plistUpdates) updateXml(options.ios.plistUpdates, 'android');
+      if (options.ios?.plistUpdates) updateXml(options.ios.plistUpdates, 'ios');
 
       await checkOptions();
 
@@ -84,7 +86,7 @@ export function commonExecutor(options: ExecutorSchema, context: ExecutorContext
       return 'ios';
     }
 
-    const platformChoices: Platform[] = ['ios', 'android'];
+    const platformChoices: Platform[] = ['ios', 'android', 'visionos'];
     const { platform } = await prompt<{ platform: Platform }>({
       type: 'select',
       name: 'platform',
@@ -166,6 +168,8 @@ export function commonExecutor(options: ExecutorSchema, context: ExecutorContext
         let defaultDir: string[];
         if (type === 'ios') {
           defaultDir = ['App_Resources', 'iOS'];
+        } else if (type === 'visionos') {
+          defaultDir = ['App_Resources', 'visionOS'];
         } else if (type === 'android') {
           defaultDir = ['App_Resources', 'Android'];
         }
@@ -176,7 +180,7 @@ export function commonExecutor(options: ExecutorSchema, context: ExecutorContext
       const fileContent = readFileSync(xmlFilePath, 'utf8');
       const xmlUpdates = xmlUpdatesConfig[filePathKeys];
 
-      if (type === 'ios') {
+      if (type === 'ios' || type === 'visionos') {
         xmlFileContent = parse(fileContent);
       } else if (type === 'android') {
         const parser = new XMLParser({
@@ -212,7 +216,7 @@ export function commonExecutor(options: ExecutorSchema, context: ExecutorContext
 
       if (needsUpdate) {
         let newXmlFileContent;
-        if (type === 'ios') {
+        if (type === 'ios' || type === 'visionos') {
           newXmlFileContent = build(xmlFileContent, { pretty: true, indent: '\t' });
         } else if (type === 'android') {
           const builder = new XMLBuilder({
