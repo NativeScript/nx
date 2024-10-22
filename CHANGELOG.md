@@ -1,3 +1,12 @@
+## [20.0.1](https://github.com/NativeScript/nx/compare/20.0.0...20.0.1) (2024-10-22)
+
+
+### Features
+
+* visionos prompt ([29d1495](https://github.com/NativeScript/nx/commit/29d14953a53e5d7692c05cda4e24a11af99af42d))
+
+
+
 # [20.0.0](https://github.com/NativeScript/nx/compare/19.0.1...20.0.0) (2024-10-22)
 
 
