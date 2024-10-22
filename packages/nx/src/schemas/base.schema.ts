@@ -1,11 +1,13 @@
 import { COMMANDS } from '../utils/commands';
 import { KeysOfProperty } from '../utils/types';
 
+export type Platform = 'ios' | 'android';
+
 export interface BaseSchema {
   command: COMMANDS;
   force: boolean;
   id: string;
-  platform: 'ios' | 'android';
+  platform: Platform;
   silent: boolean;
   verbose: boolean;
 }
