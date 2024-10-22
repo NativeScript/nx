@@ -1,169 +1,61 @@
-import { Tree, addProjectConfiguration, generateFiles, joinPathFragments, installPackagesTask } from '@nx/devkit';
-import { initGenerator } from '@nx/js';
-import { getAppName, getDefaultTemplateOptions, getFrontendFramework, getPrefix, missingArgument, PluginHelpers, prerun, updateNxProjects, updatePackageScripts } from '../../utils';
-import { angularVersion, nsAngularVersion, nsWebpackVersion, nsNgToolsVersion, nsCoreVersion, typescriptVersion, rxjsVersion, zonejsVersion, nsIOSRuntimeVersion, nsAndroidRuntimeVersion } from '../../utils/versions';
+import { Tree, addProjectConfiguration, runTasksInSerial, GeneratorCallback, formatFiles } from '@nx/devkit';
+import { initGenerator as jsInitGenerator } from '@nx/js';
+import { getAppNamingConvention, missingArgument, preRun, updatePluginDependencies, updatePluginSettings } from '../../utils';
 import { appResources } from '../app-resources/app-resources';
-import { Schema } from './schema';
+import { assertNotUsingTsSolutionSetup } from '@nx/js/src/utils/typescript/ts-solution-setup';
+import { normalizeOptions } from './lib/normalize-options';
+import { addBuildTargetDefaults } from '@nx/devkit/src/generators/target-defaults-utils';
+import { logShowProjectCommand } from '@nx/devkit/src/utils/log-show-project-command';
+import { ApplicationSchema } from './schema';
+import { createFiles } from './lib/create-files';
+import { getProjectConfiguration } from './lib/project-json';
+import { addLinting } from './lib/add-linting';
 
-export async function applicationGenerator(tree: Tree, options: Schema) {
-  if (!options.name) {
-    throw new Error(missingArgument('name', 'Provide a name for your NativeScript app.', 'nx g @nativescript/nx:app name'));
+export async function applicationGenerator(tree: Tree, schema: ApplicationSchema) {
+  assertNotUsingTsSolutionSetup(tree, 'nativescript', 'application');
+
+  if (!schema.directory) {
+    throw new Error(missingArgument('name', 'Provide a directory for your NativeScript app.', 'nx g @nativescript/nx:app <directory>'));
   }
+  const commonOptions = preRun(tree, schema, true);
+  schema = { ...schema, ...getAppNamingConvention(schema, 'nativescript') };
 
-  prerun(tree, options, true);
-  PluginHelpers.applyAppNamingConvention(tree, options, 'nativescript');
+  const options = await normalizeOptions(tree, schema);
 
-  await initGenerator(tree, {
-    skipFormat: true,
-  });
-  addAppFiles(tree, options, options.name);
+  const tasks: GeneratorCallback[] = [];
+
+  tasks.push(
+    await jsInitGenerator(tree, {
+      ...options,
+      skipFormat: true,
+    })
+  );
+
+  addBuildTargetDefaults(tree, options.buildExecutor);
+  addProjectConfiguration(tree, options.name, getProjectConfiguration(options));
+
+  createFiles(tree, options);
   // add extra files per options
   if (options.routing && ['angular'].includes(options.framework)) {
-    addAppFiles(tree, options, options.name, 'routing');
+    createFiles(tree, options, 'routing');
   }
   // add app resources
   appResources(tree, {
-    path: `apps/${options.directory ? options.directory + '/' : ''}${options.name}`,
+    path: options.projectRoot,
   });
-  PluginHelpers.updateRootDeps(tree, options);
-  // PluginHelpers.updatePrettierIgnore(),
-  // PluginHelpers.addPackageInstallTask(tree, options);
 
-  const directory = options.directory ? `${options.directory}/` : '';
-  const appPath = `apps/${directory}${options.name}`;
-  let frontendFrameworkConfig: any = {};
-  switch (options.framework) {
-    case 'angular':
-      frontendFrameworkConfig = {
-        build: {
-          executor: '@nativescript/nx:build',
-          options: {
-            noHmr: true,
-            production: true,
-            uglify: true,
-            release: true,
-            forDevice: true,
-            android: {
-              copyTo: './dist/build.apk',
-              keyStorePath: 'path/to/android.keystore',
-              keyStoreAlias: 'alias',
-              keyStorePassword: 'pass',
-              keyStoreAliasPassword: 'pass',
-            },
-            ios: {
-              copyTo: './dist/build.ipa',
-            },
-          },
-          configurations: {
-            production: {
-              fileReplacements: [
-                {
-                  replace: './src/environments/environment.ts',
-                  with: './src/environments/environment.prod.ts',
-                },
-              ],
-            },
-          },
-        },
-      };
-      break;
+  tasks.push(await addLinting(tree, options));
+
+  updatePluginSettings(tree, options);
+  tasks.push(updatePluginDependencies(tree, options));
+
+  if (!options.skipFormat) {
+    await formatFiles(tree);
   }
-  addProjectConfiguration(tree, options.name, {
-    root: `${appPath}/`,
-    sourceRoot: `${appPath}/src`,
-    projectType: 'application',
-    targets: {
-      ...frontendFrameworkConfig,
-      prepare: {
-        executor: '@nativescript/nx:prepare',
-        options: {
-          noHmr: true,
-          production: true,
-          uglify: true,
-          release: true,
-          forDevice: true,
-          platform: 'ios',
-        },
-        configurations: {
-          production: {
-            combineWithConfig: 'build:production'
-          },
-        },
-      },
-      debug: {
-        executor: '@nativescript/nx:debug',
-        options: {
-          noHmr: true,
-        },
-        configurations: {
-          production: {
-            combineWithConfig: 'build:production'
-          },
-        },
-      },
-      run: {
-        executor: '@nativescript/nx:run',
-        options: {
-          noHmr: true,
-        },
-        configurations: {
-          production: {
-            combineWithConfig: 'build:production'
-          },
-        },
-      },
-      clean: {
-        executor: '@nativescript/nx:clean',
-        options: {},
-      },
-      lint: {
-        executor: '@nrwl/linter:eslint',
-        options: {
-          lintFilePatterns: [`${appPath}/**/*.ts`, `${appPath}/src/**/*.html`],
-        },
-      },
-      test: {
-        executor: '@nativescript/nx:test',
-        outputs: [`coverage/${appPath}`],
-        options: {
-          coverage: true,
-        },
-        configurations: {},
-      },
-    },
-  });
 
-  return () => {
-    installPackagesTask(tree);
-  };
-}
+  tasks.push(() => logShowProjectCommand(options.name));
 
-function addAppFiles(tree: Tree, options: Schema, appName: string, extra: string = '') {
-  const appname = getAppName(options, 'nativescript');
-  const directory = options.directory ? `${options.directory}/` : '';
-  const framework = options.framework || getFrontendFramework() || 'angular';
-  if (typeof options.routing === 'undefined') {
-    // ensure it's at least defined
-    options.routing = false;
-  }
-  generateFiles(tree, joinPathFragments(__dirname, `files${framework ? '_' + framework : ''}${extra ? '_' + extra : ''}`), `apps/${directory}${appName}`, {
-    ...(options as any),
-    ...getDefaultTemplateOptions(tree),
-    appname,
-    directoryAppPath: `${directory}${options.name}`,
-    pathOffset: directory ? '../../../' : '../../',
-    libFolderName: PluginHelpers.getLibFoldername('nativescript'),
-    angularVersion,
-    nsAngularVersion,
-    nsCoreVersion,
-    nsWebpackVersion,
-    nsNgToolsVersion,
-    rxjsVersion,
-    zonejsVersion,
-    typescriptVersion,
-    nsIOSRuntimeVersion,
-    nsAndroidRuntimeVersion,
-  });
+  return runTasksInSerial(...tasks);
 }
 
 export default applicationGenerator;

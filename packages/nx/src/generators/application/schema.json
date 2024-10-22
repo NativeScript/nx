@@ -4,20 +4,26 @@
   "title": "Create a NativeScript Application for Nx",
   "examples": [
     {
-      "command": "g app myapp --directory=nested",
-      "description": "Generate apps/nested/myapp"
+      "command": "g app apps/nested/myapp",
+      "description": "Generate myapp app under apps/nested/myapp folder"
     }
   ],
   "type": "object",
   "properties": {
-    "name": {
-      "description": "The name of the application.",
+    "directory": {
       "type": "string",
+      "description": "A directory where the application is placed",
       "$default": {
         "$source": "argv",
         "index": 0
       },
-      "x-prompt": "What name would you like to use for the application?"
+      "alias": "d",
+      "x-prompt": "What directory would you like to use for the application? (full path - eg. apps/my-lib)"
+    },
+    "name": {
+      "type": "string",
+      "description": "The name of the application.",
+      "alias": "n"
     },
     "framework": {
       "description": "The frontend framework to use.",
@@ -43,13 +49,8 @@
       "description": "Use root routing module.",
       "default": true
     },
-    "directory": {
-      "description": "The directory of the new application.",
-      "type": "string",
-      "alias": "d"
-    },
     "groupByName": {
-      "description": "Group by app name (appname-platform) instead of the default (platform-appname)",
+      "description": "Group by app name (baseName-platform) instead of the default (platform-baseName)",
       "type": "boolean",
       "default": false
     },
@@ -60,10 +61,7 @@
     },
     "unitTestRunner": {
       "type": "string",
-      "enum": [
-        "jest",
-        "none"
-      ],
+      "enum": ["jest", "none"],
       "description": "Test runner to use for unit tests",
       "default": "jest"
     },
@@ -71,7 +69,13 @@
       "type": "string",
       "description": "Add tags to the application (used for linting)",
       "alias": "t"
+    },
+    "linter": {
+      "description": "The tool to use for running lint checks.",
+      "type": "string",
+      "enum": ["eslint", "none"],
+      "default": "eslint"
     }
   },
-  "required": []
+  "required": ["directory"]
 }

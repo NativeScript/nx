@@ -7,8 +7,6 @@ describe('init', () => {
 
   beforeEach(() => {
     tree = createTreeWithEmptyWorkspace({ layout: 'apps-libs' });
-    tree.write('/apps/.gitignore', '');
-    tree.write('/libs/.gitignore', '');
   });
 
   it('should add nativescript dependencies', async () => {

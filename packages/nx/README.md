@@ -57,15 +57,16 @@ At the prompts, you can use:
 ```sh
 ✔ Where would you like to create your workspace? · {your-workspace-name}
 
-# Choose "None"
-
 ? Which stack do you want to use? … 
 None:          Configures a minimal structure without specific frameworks or technologies.
-
-# Choose "Integrated"
+# Choose "None"
 
 ? Package-based monorepo, integrated monorepo, or standalone project?
 Integrated Monorepo:        Nx creates a monorepo that contains multiple projects.
+# Choose "Integrated"
+
+? Do you want Nx Cloud to make your CI fast? 
+# Choice is completely up to you
 ```
 
 ### Init workspace
@@ -84,6 +85,16 @@ npm install --save-dev @nativescript/nx
 
 # Using yarn
 yarn add -D @nativescript/nx
+```
+
+*Note: If you get a Warning on peer dependencies you can ignore.* For example:
+
+```bash
+npm WARN ERESOLVE overriding peer dependency
+npm WARN While resolving: @swc-node/core@1.13.1
+npm WARN Found: @swc/core@1.3.107
+npm WARN node_modules/@swc/core
+npm WARN   peer @swc/core@">= 1.3" from @swc-node/register@1.8.0
 ```
 
 ### Create an app

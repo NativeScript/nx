@@ -5,24 +5,25 @@
   "type": "object",
   "examples": [
     {
-      "command": "g lib mylib --directory=myapp",
-      "description": "Generate libs/myapp/mylib"
+      "command": "g lib libs/my-lib",
+      "description": "Generate nativescript-my-lib app under libs/nativescript-my-lib folder"
     }
   ],
   "properties": {
-    "name": {
+    "directory": {
       "type": "string",
-      "description": "Library name",
+      "description": "A directory where the lib is placed",
       "$default": {
         "$source": "argv",
         "index": 0
       },
-      "x-prompt": "What name would you like to use for the library?",
-      "pattern": "^[a-zA-Z]{1}.*$"
+      "alias": "d",
+      "x-prompt": "What directory would you like to use for the library? (full path - eg. libs/my-lib)"
     },
-    "directory": {
+    "name": {
       "type": "string",
-      "description": "A directory where the lib is placed"
+      "description": "Library name",
+      "alias": "n"
     },
     "groupByName": {
       "description": "Group by lib name (libname-platform) instead of the default (platform-libname)",
@@ -32,18 +33,12 @@
     "linter": {
       "description": "The tool to use for running lint checks.",
       "type": "string",
-      "enum": [
-        "eslint",
-        "tslint"
-      ],
+      "enum": ["eslint", "none"],
       "default": "eslint"
     },
     "unitTestRunner": {
       "type": "string",
-      "enum": [
-        "jest",
-        "none"
-      ],
+      "enum": ["jest", "vitest", "none"],
       "description": "Test runner to use for unit tests",
       "default": "jest"
     },
@@ -63,21 +58,13 @@
     },
     "testEnvironment": {
       "type": "string",
-      "enum": [
-        "jsdom",
-        "node"
-      ],
+      "enum": ["jsdom", "node"],
       "description": "The test environment to use if unitTestRunner is set to jest",
       "default": "jsdom"
     },
     "importPath": {
       "type": "string",
       "description": "The library name used to import it, like @myorg/my-awesome-lib"
-    },
-    "babelJest": {
-      "type": "boolean",
-      "description": "Use babel instead ts-jest",
-      "default": false
     },
     "pascalCaseFiles": {
       "type": "boolean",
@@ -91,7 +78,5 @@
       "default": false
     }
   },
-  "required": [
-    "name"
-  ]
+  "required": ["directory"]
 }

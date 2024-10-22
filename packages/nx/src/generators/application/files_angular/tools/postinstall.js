@@ -5,7 +5,7 @@ const path = require('path');
 const childProcess = require('child_process');
 
 // Copy potential hooks from root dependencies to app
-const hooksSrc = '<%= pathOffset %>hooks';
+const hooksSrc = '<%= projectRootOffset %>hooks';
 const hooksDest = 'hooks';
 console.info(`Copying ${hooksSrc} -> ${hooksDest}`);
 try {

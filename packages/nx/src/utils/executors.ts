@@ -1,127 +1,121 @@
 import { ExecutorContext, readProjectConfiguration } from '@nx/devkit';
 import * as childProcess from 'child_process';
-import { readFileSync, writeFileSync } from 'fs-extra';
-import * as enquirer from 'enquirer';
 import { resolve as nodeResolve } from 'path';
-import { build, parse } from 'plist';
-import { Builder, parseString } from 'xml2js';
-import { mergeDeep } from '../schemas/deep-merge';
-import { COMMANDS } from './commands';
-import { normalizeExtraFlags } from './normalize-extra-flags';
-import { parseOptionName } from './parse-option-name';
-import { ExecutorSchema } from './types';
+import { parse, build } from 'plist';
+import { parseString, Builder } from 'xml2js';
+import { readFileSync, writeFileSync } from 'fs-extra';
+import { quoteString } from './helpers';
 
-export function commonExecutor(options: ExecutorSchema, context: ExecutorContext): Promise<{ success: boolean }> {
-  // eslint-disable-next-line no-async-promise-executor
-  return new Promise(async (resolve, reject) => {
+const isWindows = process.platform === 'win32';
+
+export interface BuildExecutorSchema {
+  debug?: boolean;
+  device?: string;
+  emulator?: boolean;
+  clean?: boolean;
+  noHmr?: boolean;
+  timeout?: number;
+  uglify?: boolean;
+  verbose?: boolean;
+  release?: boolean;
+  forDevice?: boolean;
+  production?: boolean;
+  platform?: 'ios' | 'android';
+  copyTo?: string;
+  force?: boolean;
+  flags?: string;
+  combineWithConfig?: string;
+  fileReplacements?: Array<{ replace: string; with: string }>;
+  id?: string;
+  plistUpdates?: any;
+  xmlUpdates?: any;
+  /** For running `ns prepare <platform>` */
+  prepare?: boolean;
+
+  // ios only
+  provision?: string;
+
+  // android only
+  aab?: boolean;
+  keyStorePath?: string;
+  keyStorePassword?: string;
+  keyStoreAlias?: string;
+  keyStoreAliasPassword?: string;
+}
+
+export interface TestExecutorSchema extends BuildExecutorSchema {
+  coverage?: boolean;
+}
+
+export function commonExecutor(
+  options: BuildExecutorSchema | TestExecutorSchema,
+  context: ExecutorContext,
+  isTesting?: boolean
+): Promise<{ success: boolean }> {
+  return new Promise((resolve, reject) => {
     try {
-      const isBuild = options.command === COMMANDS.BUILD;
-      const isClean = options.command === COMMANDS.CLEAN;
-      const isDebug = options.command === COMMANDS.DEBUG;
-      const isPrepare = options.command === COMMANDS.PREPARE;
-      const isRun = options.command === COMMANDS.RUN;
-      const isTest = options.command === COMMANDS.TEST;
-      const isSilent = options.silent === true;
-
-      const platformCheck = [].concat(context.configurationName, options.platform, options?.['_']);
-      let isIos = platformCheck.some((overrides) => overrides === 'ios');
-      let isAndroid = platformCheck.some((overrides) => overrides === 'android');
-
-      if (!isClean && !isSilent && !isIos && !isAndroid) {
-        const { platform } = <{ platform: string }>await enquirer.default.prompt({
-          type: 'select',
-          name: 'platform',
-          message: 'Which platform do you want to target?',
-          choices: [{ name: 'ios' }, { name: 'android' }],
-        });
-        isIos = platform === 'ios';
-        isAndroid = platform === 'android';
-      }
-
-      if (!isClean) {
-        if (isAndroid) {
-          options.platform = 'android';
-        } else if (isIos) {
-          options.platform = 'ios';
-        } else {
-          options.platform = 'ios';
-          console.warn('No platform was specified. Defaulting to iOS.');
+      const projectConfig = context.projectsConfigurations.projects[context.projectName];
+      const activeTarget = projectConfig.targets[context.targetName];
+      const buildTarget = projectConfig.targets['build'];
+      // determine if running or building only
+      const isBuild = context.targetName === 'build' || process.argv.find((a) => a === 'build' || a.endsWith(':build'));
+      if (isBuild) {
+        // allow build options to override run target options
+        if (buildTarget && buildTarget.options) {
+          options = {
+            ...options,
+            ...buildTarget.options,
+          };
         }
       }
-
-      const projectConfig = context.workspace.projects[context.projectName];
+      // console.log('context.projectName:', context.projectName);
       const projectCwd = projectConfig.root;
+      // console.log('projectCwd:', projectCwd);
+      // console.log('context.targetName:', context.targetName);
+      // console.log('context.configurationName:', context.configurationName);
+      // console.log('context.target.options:', context.target.options);
 
-      const target = projectConfig.targets[options.command];
-      const targetOptions = target.options;
-      const targetPlatformOptions = targetOptions[options.platform];
-      const targetConfigurations = target.configurations;
-      let targetConfigurationName = context.configurationName;
-      // const targetDescription = JSON.parse(process.argv.find((arg) => arg.indexOf('targetDescription') !== -1));
-
-      // fix for nx overwriting android and ios sub properties
-      mergeDeep(options, targetOptions);
-
-      if (!isClean && !isSilent && !targetConfigurationName && Object.keys(targetConfigurations || {}).length) {
-        const { configurationName } = <{ configurationName: string }>await enquirer.default.prompt({
-          type: 'select',
-          name: 'configurationName',
-          message: 'No configuration was provided. Did you mean to select one of these configurations?',
-          choices: ['No', ...Object.keys(targetConfigurations)],
-        });
-        if (configurationName == 'No') {
-          console.warn(`Continuing with no configuration. Specify with --configuration=prod, -c=prod, or :prod`);
-        } else {
-          targetConfigurationName = configurationName;
-        }
+      let targetConfigName = '';
+      if (context.configurationName && context.configurationName !== 'build') {
+        targetConfigName = context.configurationName;
       }
 
-      // fix for nx overwriting android and ios sub properties
-      if (targetConfigurationName) {
-        mergeDeep(options, targetConfigurations[targetConfigurationName]);
-      }
+      // determine if any trailing args that need to be added to run/build command
+      const configTarget = targetConfigName ? `:${targetConfigName}` : '';
+      const projectTargetCmd = `${context.projectName}:${context.targetName}${configTarget}`;
+      const projectTargetCmdIndex = process.argv.findIndex((c) => c === projectTargetCmd);
 
-      const nsOptions = [];
-      nsOptions.push(options.command);
+      const nsCliFileReplacements: Array<string> = [];
 
-      if (!isClean) {
-        options.platform && nsOptions.push(options.platform);
-        options.clean && nsOptions.push('--clean');
-        options.coverage && nsOptions.push('--env.codeCoverage');
-        options.device && !options.emulator && nsOptions.push(`--device=${options.device}`);
-        options.emulator && nsOptions.push('--emulator');
-        options.noHmr && nsOptions.push('--no-hmr');
-        options.timeout && options.timeout > -1 && nsOptions.push(`--timeout=${options.timeout}`);
-        options.uglify && nsOptions.push('--env.uglify');
-        options.verbose && nsOptions.push('--env.verbose');
-        options.production && nsOptions.push('--env.production');
-        options.forDevice && nsOptions.push('--for-device');
-        options.release && nsOptions.push('--release');
-        options.copyTo && nsOptions.push(`--copy-to=${options.copyTo}`);
-        options.force !== false && nsOptions.push('--force');
+      let configOptions;
+      if (activeTarget && activeTarget.configurations) {
+        configOptions = activeTarget.configurations[targetConfigName];
+        // console.log('configOptions:', configOptions)
 
-        if (isAndroid && options.android) {
-          options.android.aab && nsOptions.push('--aab');
-          options.android.keyStorePath && nsOptions.push(`--key-store-path=${options.android.keyStorePath}`);
-          options.android.keyStorePassword && nsOptions.push(`--key-store-password=${options.android.keyStorePassword}`);
-          options.android.keyStoreAlias && nsOptions.push(`--key-store-alias=${options.android.keyStoreAlias}`);
-          options.android.keyStoreAliasPassword && nsOptions.push(`--key-store-alias-password=${options.android.keyStoreAliasPassword}`);
-        }
-        if (isIos && options.ios) {
-          options.ios.provision && nsOptions.push(`--provision=${options.ios.provision}`);
+        if (isBuild) {
+          // merge any custom build options for the target
+          const targetBuildConfig = activeTarget.configurations['build'];
+          if (targetBuildConfig) {
+            options = {
+              ...options,
+              ...targetBuildConfig,
+            };
+          }
         }
 
-        const nsCliFileReplacements: Array<string> = [];
-        if (targetConfigurationName) {
-          const configOptions = targetConfigurations[targetConfigurationName];
+        if (configOptions) {
+          if (configOptions.fileReplacements) {
+            for (const r of configOptions.fileReplacements) {
+              nsCliFileReplacements.push(`${r.replace.replace(projectCwd, './')}:${r.with.replace(projectCwd, './')}`);
+            }
+          }
           if (configOptions.combineWithConfig) {
             const configParts = configOptions.combineWithConfig.split(':');
             const combineWithTargetName = configParts[0];
-            let configName: string;
             const combineWithTarget = projectConfig.targets[combineWithTargetName];
             if (combineWithTarget && combineWithTarget.configurations) {
               if (configParts.length > 1) {
-                configName = configParts[1];
+                const configName = configParts[1];
                 const combineWithTargetConfig = combineWithTarget.configurations[configName];
                 // TODO: combine configOptions with combineWithConfigOptions
                 if (combineWithTargetConfig) {
@@ -133,35 +127,133 @@ export function commonExecutor(options: ExecutorSchema, context: ExecutorContext
                 }
               }
             } else {
-              console.warn(`Warning: No configurations will be combined. A "${combineWithTargetName}" target${configName ? ' with configuration "' + configName + '"' : ''} was not found for project name: "${context.projectName}"`);
+              console.warn(`Warning: No configurations will be combined. "${combineWithTargetName}" was not found for project name: "${context.projectName}"`);
             }
           }
         }
-        for (const r of options?.fileReplacements) {
-          nsCliFileReplacements.push(`${r.replace.replace(projectCwd, './')}:${r.with.replace(projectCwd, './')}`);
+      }
+
+      let nsOptions = [];
+      if (isTesting) {
+        nsOptions.push('test');
+      }
+
+      if (options.clean) {
+        nsOptions.push('clean');
+      } else {
+        if (isBuild) {
+          nsOptions.push('build');
+        } else if (options.prepare) {
+          nsOptions.push('prepare');
+        } else if (!isTesting) {
+          if (options.debug === false) {
+            nsOptions.push('run');
+          } else {
+            // default to debug mode
+            nsOptions.push('debug');
+          }
         }
-        nsCliFileReplacements.length && nsOptions.push(`--env.replace="${nsCliFileReplacements.join(',')}"`);
+
+        if (!options.platform) {
+          // a platform must be set
+          // absent of it being explicitly set, we default to 'ios'
+          // this helps cases where nx run-many is used for general targets used in, for example, pull request auto prepare/build checks (just need to know if there are any .ts errors in the build where platform often doesn't matter - much)
+          options.platform = 'ios';
+        }
+
+        if (options.platform) {
+          nsOptions.push(options.platform);
+        }
+        if ((<TestExecutorSchema>options).coverage) {
+          nsOptions.push('--env.codeCoverage');
+        }
+        if (options.device && !options.emulator) {
+          nsOptions.push(`--device=${options.device}`);
+        }
+        if (options.emulator) {
+          nsOptions.push('--emulator');
+        }
+        if (options.noHmr) {
+          nsOptions.push('--no-hmr');
+        }
+        if (options.timeout && options.timeout > -1) {
+          nsOptions.push(`--timeout=${options.timeout}`);
+        }
+        if (options.uglify) {
+          nsOptions.push('--env.uglify');
+        }
+        if (options.verbose) {
+          nsOptions.push('--log=trace');
+        }
+        if (options.production) {
+          nsOptions.push('--env.production');
+        }
+        if (options.forDevice) {
+          nsOptions.push('--for-device');
+        }
+        if (options.release) {
+          nsOptions.push('--release');
+        }
+        if (options.aab) {
+          nsOptions.push('--aab');
+        }
+        if (options.keyStorePath) {
+          nsOptions.push(`--key-store-path=${options.keyStorePath}`);
+        }
+        if (options.keyStorePassword) {
+          nsOptions.push(`--key-store-password=${options.keyStorePassword}`);
+        }
+        if (options.keyStoreAlias) {
+          nsOptions.push(`--key-store-alias=${options.keyStoreAlias}`);
+        }
+        if (options.keyStoreAliasPassword) {
+          nsOptions.push(`--key-store-alias-password=${options.keyStoreAliasPassword}`);
+        }
+        if (options.provision) {
+          nsOptions.push(`--provision=${options.provision}`);
+        }
+        if (options.copyTo) {
+          nsOptions.push(`--copy-to=${options.copyTo}`);
+        }
+
+        if (nsCliFileReplacements.length) {
+          // console.log('nsCliFileReplacements:', nsCliFileReplacements);
+          nsOptions.push(`--env.replace="${nsCliFileReplacements.join(',')}"`);
+        }
+        // always add --force (unless explicity set to false) for now since within Nx we use @nativescript/webpack at root only and the {N} cli shows a blocking error if not within the app
+        if (options?.force !== false) {
+          nsOptions.push('--force');
+        }
       }
 
       // some options should never be duplicated
-      // const enforceSingularOptions = ['provision', 'device', 'copy-to'];
-
+      const enforceSingularOptions = ['provision', 'device', 'copy-to'];
+      const parseOptionName = (flag: string) => {
+        // strip just the option name from extra arguments
+        // --provision='match AppStore my.bundle.com' > provision
+        return flag.split('=')[0].replace('--', '');
+      };
       // additional cli flags
-      // const overrides = { ...targetDescription.overrides };
-      // // remove nx unparsed overrides
-      // for (const override of Object.keys(overrides)) {
-      //   if (override.indexOf('_') === 0) delete overrides[override];
-      // }
-      const additionalArgs = [];//normalizeExtraFlags(overrides);
-
-      // if (!isClean) {
-      //   for (const flag of additionalArgs) {
-      //     const optionName = parseOptionName(flag);
-      //     if (!nsOptions.includes(flag) && !additionalArgs.includes(flag) && !enforceSingularOptions.includes(optionName)) {
-      //       additionalArgs.push(flag);
-      //     }
-      //   }
-      // }
+      // console.log('projectTargetCmdIndex:', projectTargetCmdIndex)
+      let additionalArgs = [];
+      if (options.flags) {
+        // persisted flags in configurations
+        additionalArgs.push(...options.flags.split(' '));
+      }
+      if (!options.clean && process.argv.length > projectTargetCmdIndex + 1) {
+        // manually added flags to the execution command
+        const extraFlags = process.argv.slice(projectTargetCmdIndex + 1, process.argv.length);
+        for (const flag of extraFlags) {
+          const optionName = parseOptionName(flag);
+          if (optionName?.indexOf('/') === -1 && optionName?.indexOf('{') === -1 && optionName?.indexOf('\\') === -1) {
+            // no valid options should start with '/' or '{' - those are often extra process.argv context args that should be ignored
+            if (!nsOptions.includes(flag) && !additionalArgs.includes(flag) && !enforceSingularOptions.includes(optionName)) {
+              additionalArgs.push(flag);
+            }
+          }
+        }
+        // console.log('additionalArgs:', additionalArgs);
+      }
 
       const runCommand = function () {
         let icon = '';
@@ -174,8 +266,13 @@ export function commonExecutor(options: ExecutorSchema, context: ExecutorContext
             icon = '🥽';
           }
         }
+        if (isWindows) {
+          // https://github.com/NativeScript/nativescript-cli/pull/5808
+          nsOptions = nsOptions.map((arg) => quoteString(arg));
+          additionalArgs = additionalArgs.map((arg) => quoteString(arg));
+        }
         console.log(`―――――――――――――――――――――――― ${icon}`);
-        console.log(`Running NativeScript ${isTest ? 'unit tests' : 'CLI'} within ${projectCwd}`);
+        console.log(`Running NativeScript ${isTesting ? 'unit tests' : 'CLI'} within ${projectCwd}`);
         console.log(' ');
         console.log([`ns`, ...nsOptions, ...additionalArgs].join(' '));
         console.log(' ');
@@ -187,6 +284,7 @@ export function commonExecutor(options: ExecutorSchema, context: ExecutorContext
         const child = childProcess.spawn(/^win/.test(process.platform) ? 'ns.cmd' : 'ns', [...nsOptions, ...additionalArgs], {
           cwd: projectCwd,
           stdio: 'inherit',
+          shell: isWindows ? true : undefined,
         });
         child.on('close', (code) => {
           console.log(`Done.`);
@@ -197,8 +295,13 @@ export function commonExecutor(options: ExecutorSchema, context: ExecutorContext
 
       const checkAppId = function () {
         return new Promise((resolve) => {
-          const child = childProcess.spawn(/^win/.test(process.platform) ? 'ns.cmd' : 'ns', ['config', 'get', `id`], {
+          let args = ['config', 'get', `id`];
+          if (isWindows) {
+            args = args.map((arg) => quoteString(arg));
+          }
+          const child = childProcess.spawn(/^win/.test(process.platform) ? 'ns.cmd' : 'ns', args, {
             cwd: projectCwd,
+            shell: isWindows ? true : undefined,
           });
           child.stdout.setEncoding('utf8');
           child.stdout.on('data', function (data) {
@@ -219,9 +322,14 @@ export function commonExecutor(options: ExecutorSchema, context: ExecutorContext
           checkAppId().then((id) => {
             if (options.id !== id) {
               // set custom app bundle id before running the app
-              const child = childProcess.spawn(/^win/.test(process.platform) ? 'ns.cmd' : 'ns', ['config', 'set', `${options.platform}.id`, options.id], {
+              let args = ['config', 'set', `${options.platform}.id`, options.id];
+              if (isWindows) {
+                args = args.map((arg) => quoteString(arg));
+              }
+              const child = childProcess.spawn(/^win/.test(process.platform) ? 'ns.cmd' : 'ns', args, {
                 cwd: projectCwd,
                 stdio: 'inherit',
+                shell: isWindows ? true : undefined,
               });
               child.on('close', (code) => {
                 child.kill('SIGKILL');
@@ -239,7 +347,7 @@ export function commonExecutor(options: ExecutorSchema, context: ExecutorContext
       if (options.clean) {
         runCommand();
       } else {
-        const plistKeys = Object.keys(options.ios?.plistUpdates || {});
+        const plistKeys = Object.keys(options.plistUpdates || {});
         if (plistKeys.length) {
           for (const filepath of plistKeys) {
             let plistPath: string;
@@ -251,7 +359,7 @@ export function commonExecutor(options: ExecutorSchema, context: ExecutorContext
               plistPath = nodeResolve(projectCwd, 'App_Resources', 'iOS', filepath);
             }
             const plistFile = parse(readFileSync(plistPath, 'utf8'));
-            const plistUpdates = options.ios.plistUpdates[filepath];
+            const plistUpdates = options.plistUpdates[filepath];
             // check if updates are needed to avoid native build if not needed
             let needsUpdate = false;
             for (const key in plistUpdates) {
@@ -281,7 +389,7 @@ export function commonExecutor(options: ExecutorSchema, context: ExecutorContext
           }
         }
 
-        const xmlKeys = Object.keys(options.android?.xmlUpdates || {});
+        const xmlKeys = Object.keys(options.xmlUpdates || {});
         if (xmlKeys.length) {
           for (const filepath of xmlKeys) {
             let xmlPath: string;
@@ -302,7 +410,7 @@ export function commonExecutor(options: ExecutorSchema, context: ExecutorContext
               // console.log('BEFORE---');
               // console.log(JSON.stringify(result, null, 2));
 
-              const xmlUpdates = options.android.xmlUpdates[filepath];
+              const xmlUpdates = options.xmlUpdates[filepath];
               for (const key in xmlUpdates) {
                 result[key] = {};
                 for (const subKey in xmlUpdates[key]) {

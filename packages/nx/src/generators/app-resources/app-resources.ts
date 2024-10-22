@@ -1,13 +1,12 @@
 import { Tree, generateFiles, joinPathFragments } from '@nx/devkit';
-import { PluginHelpers, getDefaultTemplateOptions } from '../../utils';
+import { getDefaultTemplateOptions } from '../../utils';
 
 import { Schema as AppResourcesSchema } from './schema';
 
 export function appResources(tree: Tree, options: AppResourcesSchema) {
   generateFiles(tree, joinPathFragments(__dirname, 'files'), options.path, {
     ...getDefaultTemplateOptions(tree),
-    name: options.name || 'App_Resources',
-    libFolderName: PluginHelpers.getLibFoldername('nativescript'),
+    name: options.name ?? 'App_Resources',
   });
 }
 

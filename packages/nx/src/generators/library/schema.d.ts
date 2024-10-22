@@ -1,17 +1,29 @@
 import { Linter } from '@nx/workspace/src/utils/lint';
+import { LinterType } from '@nx/eslint';
+import { UnitTestRunner } from '../../utils';
 
-export interface Schema {
-  name: string;
-  directory?: string;
-  skipTsConfig: boolean;
-  skipFormat: boolean;
+export interface LibrarySchema {
+  directory: string;
+  name?: string;
+  groupByName?: boolean;
+  linter?: Linter | LinterType;
+  unitTestRunner?: UnitTestRunner;
   tags?: string;
-  simpleModuleName: boolean;
-  unitTestRunner: 'jest' | 'none';
-  linter: Linter;
-  testEnvironment: 'jsdom' | 'node';
+  skipFormat?: boolean;
+  skipTsConfig?: boolean;
+  testEnvironment?: 'jsdom' | 'node';
   importPath?: string;
-  js: boolean;
-  babelJest?: boolean;
-  pascalCaseFiles: boolean;
+  pascalCaseFiles?: boolean;
+  js?: boolean;
+}
+
+export interface NormalizedSchema extends LibrarySchema {
+  baseName: string;
+  projectName: string;
+  projectRoot: string;
+  projectSourceRoot: string;
+  projectRootOffset: string;
+  projectSourceRootOffset: string;
+  parsedTags: string[];
+  outputPath: string;
 }

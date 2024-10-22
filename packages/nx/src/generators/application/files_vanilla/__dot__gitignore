@@ -6,6 +6,7 @@ platforms/
 # NativeScript Template
 *.js.map
 *.js
+!eslint.config.js
 !webpack.config.js
 
 # Logs
@@ -31,6 +32,7 @@ npm-debug.log
 # app
 !*.d.ts
 !src/assets/fontawesome.min.css
+!eslint.config.js
 !webpack.config.js
 /report/
 .nsbuildinfo
