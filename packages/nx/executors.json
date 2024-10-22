@@ -3,25 +3,65 @@
   "executors": {
     "build": {
       "implementation": "./src/executors/build/executor",
-      "schema": "./src/executors/build/schema.json",
-      "description": "NativeScript builder"
+      "schema": "./src/executors/build/build.schema.json",
+      "description": "NativeScript executor"
+    },
+    "debug": {
+      "implementation": "./src/executors/build/executor",
+      "schema": "./src/executors/build/debug.schema.json",
+      "description": "NativeScript debug executor"
+    },
+    "run": {
+      "implementation": "./src/executors/build/executor",
+      "schema": "./src/executors/build/run.schema.json",
+      "description": "NativeScript run executor"
+    },
+    "prepare": {
+      "implementation": "./src/executors/build/executor",
+      "schema": "./src/executors/build/prepare.schema.json",
+      "description": "NativeScript prepare executor"
     },
     "test": {
-      "implementation": "./src/executors/test/executor",
-      "schema": "./src/executors/test/schema.json",
+      "implementation": "./src/executors/build/executor",
+      "schema": "./src/executors/build/test.schema.json",
       "description": "Start the NativeScript unit test runner"
+    },
+    "clean": {
+      "implementation": "./src/executors/build/executor",
+      "schema": "./src/executors/build/clean.schema.json",
+      "description": "NativeScript clean executor"
     }
   },
   "builders": {
     "build": {
       "implementation": "./src/executors/build/builder",
-      "schema": "./src/executors/build/schema.json",
-      "description": "build executor"
+      "schema": "./src/executors/build/build.schema.json",
+      "description": "NativeScript build builder"
+    },
+    "debug": {
+      "implementation": "./src/executors/build/builder",
+      "schema": "./src/executors/build/debug.schema.json",
+      "description": "NativeScript debug builder"
+    },
+    "run": {
+      "implementation": "./src/executors/build/builder",
+      "schema": "./src/executors/build/run.schema.json",
+      "description": "NativeScript run builder"
+    },
+    "prepare": {
+      "implementation": "./src/executors/build/builder",
+      "schema": "./src/executors/build/prepare.schema.json",
+      "description": "NativeScript prepare builder"
     },
     "test": {
-      "implementation": "./src/executors/test/builder",
-      "schema": "./src/executors/test/schema.json",
-      "description": "test executor"
+      "implementation": "./src/executors/build/builder",
+      "schema": "./src/executors/build/test.schema.json",
+      "description": "NativeScript test builder"
+    },
+    "clean": {
+      "implementation": "./src/executors/build/builder",
+      "schema": "./src/executors/build/clean.schema.json",
+      "description": "NativeScript clean builder"
     }
   }
 }

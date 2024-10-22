@@ -4,18 +4,11 @@ dependencies {
 }
 
 android {
-  // compileSdkVersion 32
-  // buildToolsVersion "32.0.0"
-  // ndkVersion ""
-
+  compileSdkVersion 34
+  buildToolsVersion "34"
   defaultConfig {
-    minSdkVersion 21
-    // targetSdkVersion 32
-
-    // Version Information
-    versionCode 1
-    versionName "1.0.0"
-    
+    minSdkVersion 23
+    targetSdkVersion 34
     generatedDensities = []
   }
 

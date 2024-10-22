@@ -246,13 +246,27 @@ Here's an example app config:
       "executor": "@nativescript/nx:build",
       "options": {
         "noHmr": true,
-        "production": true,
         "uglify": true,
+        "forDevice": true,
         "release": true,
-        "forDevice": true
+        "android": {
+          "copyTo": "./dist/app.apk",
+          "keyStorePath": "/path/to/android.keystore",
+          "keyStoreAlias": "app",
+          "keyStorePassword": "pass",
+          "keyStoreAliasPassword": "pass"
+        },
+        "ios": {
+          "copyTo": "./dist/app.ipa"
+        }
       },
       "configurations": {
-        "prod": {
+        "production": {
+          "production": true,
+          "release": true,
+          "android": {
+            "keyStorePassword": "productionpw"
+          },
           "fileReplacements": [
             {
               "replace": "./src/environments/environment.ts",
@@ -262,56 +276,69 @@ Here's an example app config:
         }
       }
     },
-    "ios": {
-      "executor": "@nativescript/nx:build",
+    "debug": {
+      "executor": "@nativescript/nx:debug",
       "options": {
-        "platform": "ios"
+        "noHmr": true,
+        "uglify": false,
+        "release": false,
+        "forDevice": false,
+        "prepare": false
       },
       "configurations": {
-        "build": {
-          "provision": "AppStore Profile",
-          "copyTo": "./dist/build.ipa"
-        },
         "prod": {
-          "combineWithConfig": "build:prod"
+           "fileReplacements": [
+            {
+              "replace": "./src/environments/environment.ts",
+              "with": "./src/environments/environment.prod.ts"
+            }
+          ]
         }
       }
     },
-    "android": {
-      "executor": "@nativescript/nx:build",
+    "prepare": {
+      "executor": "@nativescript/nx:prepare",
       "options": {
-        "platform": "android"
+        "noHmr": true,
+        "production": true,
+        "uglify": true,
+        "release": true,
+        "forDevice": true,
+        "prepare": true
       },
       "configurations": {
-        "build": {
-          "aab": true,
-          "keyStorePath": "./tools/keystore.jks",
-          "keyStorePassword": "your-password",
-          "keyStoreAlias": "keystore-alias",
-          "keyStoreAliasPassword": "keystore-alias-password",
-          "copyTo": "./dist/build.aab"
-        },
         "prod": {
-          "combineWithConfig": "build:prod"
+           "fileReplacements": [
+            {
+              "replace": "./src/environments/environment.ts",
+              "with": "./src/environments/environment.prod.ts"
+            }
+          ]
         }
+      }
+    },
+    "clean": {
+      "executor": "@nativescript/nx:clean",
+      "options": {}
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "apps/nativescript-app/**/*.ts",
+          "apps/nativescript-app/src/**/*.html"
+        ]
       }
     },
     "test": {
       "executor": "@nativescript/nx:test",
-      "outputs": ["coverage/apps/nativescript-mobile"],
+      "outputs": [
+        "coverage/apps/nativescript-app"
+      ],
       "options": {
-        "coverage": false
+        "coverage": true
       },
-      "configurations": {
-        "android": {},
-        "ios": {}
-      }
-    },
-    "clean": {
-      "executor": "@nativescript/nx:build",
-      "options": {
-        "clean": true
-      }
+      "configurations": {}
     }
   }
 }
@@ -322,13 +349,13 @@ Here's an example app config:
 **Android:**
 
 ```sh
-npx nx run <app-name>:android:prod
+npx nx debug <app-name> android -c=prod
 ```
 
 **iOS:** (Mac only)
 
 ```sh
-npx nx run <app-name>:ios:prod
+npx nx debug <app-name> ios -c=prod
 ```
 
 #### Run tests
@@ -336,19 +363,19 @@ npx nx run <app-name>:ios:prod
 **Android:**
 
 ```sh
-npx nx run <app-name>:test:android
+npx nx test <app-name> android
 ```
 
 **iOS:** (Mac only)
 
 ```sh
-npx nx run <app-name>:test:ios
+npx nx test <app-name> ios
 ```
 
 You can generate coverage reports by using the flag with iOS or Android, for example:
 
 ```sh
-npx nx run <app-name>:test:ios --coverage
+npx nx test <app-name> ios --coverage
 ```
 
 You can also set this option in the config, for example:
@@ -380,7 +407,7 @@ Build with an environment configuration enabled (for example, with `prod`):
 **Android:**
 
 ```sh
-npx nx run <app-name>:build:prod --platform=android
+npx nx build <app-name> android --c=prod
 ```
 
 You can pass additional NativeScript CLI options as flags on the end of you build command.
@@ -388,7 +415,7 @@ You can pass additional NativeScript CLI options as flags on the end of you buil
 * example of building AAB bundle for upload to Google Play:
 
 ```
-npx nx run <app-name>:build:prod --platform=android \
+npx nx build <app-name> android --c=prod \
   --aab \
   --key-store-path=<path-to-your-keystore> \
   --key-store-password=<your-key-store-password> \
@@ -400,7 +427,7 @@ npx nx run <app-name>:build:prod --platform=android \
 **iOS:** (Mac only)
 
 ```sh
-npx nx run <app-name>:build:prod --platform=ios
+npx nx build <app-name> iod --c=prod
 ```
 
 As mentioned, you can pass any additional NativeScript CLI options as flags on the end of your nx build command:
@@ -408,7 +435,7 @@ As mentioned, you can pass any additional NativeScript CLI options as flags on t
 * example of building IPA for upload to iOS TestFlight:
 
 ```
-npx nx run <app-name>:build:prod --platform=ios \
+npx nx build <app-name> ios --c=prod \
   --provision <provisioning-profile-name> \
   --copy-to ./dist/build.ipa
 ```
@@ -418,7 +445,7 @@ npx nx run <app-name>:build:prod --platform=ios \
 It can be helpful to clean the app at times. This will clear out old dependencies plus iOS/Android platform files to give your app a nice reset.
 
 ```sh
-npx nx run <app-name>:clean
+npx nx clean <app-name>
 ```
 
 ## Create NativeScript library
