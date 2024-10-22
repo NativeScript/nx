@@ -1,6 +1,8 @@
-import { Tree, serializeJson, readJson, readNxJson } from '@nx/devkit';
+import { Tree, readJson, normalizePath } from '@nx/devkit';
 import * as nxStringUtils from '@nx/devkit/src/utils/string-utils';
 import { getNpmScope } from '@nx/js/src/utils/package-json/get-npm-scope';
+import { basename } from 'node:path/posix';
+import { CommonSchema } from './helpers';
 
 export interface IPluginSettings {
   prefix?: string;
@@ -9,21 +11,20 @@ export interface IPluginSettings {
 }
 
 export type PlatformTypes = 'nativescript';
-export const supportedPlatforms: Array<PlatformTypes> = ['nativescript'];
-export type FrameworkTypes = 'angular';
+export type FrameworkTypes = 'angular' | 'vanilla';
 // TODO: support react, svelte, vue
 // | 'react'
 // | 'svelte
 // | 'vue'
-export const supportedFrameworks: Array<FrameworkTypes> = ['angular']; //, 'react', 'svelte', 'vue']
-export const supportedSandboxPlatforms: Array<PlatformTypes> = ['nativescript'];
 
-// various plugin settings - workspace can be setup using these possible keys
+export const supportedPlatforms: Readonly<PlatformTypes[]> = ['nativescript'];
+export const supportedFrameworks: Readonly<FrameworkTypes[]> = ['angular']; //, 'react', 'svelte', 'vue']
+// various workspace settings - workspace can be setup using these possible keys
 // this plugin works under the hood of xplat as well
-export const packageSettingKeys = {
-  nativescriptNx: 'nativescript-nx',
-  xplat: 'xplat',
-};
+export const enum WorkspaceSetting {
+  NATIVESCRIPT_NX = 'nativescript-nx',
+  XPLAT = 'xplat',
+}
 
 // selector prefix to use when generating various boilerplate components
 let prefix: string;
@@ -45,46 +46,20 @@ export function getGroupByName() {
   return groupByName;
 }
 
-export function getAppName(options: any, platform: PlatformTypes) {
-  return groupByName ? options.name.replace(`-${platform}`, '') : options.name.replace(`${platform}-`, '');
+export function getBaseName(options: { directory: string }, platform: PlatformTypes) {
+  const name = basename(normalizePath(options.directory));
+  return groupByName ? name.replace(`-${platform}`, '') : name.replace(`${platform}-`, '');
 }
 
 export function isXplatWorkspace() {
   return usingXplatWorkspace;
 }
 
-export function applyAppNamingConvention(options: any, platform: PlatformTypes) {
-  const { name, directory } = getAppNamingConvention(options, platform);
-  options.name = name;
-  options.directory = directory;
-}
-
-export function getAppNamingConvention(options: any, platform: PlatformTypes) {
-  let name = '';
-  let directory = '';
-  if (options.directory) {
-    directory = toFileName(options.directory);
-    if (directory === platform && supportedPlatforms.includes(<PlatformTypes>directory)) {
-      name = toFileName(options.name);
-    } else {
-      name = getPlatformName(options.name, platform);
-    }
-  } else {
-    name = getPlatformName(options.name, platform);
-  }
-  return {
-    name,
-    directory,
-  };
-}
-
-export function getPlatformName(name: string, platform: PlatformTypes) {
-  const nameSanitized = toFileName(name);
-  return getGroupByName() ? `${nameSanitized}-${platform}` : `${platform}-${nameSanitized}`;
+export function inferPluginSettingKey() {
+  return isXplatWorkspace() ? WorkspaceSetting.XPLAT : WorkspaceSetting.NATIVESCRIPT_NX;
 }
 
 export function getDefaultTemplateOptions(tree: Tree) {
-  // console.log('getDefaultTemplateOptions getPrefix:', getPrefix());
   return {
     tmpl: '',
     utils: stringUtils,
@@ -95,26 +70,30 @@ export function getDefaultTemplateOptions(tree: Tree) {
   };
 }
 
-export function prerun(tree: Tree, options?: any, init?: boolean) {
-
+export function preRun(tree: Tree, options?: Readonly<CommonSchema>, init?: boolean) {
   const packageJson = readJson(tree, 'package.json');
+  const updatedCommonOptions: CommonSchema = {
+    prefix: options.prefix,
+    framework: options.framework,
+    groupByName: options.groupByName,
+    isTesting: options.isTesting,
+  };
 
   let frameworkChoice: string;
   if (options && options.framework) {
-    // can actually specify comma delimited list of frameworks to generate support for
-    // most common to generate 1 at a time but we allow multiple
+    // can actually specify comma-delimited list of frameworks to generate support for
+    // most common to generate 1 at a time, but we allow multiple
     const frameworks = sanitizeCommaDelimitedArg(options.framework);
     // always default framework choice to first in list when multiple
     // when it's just one (most common) will be first already
     frameworkChoice = frameworks[0];
   }
-  // console.log('frameworkChoice:', frameworkChoice);
 
   if (packageJson) {
     prefix = '';
-    const pluginSettings = packageJson[packageSettingKeys.nativescriptNx] || packageJson[packageSettingKeys.xplat];
+    const pluginSettings = packageJson[WorkspaceSetting.NATIVESCRIPT_NX] || packageJson[WorkspaceSetting.XPLAT];
     if (pluginSettings) {
-      usingXplatWorkspace = !!packageJson[packageSettingKeys.xplat];
+      usingXplatWorkspace = !!packageJson[WorkspaceSetting.XPLAT];
       // use persisted settings
       prefix = pluginSettings.prefix || getNpmScope(tree); // (if not prefix, default to npmScope)
       frontendFramework = pluginSettings.framework;
@@ -125,7 +104,7 @@ export function prerun(tree: Tree, options?: any, init?: boolean) {
           prefix = options.prefix;
         } else {
           // ensure options are updated
-          options.prefix = prefix;
+          updatedCommonOptions.prefix = prefix;
         }
         if (frameworkChoice) {
           // always override default framework when user has explicitly passed framework option in
@@ -143,7 +122,7 @@ export function prerun(tree: Tree, options?: any, init?: boolean) {
         }
       } else {
         // default to npmScope for prefix
-        options.prefix = getNpmScope(tree);
+        updatedCommonOptions.prefix = getNpmScope(tree);
       }
       if (frameworkChoice) {
         if (!frontendFramework && init) {
@@ -152,51 +131,14 @@ export function prerun(tree: Tree, options?: any, init?: boolean) {
       }
     }
   }
-  // console.log('prefix:', prefix);
+  return updatedCommonOptions;
 }
 
-export function updateJsonFile(tree: Tree, path: string, jsonData: any) {
-  try {
-    tree.write(path, serializeJson(jsonData));
-  } catch (err) {
-    // console.warn(err);
-    throw new Error(`${path}: ${err}`);
-  }
-}
-
-export function updateFile(tree: Tree, path: string, content: string) {
-  try {
-    // if (tree.exists(path)) {
-    tree.write(path, content);
-    // }
-    return tree;
-  } catch (err) {
-    // console.warn(err);
-    throw new Error(`${path}: ${err}`);
-  }
-}
-
-export function updatePackageScripts(tree: Tree, scripts: any) {
-  const path = 'package.json';
-  const packageJson = readJson(tree, path);
-  const scriptsMap = Object.assign({}, packageJson.scripts);
-  packageJson.scripts = Object.assign(scriptsMap, scripts);
-  return updateJsonFile(tree, path, packageJson);
-}
-
-export function updateNxProjects(tree: Tree, projects: any) {
-  const path = 'nx.json';
-  const nxJson = readJson(tree, path);
-  const projectsMap = Object.assign({}, nxJson.projects);
-  nxJson.projects = Object.assign(projectsMap, projects);
-  return updateJsonFile(tree, path, nxJson);
-}
-
-export function sanitizeCommaDelimitedArg(input: string): Array<string> {
+export function sanitizeCommaDelimitedArg(input: string): string[] {
   if (input) {
     return input
       .split(',')
-      .filter((i) => !!i)
+      .filter((i) => !!i?.trim())
       .map((i) => i.trim().toLowerCase());
   }
   return [];

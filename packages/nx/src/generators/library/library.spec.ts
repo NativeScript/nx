@@ -1,71 +1,84 @@
 import { readJson, readProjectConfiguration, Tree, updateJson } from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
-import { library } from './library';
+import { libraryGenerator } from './library';
+import { normalizeOptions } from './lib/normalize-options';
+import { getAppNamingConvention, preRun, UnitTestRunner } from '../../utils';
+import { LibrarySchema } from './schema';
 
 describe('lib', () => {
   let tree: Tree;
 
   beforeEach(() => {
     tree = createTreeWithEmptyWorkspace({ layout: 'apps-libs' });
-    tree.write('/apps/.gitignore', '');
-    tree.write('/libs/.gitignore', '');
   });
 
   describe('not nested', () => {
-    it('should update project.json', async () => {
-      await library(tree, { name: 'myLib', unitTestRunner: 'none' });
-      const libName = `nativescript-my-lib`;
+    it('should create library', async () => {
+      const schema: LibrarySchema = { directory: 'libs/my-lib', unitTestRunner: 'none' };
+      await libraryGenerator(tree, schema);
 
-      expect(tree.exists(`libs/${libName}/tsconfig.json`)).toBeTruthy();
-      expect(tree.exists(`libs/${libName}/references.d.ts`)).toBeTruthy();
+      const projectConfig = readProjectConfiguration(tree, 'nativescript-my-lib');
+      const tsconfig = readJson(tree, `libs/nativescript-my-lib/tsconfig.json`);
 
-      const tsconfig = readJson(tree, `libs/${libName}/tsconfig.json`);
+      expect(projectConfig.name).toEqual('nativescript-my-lib');
+      expect(projectConfig.root).toEqual('libs/nativescript-my-lib');
+      expect(tree.exists(`libs/nativescript-my-lib/tsconfig.json`)).toBeTruthy();
+      expect(tree.exists(`libs/nativescript-my-lib/references.d.ts`)).toBeTruthy();
       expect(tsconfig.files).toEqual(['./references.d.ts']);
       expect(tsconfig.include).toEqual(['**/*.ts']);
-
-      const projectConfig = readProjectConfiguration(tree, libName);
-      expect(projectConfig.root).toEqual(`libs/${libName}`);
       expect(projectConfig.targets.lint).toEqual({
         executor: '@nx/eslint:lint',
-        options: {
-          lintFilePatterns: [`libs/${libName}/**/*.ts`, `libs/${libName}/package.json`],
-        },
-        outputs: ['{options.outputFile}'],
       });
     });
 
-    it('groupByName: should update workspace.json', async () => {
-      await library(tree, { name: 'myLib', groupByName: true, unitTestRunner: 'none' });
-      const libName = `my-lib-nativescript`;
-      const projectConfig = readProjectConfiguration(tree, libName);
+    it('should create library w/ --groupByName=true', async () => {
+      const schema: LibrarySchema = { directory: 'libs/my-lib', unitTestRunner: 'none', groupByName: true };
+      await libraryGenerator(tree, schema);
 
-      expect(projectConfig.root).toEqual(`libs/${libName}`);
+      const projectConfig = readProjectConfiguration(tree, 'my-lib-nativescript');
+      const tsconfig = readJson(tree, `libs/my-lib-nativescript/tsconfig.json`);
+
+      expect(projectConfig.name).toEqual('my-lib-nativescript');
+      expect(projectConfig.root).toEqual('libs/my-lib-nativescript');
+      expect(tree.exists(`libs/my-lib-nativescript/tsconfig.json`)).toBeTruthy();
+      expect(tree.exists(`libs/my-lib-nativescript/references.d.ts`)).toBeTruthy();
+      expect(tsconfig.files).toEqual(['./references.d.ts']);
+      expect(tsconfig.include).toEqual(['**/*.ts']);
       expect(projectConfig.targets.lint).toEqual({
         executor: '@nx/eslint:lint',
-        options: {
-          lintFilePatterns: [`libs/${libName}/**/*.ts`, `libs/${libName}/package.json`],
-        },
-        outputs: ['{options.outputFile}'],
       });
     });
 
-    it('should update root tsconfig.json', async () => {
-      await library(tree, { name: 'myLib' });
-      const libName = `nativescript-my-lib`;
+    it('should update root tsconfig.base.json paths', async () => {
+      const schema: LibrarySchema = { directory: 'libs/my-lib' };
+      await libraryGenerator(tree, schema);
+
       const tsconfigJson = readJson(tree, '/tsconfig.base.json');
-      expect(tsconfigJson.compilerOptions.paths[`@proj/${libName}`]).toEqual([`libs/${libName}/src/index.ts`]);
+
+      expect(tsconfigJson.compilerOptions.paths[`@proj/nativescript-my-lib`]).toEqual([`libs/nativescript-my-lib/src/index.ts`]);
     });
 
-    it('should update root tsconfig.json (no existing path mappings)', async () => {
+    it('should update root tsconfig.base.json paths w/ --groupByName=true', async () => {
+      const schema: LibrarySchema = { directory: 'libs/my-lib', groupByName: true };
+      await libraryGenerator(tree, schema);
+
+      const tsconfigJson = readJson(tree, '/tsconfig.base.json');
+
+      expect(tsconfigJson.compilerOptions.paths[`@proj/my-lib-nativescript`]).toEqual([`libs/my-lib-nativescript/src/index.ts`]);
+    });
+
+    it('should update root tsconfig.base.json paths (when no existing path mappings)', async () => {
       updateJson(tree, 'tsconfig.base.json', (json) => {
         json.compilerOptions.paths = undefined;
         return json;
       });
 
-      await library(tree, { name: 'myLib' });
-      const libName = `nativescript-my-lib`;
+      const schema: LibrarySchema = { directory: 'libs/my-lib' };
+      await libraryGenerator(tree, schema);
+
       const tsconfigJson = readJson(tree, '/tsconfig.base.json');
-      expect(tsconfigJson.compilerOptions.paths[`@proj/${libName}`]).toEqual([`libs/${libName}/src/index.ts`]);
+
+      expect(tsconfigJson.compilerOptions.paths[`@proj/nativescript-my-lib`]).toEqual([`libs/nativescript-my-lib/src/index.ts`]);
     });
   });
 });

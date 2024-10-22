@@ -36,6 +36,13 @@
         "@typescript-eslint/no-extra-semi": "error",
         "no-extra-semi": "off"
       }
+    },
+    {
+      "files": ["*.json"],
+      "parser": "jsonc-eslint-parser",
+      "rules": {
+        "@nx/dependency-checks": ["error", {}]
+      }
     }
   ]
 }

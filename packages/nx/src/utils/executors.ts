@@ -47,10 +47,14 @@ export interface TestExecutorSchema extends BuildExecutorSchema {
   coverage?: boolean;
 }
 
-export function commonExecutor(options: BuildExecutorSchema | TestExecutorSchema, context: ExecutorContext, isTesting?: boolean): Promise<{ success: boolean }> {
+export function commonExecutor(
+  options: BuildExecutorSchema | TestExecutorSchema,
+  context: ExecutorContext,
+  isTesting?: boolean
+): Promise<{ success: boolean }> {
   return new Promise((resolve, reject) => {
     try {
-      const projectConfig = context.workspace.projects[context.projectName];
+      const projectConfig = context.projectsConfigurations.projects[context.projectName];
       const activeTarget = projectConfig.targets[context.targetName];
       const buildTarget = projectConfig.targets['build'];
       // determine if running or building only

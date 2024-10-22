@@ -1,5 +1,5 @@
 {
-  "name": "<%= utils.sanitize(appname) %>",
+  "name": "<%= utils.sanitize(baseName) %>",
   "main": "./src/main.ts",
   "license": "SEE LICENSE IN <your-license-filename>",
   "version": "0.0.0",
