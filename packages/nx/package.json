@@ -1,6 +1,6 @@
 {
   "name": "@nativescript/nx",
-  "version": "19.0.1",
+  "version": "20.0.0-alpha.0",
   "description": "NativeScript Plugin for Nx",
   "repository": {
     "type": "git",
@@ -30,15 +30,13 @@
   "dependencies": {
     "fs-extra": "^11.2.0",
     "plist": "^3.1.0",
-    "xml2js": "~0.6.0",
-    "nx": "20.0.3",
-    "typescript": "^5.4.2",
-    "tslib": "^2.6.2"
+    "xml2js": "~0.6.0"
   },
   "peerDependencies": {
     "@nx/devkit": "^20.0.0",
     "@nx/eslint": "^20.0.0",
     "@nx/js": "^20.0.0",
-    "@nx/workspace": "^20.0.0"
+    "@nx/workspace": "^20.0.0",
+    "nx": "^20.0.0"
   }
 }
