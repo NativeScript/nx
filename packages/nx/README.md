@@ -11,6 +11,8 @@
 
 > Requires at least NativeScript CLI v8.x.x or higher. You can confirm your CLI version by running `ns -v`.
 
+If updating from Nx <= 19 to >=20, [see the migration guide](https://github.com/NativeScript/nx/wiki/Migrate-guide-for-Nx-19-to-20) for updates to your `project.json` and commands.
+
 ## Table of Contents
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
