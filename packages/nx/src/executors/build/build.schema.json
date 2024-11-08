@@ -37,6 +37,35 @@
       "type": "string",
       "description": "Used with targets to share build configurations and avoid duplicating configurations across multiple targets."
     },
+    "provision": {
+      "type": "string",
+      "description": "(Apple Only) When building, use this provision profile name."
+    },
+    "aab": {
+      "type": "boolean",
+      "default": false,
+      "description": "(Android Only) When building, create an Android App Bundle (.aab file)."
+    },
+    "keyStorePath": {
+      "type": "string",
+      "description": "(Android Only) When building, use the keystore file at this location."
+    },
+    "keyStorePassword": {
+      "type": "string",
+      "description": "(Android Only) When building, use this keystore password."
+    },
+    "keyStoreAlias": {
+      "type": "string",
+      "description": "(Android Only) When building, use this keystore alias."
+    },
+    "keyStoreAliasPassword": {
+      "type": "string",
+      "description": "(Android Only) When building, use this keystore alias password."
+    },
+    "copyTo": {
+      "type": "string",
+      "description": "When building, copy the package to this location."
+    },
     "android": {
       "type": "object",
       "aab": {

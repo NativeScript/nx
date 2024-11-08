@@ -10,6 +10,13 @@ export interface BaseSchema {
   platform: Platform;
   silent: boolean;
   verbose: boolean;
+  provision: string;
+  aab: boolean;
+  keyStorePath: string;
+  keyStorePassword: string;
+  keyStoreAlias: string;
+  keyStoreAliasPassword: string;
+  copyTo: string;
 }
 
 export const baseSchema = {
@@ -30,7 +37,8 @@ export const baseSchema = {
     force: {
       type: 'boolean',
       default: true,
-      description: 'If true, skips the application compatibility checks and forces npm i to ensure all dependencies are installed. Otherwise, the command will check the application compatibility with the current CLI version and could fail requiring ns migrate.',
+      description:
+        'If true, skips the application compatibility checks and forces npm i to ensure all dependencies are installed. Otherwise, the command will check the application compatibility with the current CLI version and could fail requiring ns migrate.',
     },
     silent: {
       type: 'boolean',
@@ -50,6 +58,35 @@ export const baseSchema = {
     combineWithConfig: {
       type: 'string',
       description: 'Used with targets to share build configurations and avoid duplicating configurations across multiple targets.',
+    },
+    provision: {
+      type: 'string',
+      description: '(Apple Only) When building, use this provision profile name.',
+    },
+    aab: {
+      type: 'boolean',
+      default: false,
+      description: '(Android Only) When building, create an Android App Bundle (.aab file).',
+    },
+    keyStorePath: {
+      type: 'string',
+      description: '(Android Only) When building, use the keystore file at this location.',
+    },
+    keyStorePassword: {
+      type: 'string',
+      description: '(Android Only) When building, use this keystore password.',
+    },
+    keyStoreAlias: {
+      type: 'string',
+      description: '(Android Only) When building, use this keystore alias.',
+    },
+    keyStoreAliasPassword: {
+      type: 'string',
+      description: '(Android Only) When building, use this keystore alias password.',
+    },
+    copyTo: {
+      type: 'string',
+      description: 'When building, copy the package to this location.',
     },
   },
 };

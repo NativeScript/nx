@@ -40,7 +40,7 @@ export function commonExecutor(options: ExecutorSchema, context: ExecutorContext
       }
 
       if (!isClean) {
-        options.platform = isAndroid ? 'android' : (isIos ? 'ios' : 'visionos');
+        options.platform = isAndroid ? 'android' : isIos ? 'ios' : 'visionos';
       }
 
       const projectConfig = context.projectsConfigurations.projects[context.projectName];
@@ -124,16 +124,30 @@ export function commonExecutor(options: ExecutorSchema, context: ExecutorContext
     // early exit for `ns clean`
     if (options.command === COMMANDS.CLEAN) return nsOptions;
 
-    if (options.platform === 'android' && options.android) {
-      options.android.aab && nsOptions.push('--aab');
-      options.android.keyStorePath && nsOptions.push(`--key-store-path=${options.android.keyStorePath}`);
-      options.android.keyStorePassword && nsOptions.push(`--key-store-password=${options.android.keyStorePassword}`);
-      options.android.keyStoreAlias && nsOptions.push(`--key-store-alias=${options.android.keyStoreAlias}`);
-      options.android.keyStoreAliasPassword && nsOptions.push(`--key-store-alias-password=${options.android.keyStoreAliasPassword}`);
+    if (options.platform === 'android') {
+      if (options.android?.aab || options.aab) {
+        nsOptions.push('--aab');
+      }
+      if (options.android?.keyStorePath || options.keyStorePath) {
+        nsOptions.push(`--key-store-path=${options.android?.keyStorePath || options.keyStorePath}`);
+      }
+      if (options.android?.keyStorePassword || options.keyStorePassword) {
+        nsOptions.push(`--key-store-password=${options.android?.keyStorePassword || options.keyStorePassword}`);
+      }
+      if (options.android?.keyStoreAlias || options.keyStoreAlias) {
+        nsOptions.push(`--key-store-alias=${options.android?.keyStoreAlias || options.keyStoreAlias}`);
+      }
+      if (options.android?.keyStoreAliasPassword || options.keyStoreAliasPassword) {
+        nsOptions.push(`--key-store-alias-password=${options.android?.keyStoreAliasPassword || options.keyStoreAliasPassword}`);
+      }
     }
 
-    if (options.platform === 'ios' && options.ios) {
-      options.ios.provision && nsOptions.push(`--provision=${options.ios.provision}`);
+    if (options.platform === 'ios') {
+      if (options.ios?.provision) {
+        nsOptions.push(`--provision=${options.ios.provision}`);
+      } else if (options.provision) {
+        nsOptions.push(`--provision=${options.provision}`);
+      }
     }
 
     // Append common options
