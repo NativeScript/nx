@@ -1,3 +1,12 @@
+## [20.0.4](https://github.com/NativeScript/nx/compare/20.0.3...20.0.4) (2024-11-08)
+
+
+### Bug Fixes
+
+* allow root level build command flags ([b083c99](https://github.com/NativeScript/nx/commit/b083c991c30965267f5c1a092c1a18606de40a89))
+
+
+
 ## [20.0.3](https://github.com/NativeScript/nx/compare/20.0.1...20.0.3) (2024-10-22)
 
 
