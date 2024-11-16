@@ -207,6 +207,11 @@ A custom executor is provided via `@nativescript/nx:build` with the following op
   "type": "string",
   "description": "When building, copy the package to this location."
 },
+"force": {
+  "type": "boolean",
+  "default": true,
+  "description": "If true, skips the application compatibility checks and forces npm i to ensure all dependencies are installed. Otherwise, the command will check the application compatibility with the current CLI version and could fail requiring ns migrate."
+},
 "provision": {
   "type": "string",
   "description": "(iOS Only) When building, use this provision profile name."
