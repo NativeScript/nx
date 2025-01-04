@@ -10,16 +10,17 @@ import {
   toFileName,
 } from './general';
 import {
-  sassVersion,
   angularVersion,
   nsAngularVersion,
   nsTypesVersion,
   nsCoreVersion,
   nsNgToolsVersion,
   rxjsVersion,
-  nsThemeVersion,
   zonejsVersion,
   nsWebpackVersion,
+  tailwindVersion,
+  ajvVersion,
+  nsTailwindVersion,
 } from './versions';
 import { addDependenciesToPackageJson } from '@nx/devkit/src/utils/package-json';
 import { PackageJson } from 'nx/src/utils/package-json';
@@ -89,18 +90,19 @@ export function updatePluginDependencies(tree: Tree, options: CommonSchema) {
       // devDeps
       frameworkDevDependencies['@angular-devkit/build-angular'] = angularVersion;
       frameworkDevDependencies['@angular/compiler-cli'] = angularVersion;
+      frameworkDevDependencies['@nativescript/tailwind'] = nsTailwindVersion;
       frameworkDevDependencies['@ngtools/webpack'] = nsNgToolsVersion;
+      frameworkDevDependencies['ajv'] = ajvVersion;
+      frameworkDevDependencies['tailwindcss'] = tailwindVersion;
       break;
   }
   return addDependenciesToPackageJson(
     tree,
     {
       '@nativescript/core': nsCoreVersion,
-      'nativescript-theme-core': nsThemeVersion,
       ...frameworkDependencies,
     },
     {
-      sass: sassVersion,
       '@nativescript/webpack': nsWebpackVersion,
       '@nativescript/types': nsTypesVersion,
       ...frameworkDevDependencies,

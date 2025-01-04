@@ -21,10 +21,10 @@ If updating from Nx <= 19 to >=20, [see the migration guide](https://github.com/
 - [NativeScript Plugin for Nx](#nativescript-plugin-for-nx)
   - [Table of Contents](#table-of-contents)
   - [Getting started](#getting-started)
-    - [Create a new Nx workspace](#create-a-new-nx-workspace)
-    - [Init workspace](#init-workspace)
-    - [Install NativeScript plugin](#install-nativescript-plugin)
-    - [Create an app](#create-an-app)
+    - [1. Create a new Nx workspace](#1-create-a-new-nx-workspace)
+    - [2. Init workspace](#2-init-workspace)
+    - [3. Install NativeScript plugin](#3-install-nativescript-plugin)
+    - [4. Create an app](#4-create-an-app)
       - [`--framework [angular|vanilla]`](#--framework-angularvanilla)
       - [`--groupByName`](#--groupbyname)
       - [Develop on simulators and devices](#develop-on-simulators-and-devices)
@@ -44,34 +44,25 @@ If updating from Nx <= 19 to >=20, [see the migration guide](https://github.com/
 
 ## Getting started
 
-### Create a new Nx workspace
+### 1. Create a new Nx workspace
 
 ```sh
 # Using npm
-npx create-nx-workspace@latest
+npx create-nx-workspace@latest --preset=apps
 
 # Using yarn
-yarn create-nx-workspace@latest
+yarn create-nx-workspace@latest --preset=apps
 ```
 
-At the prompts, you can use:
+The prompts may vary with different Nx versions, but for the following you can use:
 
 ```sh
 ✔ Where would you like to create your workspace? · {your-workspace-name}
 
-? Which stack do you want to use? … 
-None:          Configures a minimal structure without specific frameworks or technologies.
-# Choose "None"
-
-? Package-based monorepo, integrated monorepo, or standalone project?
-Integrated Monorepo:        Nx creates a monorepo that contains multiple projects.
-# Choose "Integrated"
-
-? Do you want Nx Cloud to make your CI fast? 
-# Choice is completely up to you
+? Which CI provider would you like to use? … {your choice}
 ```
 
-### Init workspace
+### 2. Init workspace
 
 Initialize a TypeScript project -- This will ensure a `tsconfig.base.json` is created to begin building your workspace.
 
@@ -79,7 +70,7 @@ Initialize a TypeScript project -- This will ensure a `tsconfig.base.json` is cr
 npx nx g @nx/js:init
 ```
 
-### Install NativeScript plugin
+### 3. Install NativeScript plugin
 
 ```sh
 # Using npm
@@ -99,7 +90,7 @@ npm WARN node_modules/@swc/core
 npm WARN   peer @swc/core@">= 1.3" from @swc-node/register@1.8.0
 ```
 
-### Create an app
+### 4. Create an app
 
 ```sh
 # Using npm
@@ -108,6 +99,9 @@ npx nx g @nativescript/nx:app <app-name> [...options]
 # Using yarn
 yarn nx g @nativescript/nx:app <app-name> [...options]
 ```
+
+**NOTE**: It's recommended to put inside an `apps` folder for good organization, eg: `apps/nativescript-<app-name>`.
+You can use further subfolders if you prefer as well.
 
 This will generate: 
 
@@ -144,13 +138,13 @@ apps/<app-name>-nativescript
 **Android:**
 
 ```sh
-npx nx run <app-name>:android
+npx nx debug <app-name> android
 ```
 
 **iOS:** (Mac only)
 
 ```sh
-npx nx run <app-name>:ios
+npx nx debug <app-name> ios
 ```
 
 #### Configuration options
@@ -268,7 +262,7 @@ Here's an example app config:
         }
       },
       "configurations": {
-        "production": {
+        "prod": {
           "production": true,
           "release": true,
           "android": {
@@ -434,7 +428,7 @@ npx nx build <app-name> android --c=prod \
 **iOS:** (Mac only)
 
 ```sh
-npx nx build <app-name> iod --c=prod
+npx nx build <app-name> ios --c=prod
 ```
 
 As mentioned, you can pass any additional NativeScript CLI options as flags on the end of your nx build command:

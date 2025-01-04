@@ -8,6 +8,7 @@ platforms/
 *.js
 !eslint.config.js
 !webpack.config.js
+!tailwind.config.js
 
 # Logs
 logs

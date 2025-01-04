@@ -3,14 +3,12 @@
   "description": "NativeScript Application",
   "license": "SEE LICENSE IN <your-license-filename>",
   "repository": "<fill-your-repository-here>",
-  "scripts": {
-    "postinstall": "node ./tools/postinstall.js"
-  },
   "dependencies": {
     "@nativescript/core": "*"
   },
   "devDependencies": {
     "@nativescript/android": "<%= nsAndroidRuntimeVersion %>",
-    "@nativescript/ios": "<%= nsIOSRuntimeVersion %>"
+    "@nativescript/ios": "<%= nsIOSRuntimeVersion %>",
+    "@nativescript/tailwind": "<%= nsTailwindVersion %>"
   }
 }

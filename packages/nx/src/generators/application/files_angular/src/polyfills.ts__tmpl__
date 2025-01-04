@@ -7,6 +7,11 @@ import '@nativescript/core/globals';
 // Install @nativescript/angular specific polyfills
 import '@nativescript/angular/polyfills';
 
+/** 
+ * Disable zone completely by removing the following 3 imports 
+ * alongside also adjusting main.ts to boot zoneless
+ */
+
 /**
  * Zone.js and patches
  */

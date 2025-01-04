@@ -7,6 +7,8 @@ import {
   nsAngularVersion,
   nsCoreVersion,
   nsIOSRuntimeVersion,
+  nsTailwindVersion,
+  tailwindVersion,
   nsNgToolsVersion,
   nsWebpackVersion,
   rxjsVersion,
@@ -34,5 +36,7 @@ export function createFiles(tree: Tree, options: NormalizedSchema, extra = '') {
     typescriptVersion,
     nsIOSRuntimeVersion,
     nsAndroidRuntimeVersion,
+    nsTailwindVersion,
+    tailwindVersion
   });
 }
