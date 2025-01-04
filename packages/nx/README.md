@@ -67,6 +67,7 @@ The prompts may vary with different Nx versions, but for the following you can u
 Initialize a TypeScript project -- This will ensure a `tsconfig.base.json` is created to begin building your workspace.
 
 ```sh
+cd <your-workspace-name>
 npx nx g @nx/js:init
 ```
 

@@ -1,3 +1,12 @@
+# [20.3.0](https://github.com/NativeScript/nx/compare/20.0.4...20.3.0) (2025-01-04)
+
+
+### Features
+
+* Nx 20.3+ with Angular 19 support with optional zoneless ([#82](https://github.com/NativeScript/nx/issues/82)) ([49bf89f](https://github.com/NativeScript/nx/commit/49bf89f29bfda189e06fb7e08ea08aeaa47a0452))
+
+
+
 ## [20.0.4](https://github.com/NativeScript/nx/compare/20.0.3...20.0.4) (2024-11-08)
 
 
