@@ -24,6 +24,7 @@ export function getFrontendFrameworkTargets(options: NormalizedSchema) {
               ],
             },
           },
+          dependsOn: ['^build'],
         },
       };
     default:
@@ -38,39 +39,55 @@ export function getProjectConfiguration(options: NormalizedSchema): ProjectConfi
     projectType: 'application',
     targets: {
       ...getFrontendFrameworkTargets(options),
-      ios: {
-        executor: options.buildExecutor,
+      debug: {
+        executor: '@nativescript/nx:debug',
         options: {
-          platform: 'ios',
+          noHmr: true,
+          uglify: false,
+          release: false,
+          forDevice: false,
+          prepare: false,
         },
         configurations: {
           build: {
             copyTo: './dist/build.ipa',
           },
           prod: {
-            combineWithConfig: 'build:prod',
+            fileReplacements: [
+              {
+                replace: `./src/environments/environment.ts`,
+                with: `./src/environments/environment.prod.ts`,
+              },
+            ],
           },
         },
+        dependsOn: ['^build'],
       },
-      android: {
-        executor: options.buildExecutor,
+      prepare: {
+        executor: '@nativescript/nx:prepare',
         options: {
-          platform: 'android',
+          noHmr: true,
+          production: true,
+          uglify: true,
+          release: true,
+          forDevice: true,
+          prepare: true,
         },
         configurations: {
-          build: {
-            copyTo: './dist/build.apk',
-          },
           prod: {
-            combineWithConfig: 'build:prod',
+            fileReplacements: [
+              {
+                replace: `./src/environments/environment.ts`,
+                with: `./src/environments/environment.prod.ts`,
+              },
+            ],
           },
         },
+        dependsOn: ['^build'],
       },
       clean: {
-        executor: options.buildExecutor,
-        options: {
-          clean: true,
-        },
+        executor: '@nativescript/nx:clean',
+        options: {},
       },
     },
   };

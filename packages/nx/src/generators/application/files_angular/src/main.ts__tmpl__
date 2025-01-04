@@ -1,12 +1,31 @@
-import { platformNativeScript, runNativeScriptAngularApp } from '@nativescript/angular';
-import { enableProdMode } from '@angular/core';
-import { environment } from './environments/environment';
-import { AppModule } from './app.module';
+import {
+  bootstrapApplication,
+  provideNativeScriptHttpClient,
+  provideNativeScriptNgZone,
+  provideNativeScriptRouter,
+  runNativeScriptAngularApp,
+} from '@nativescript/angular';
+import { provideExperimentalZonelessChangeDetection } from '@angular/core';
+import { withInterceptorsFromDi } from '@angular/common/http';
+import { routes } from './app.routes';
+import { AppComponent } from './app.component';
 
-if (environment.production) {
-  enableProdMode();
-}
+/** 
+ * Disable zone by setting this to true 
+ * Then also adjust polyfills.ts (see note there)
+ */
+const EXPERIMENTAL_ZONELESS = false;
 
 runNativeScriptAngularApp({
-  appModuleBootstrap: () => platformNativeScript().bootstrapModule(AppModule),
+  appModuleBootstrap: () => {
+    return bootstrapApplication(AppComponent, {
+      providers: [
+        provideNativeScriptHttpClient(withInterceptorsFromDi()),
+        provideNativeScriptRouter(routes),
+        EXPERIMENTAL_ZONELESS
+          ? provideExperimentalZonelessChangeDetection()
+          : provideNativeScriptNgZone(),
+      ],
+    });
+  },
 });

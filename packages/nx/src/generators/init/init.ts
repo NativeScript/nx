@@ -1,6 +1,6 @@
 import { Tree, updateJson } from '@nx/devkit';
 import { initGenerator } from '@nx/js';
-import { nsCoreVersion, nsTypesVersion, nsThemeVersion } from '../../utils/versions';
+import { nsCoreVersion, nsTypesVersion } from '../../utils/versions';
 import { Schema } from './schema';
 
 export async function init(tree: Tree, options: Schema) {
@@ -13,9 +13,6 @@ export async function init(tree: Tree, options: Schema) {
     }
     if (!json.dependencies['@nativescript/core']) {
       json.dependencies['@nativescript/core'] = nsCoreVersion;
-    }
-    if (!json.dependencies['@nativescript/theme']) {
-      json.dependencies['@nativescript/theme'] = nsThemeVersion;
     }
     if (!json.devDependencies) {
       json.devDependencies = {};

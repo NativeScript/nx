@@ -36,9 +36,9 @@ export async function applicationGenerator(tree: Tree, schema: ApplicationSchema
 
   createFiles(tree, options);
   // add extra files per options
-  if (options.routing && ['angular'].includes(options.framework)) {
-    createFiles(tree, options, 'routing');
-  }
+  // if (options.routing && ['angular'].includes(options.framework)) {
+  //   createFiles(tree, options, 'routing');
+  // }
   // add app resources
   appResources(tree, {
     path: options.projectRoot,

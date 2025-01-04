@@ -3,11 +3,12 @@ export const nxVersion = '^20.0.0';
 export const nsNxPluginVersion = '^20.0.0';
 export const nsCoreVersion = '~8.8.0';
 export const nsTypesVersion = '~8.8.0';
-export const nsThemeVersion = '~1.0.4';
 export const nsWebpackVersion = '~5.0.0';
-export const sassVersion = '^1.32.0';
 export const nsIOSRuntimeVersion = '~8.8.0';
 export const nsAndroidRuntimeVersion = '~8.8.0';
+export const nsTailwindVersion = '^2.1.0';
+export const tailwindVersion = '~3.4.0';
+export const ajvVersion = '~8.17.0';
 
 // Frontend frameworks
 export const angularVersion = '^19.0.0';
