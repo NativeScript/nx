@@ -91,6 +91,14 @@ npm WARN node_modules/@swc/core
 npm WARN   peer @swc/core@">= 1.3" from @swc-node/register@1.8.0
 ```
 
+*Note: If you receive the following error:*
+
+```bash
+ NX   The "@nx/nativescript:application" generator doesn't yet support the existing TypeScript setup
+```
+
+You may have forgotten to use the `--preset=apps` flag mentioned above. You can create workspace your workspace with `npx create-nx-workspace@latest --preset=apps`.
+
 ### 4. Create an app
 
 ```sh
