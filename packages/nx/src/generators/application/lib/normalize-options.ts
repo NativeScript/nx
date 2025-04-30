@@ -1,10 +1,10 @@
 import { ApplicationSchema, NormalizedSchema } from '../schema';
 import { joinPathFragments, offsetFromRoot, Tree } from '@nx/devkit';
-import { determineProjectNameAndRootOptions, ensureProjectName } from '@nx/devkit/src/generators/project-name-and-root-utils';
+import { determineProjectNameAndRootOptions, ensureRootProjectName } from '@nx/devkit/src/generators/project-name-and-root-utils';
 import { getBaseName } from '../../../utils';
 
 export async function normalizeOptions(host: Tree, options: ApplicationSchema): Promise<NormalizedSchema> {
-  await ensureProjectName(host, options, 'application');
+  await ensureRootProjectName(options, 'application');
   const { projectName, projectRoot } = await determineProjectNameAndRootOptions(host, {
     name: options.name,
     projectType: 'application',
