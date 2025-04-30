@@ -1,3 +1,11 @@
+# [20.8.0](https://github.com/NativeScript/nx/compare/20.3.0...20.8.0) (2025-04-30)
+
+### Features
+
+* Nx 20.8+ Compatibility
+* NativeScript 8.9 ([1a3e619](https://github.com/NativeScript/nx/commit/1a3e61984f734704c0b2562219f38957a3554025))
+
+
 # [20.3.0](https://github.com/NativeScript/nx/compare/20.0.4...20.3.0) (2025-01-04)
 
 
