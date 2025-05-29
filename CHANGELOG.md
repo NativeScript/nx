@@ -1,3 +1,12 @@
+# [21.0.0](https://github.com/NativeScript/nx/compare/20.8.0...21.0.0) (2025-05-29)
+
+
+### Features
+
+* Nx 21+ ([#83](https://github.com/NativeScript/nx/issues/83)) ([7ec83ca](https://github.com/NativeScript/nx/commit/7ec83caa82340d64fac9460475062d3131aefcd6))
+
+
+
 # [20.8.0](https://github.com/NativeScript/nx/compare/20.3.0...20.8.0) (2025-04-30)
 
 ### Features
