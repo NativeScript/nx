@@ -43,3 +43,5 @@ Thumbs.db
 .nx/workspace-data
 .angular
 .env
+.cursor/rules/nx-rules.mdc
+.github/instructions/nx.instructions.md
