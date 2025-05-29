@@ -43,10 +43,10 @@
     "plist": "^3.1.0"
   },
   "peerDependencies": {
-    "@nx/devkit": "^20.0.0",
-    "@nx/eslint": "^20.0.0",
-    "@nx/js": "^20.0.0",
-    "@nx/workspace": "^20.0.0",
-    "nx": "^20.0.0"
+    "@nx/devkit": "^21.0.0",
+    "@nx/eslint": "^21.0.0",
+    "@nx/js": "^21.0.0",
+    "@nx/workspace": "^21.0.0",
+    "nx": "^21.0.0"
   }
 }
