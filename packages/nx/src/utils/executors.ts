@@ -65,8 +65,11 @@ export function commonExecutor(options: ExecutorSchema, context: ExecutorContext
         additionalArgs.push(...options.flags.split(' '));
       }
 
-      if (options.android?.xmlUpdates) updateXml(options.android.xmlUpdates, 'android');
-      if (options.ios?.plistUpdates) updateXml(options.ios.plistUpdates, 'ios');
+      if (isAndroid && options?.xmlUpdates) {
+        updateXml(options?.xmlUpdates, 'android');
+      } else if (options?.plistUpdates) {
+        updateXml(options.plistUpdates, 'ios');
+      }
 
       await checkOptions();
 
@@ -223,10 +226,34 @@ export function commonExecutor(options: ExecutorSchema, context: ExecutorContext
             recursiveUpdate(target[key], updates[key]);
           } else {
             if (Array.isArray(target[key])) {
-              recursiveUpdate(target[key], updates[key]);
+              // Handle Android XML string resources
+              if (type === 'android' && key === 'string' && Array.isArray(updates[key])) {
+                  // updates[key] is an array of objects with name-value pairs
+                  for (const updateItem of updates[key]) {
+                      for (const nameAttr in updateItem) {
+                          const newValue = updateItem[nameAttr];
+                          // Find the string element with matching name attribute
+                          for (let i = 0; i < target[key].length; i++) {
+                              const stringElement = target[key][i];
+                              if (stringElement && typeof stringElement === 'object' && stringElement.name === nameAttr) {
+                                  // Update the text content (value) of the string element
+                                  if (stringElement['#text'] !== newValue) {
+                                      stringElement['#text'] = newValue;
+                                      needsUpdate = true;
+                                  }
+                                  break;
+                              }
+                          }
+                      }
+                  }
+              } else {
+                recursiveUpdate(target[key], updates[key]);
+              }
             } else {
-              target[key] = updates[key];
-              needsUpdate = true;
+              if (target[key] !== updates[key]) {
+                target[key] = updates[key];
+                needsUpdate = true;
+              }
             }
           }
         }
