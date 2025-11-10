@@ -1,6 +1,6 @@
 {
   "name": "@nativescript/nx",
-  "version": "21.0.0",
+  "version": "22.0.0",
   "description": "NativeScript Plugin for Nx",
   "repository": {
     "type": "git",
@@ -43,10 +43,10 @@
     "plist": "^3.1.0"
   },
   "peerDependencies": {
-    "@nx/devkit": "^21.0.0",
-    "@nx/eslint": "^21.0.0",
-    "@nx/js": "^21.0.0",
-    "@nx/workspace": "^21.0.0",
-    "nx": "^21.0.0"
+    "@nx/devkit": "^22.0.0",
+    "@nx/eslint": "^22.0.0",
+    "@nx/js": "^22.0.0",
+    "@nx/workspace": "^22.0.0",
+    "nx": "^22.0.0"
   }
 }

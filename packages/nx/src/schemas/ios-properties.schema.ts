@@ -20,7 +20,8 @@ export const iosSchema = {
       },
       plistUpdates: {
         type: 'object',
-        description: "Update any .plist value. Specify name of any filename with key/value pairs, e.g. { 'Info.plist': { CFBundleDisplayName: 'MyApp' } }. Defaults to look in App_Resources/iOS/{filepath} however you can specify relative path if located elsewhere.",
+        description:
+          "Update any .plist value. Specify name of any filename with key/value pairs, e.g. { 'Info.plist': { CFBundleDisplayName: 'MyApp' } }. Defaults to look in App_Resources/iOS/{filepath} however you can specify relative path if located elsewhere.",
       },
     },
   },

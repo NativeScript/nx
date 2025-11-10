@@ -8,6 +8,8 @@ export interface TestSchema {
   debug: boolean;
   device: string;
   emulator: boolean;
+  plistUpdates: Record<string, any>;
+  xmlUpdates: Record<string, any>;
   fileReplacements: any;
   forDevice: boolean;
   noHmr: boolean;
@@ -80,13 +82,24 @@ export const testSchema = {
     },
     prepare: {
       type: 'boolean',
-      description: "Starts a Webpack compilation and prepares the app's App_Resources and the plugins platforms directories. The output is generated in a subdirectory for the selected target platform in the platforms directory. This lets you build the project for the selected platform.",
+      description:
+        "Starts a Webpack compilation and prepares the app's App_Resources and the plugins platforms directories. The output is generated in a subdirectory for the selected target platform in the platforms directory. This lets you build the project for the selected platform.",
       default: false,
     },
     coverage: {
       type: 'boolean',
       description: '',
       default: false,
+    },
+    plistUpdates: {
+      type: 'object',
+      description:
+        "Update any .plist value. Specify name of any filename with key/value pairs, e.g. { 'Info.plist': { CFBundleDisplayName: 'MyApp' } }. Defaults to look in App_Resources/iOS/{filepath} however you can specify relative path if located elsewhere.",
+    },
+    xmlUpdates: {
+      type: 'object',
+      description:
+        "Update any .xml value. Specify name of any filename with key/value pairs, e.g. { 'src/main/res/values/strings.xml': { app_name: 'MyApp', title_activity_kimera: 'MyApp' } }. Defaults to look in App_Resources/Android/{filepath} however you can specify relative path if located elsewhere.",
     },
     fileReplacements: {
       description: 'Replace files with other files in the build.',
