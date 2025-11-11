@@ -1,3 +1,17 @@
+# [22.0.0](https://github.com/NativeScript/nx/compare/21.0.0...22.0.0) (2025-11-11)
+
+
+### Bug Fixes
+
+* xmlUpdates and plistUpdates ([419cab1](https://github.com/NativeScript/nx/commit/419cab1745765b846f2ff749196a8abb507006e7))
+
+
+### Features
+
+* Nx 22 ([b49421c](https://github.com/NativeScript/nx/commit/b49421cd56b6717e4f1d02c8f9f60e6ab47f0fd3))
+
+
+
 # [21.0.0](https://github.com/NativeScript/nx/compare/20.8.0...21.0.0) (2025-05-29)
 
 
