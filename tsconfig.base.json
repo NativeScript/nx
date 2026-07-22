@@ -5,7 +5,7 @@
     "sourceMap": true,
     "declaration": false,
     "esModuleInterop": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "importHelpers": true,
@@ -15,14 +15,12 @@
     "lib": ["es2019"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
-    "baseUrl": ".",
     "paths": {
-      "@nativescript/nx": ["packages/nx/src/index.ts"]
+      "@nativescript/nx": ["./packages/nx/src/index.ts"]
     },
     "strict": false,
     "noUncheckedSideEffectImports": false,
-    "types": ["*"],
-    "ignoreDeprecations": "6.0"
+    "types": ["*"]
   },
   "exclude": ["node_modules", "tmp"]
 }

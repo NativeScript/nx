@@ -12,8 +12,5 @@
     {
       "path": "./tsconfig.editor.json"
     }
-  ],
-  "compilerOptions": {
-    "ignoreDeprecations": "6.0"
-  }
+  ]
 }

@@ -9,19 +9,7 @@ import {
   sanitizeCommaDelimitedArg,
   toFileName,
 } from './general';
-import {
-  angularVersion,
-  nsAngularVersion,
-  nsTypesVersion,
-  nsCoreVersion,
-  nsNgToolsVersion,
-  rxjsVersion,
-  zonejsVersion,
-  nsWebpackVersion,
-  tailwindVersion,
-  ajvVersion,
-  nsTailwindVersion,
-} from './versions';
+import { VersionedPackage, versions } from './versions';
 import { PackageJson } from 'nx/src/utils/package-json';
 import { CompilerOptions } from 'typescript';
 import { LibrarySchema } from '../generators/library/schema';
@@ -69,41 +57,42 @@ export function getFrameworkChoice(frameworkArgument: string, frameworks?: Frame
   return frameworks.length ? frameworks[0] : null;
 }
 
+function pickVersions(packages: VersionedPackage[]): Record<string, string> {
+  const picked: Record<string, string> = {};
+  for (const name of packages) {
+    picked[name] = versions[name];
+  }
+  return picked;
+}
+
 export function updatePluginDependencies(tree: Tree, options: CommonSchema) {
-  const frameworkDependencies: PackageJson['dependencies'] = {};
-  const frameworkDevDependencies: PackageJson['devDependencies'] = {};
+  let frameworkDependencies: PackageJson['dependencies'] = {};
+  let frameworkDevDependencies: PackageJson['devDependencies'] = {};
   switch (options.framework) {
     case 'angular':
-      // deps
-      frameworkDependencies['@nativescript/angular'] = nsAngularVersion;
-      frameworkDependencies['@angular/animations'] = angularVersion;
-      frameworkDependencies['@angular/common'] = angularVersion;
-      frameworkDependencies['@angular/compiler'] = angularVersion;
-      frameworkDependencies['@angular/core'] = angularVersion;
-      frameworkDependencies['@angular/forms'] = angularVersion;
-      frameworkDependencies['@angular/platform-browser'] = angularVersion;
-      frameworkDependencies['@angular/platform-browser-dynamic'] = angularVersion;
-      frameworkDependencies['@angular/router'] = angularVersion;
-      frameworkDependencies['rxjs'] = rxjsVersion;
-      frameworkDependencies['zone.js'] = zonejsVersion;
-      // devDeps
-      frameworkDevDependencies['@angular-devkit/build-angular'] = angularVersion;
-      frameworkDevDependencies['@angular/compiler-cli'] = angularVersion;
-      frameworkDevDependencies['@nativescript/tailwind'] = nsTailwindVersion;
-      frameworkDevDependencies['@ngtools/webpack'] = nsNgToolsVersion;
-      frameworkDevDependencies['ajv'] = ajvVersion;
-      frameworkDevDependencies['tailwindcss'] = tailwindVersion;
+      frameworkDependencies = pickVersions([
+        '@nativescript/angular',
+        '@angular/animations',
+        '@angular/common',
+        '@angular/compiler',
+        '@angular/core',
+        '@angular/forms',
+        '@angular/platform-browser',
+        '@angular/router',
+        'rxjs',
+      ]);
+      frameworkDevDependencies = pickVersions(['@angular-devkit/build-angular', '@angular/compiler-cli', '@nativescript/tailwind', '@ngtools/webpack', 'ajv', 'tailwindcss']);
       break;
   }
   return addDependenciesToPackageJson(
     tree,
     {
-      '@nativescript/core': nsCoreVersion,
+      '@nativescript/core': versions['@nativescript/core'],
       ...frameworkDependencies,
     },
     {
-      '@nativescript/webpack': nsWebpackVersion,
-      '@nativescript/types': nsTypesVersion,
+      '@nativescript/webpack': versions['@nativescript/webpack'],
+      '@nativescript/types': versions['@nativescript/types'],
       ...frameworkDevDependencies,
     },
   );

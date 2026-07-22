@@ -1,20 +1,7 @@
 import { generateFiles, joinPathFragments, Tree } from '@nx/devkit';
 import { NormalizedSchema } from '../schema';
 import { getDefaultTemplateOptions, getFrontendFramework } from '../../../utils';
-import {
-  angularVersion,
-  nsAndroidRuntimeVersion,
-  nsAngularVersion,
-  nsCoreVersion,
-  nsIOSRuntimeVersion,
-  nsTailwindVersion,
-  tailwindVersion,
-  nsNgToolsVersion,
-  nsWebpackVersion,
-  rxjsVersion,
-  typescriptVersion,
-  zonejsVersion,
-} from '../../../utils/versions';
+import { versions } from '../../../utils/versions';
 
 export function createFiles(tree: Tree, options: NormalizedSchema, extra = '') {
   const framework = options.framework || getFrontendFramework() || 'angular';
@@ -25,17 +12,8 @@ export function createFiles(tree: Tree, options: NormalizedSchema, extra = '') {
   generateFiles(tree, joinPathFragments(__dirname, '..', `files${framework ? '_' + framework : ''}${extra ? '_' + extra : ''}`), options.projectRoot, {
     ...options,
     ...getDefaultTemplateOptions(tree),
-    angularVersion,
-    nsAngularVersion,
-    nsCoreVersion,
-    nsWebpackVersion,
-    nsNgToolsVersion,
-    rxjsVersion,
-    zonejsVersion,
-    typescriptVersion,
-    nsIOSRuntimeVersion,
-    nsAndroidRuntimeVersion,
-    nsTailwindVersion,
-    tailwindVersion,
+    nsIOSRuntimeVersion: versions['@nativescript/ios'],
+    nsAndroidRuntimeVersion: versions['@nativescript/android'],
+    nsTailwindVersion: versions['@nativescript/tailwind'],
   });
 }

@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { readJson, readProjectConfiguration, Tree } from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import { applicationGenerator } from './application';
-import { angularVersion, nsAngularVersion, rxjsVersion, zonejsVersion } from '../../utils/versions';
+import { versions } from '../../utils/versions';
 
 describe('app', () => {
   let tree: Tree;
@@ -82,17 +82,18 @@ describe('app', () => {
     await applicationGenerator(tree, { directory: 'apps/my-app', framework: 'angular' });
     const packageJson = readJson(tree, `package.json`);
 
-    expect(packageJson['dependencies']['@angular/animations']).toEqual(angularVersion);
-    expect(packageJson['dependencies']['@angular/common']).toEqual(angularVersion);
-    expect(packageJson['dependencies']['@angular/compiler']).toEqual(angularVersion);
-    expect(packageJson['dependencies']['@angular/core']).toEqual(angularVersion);
-    expect(packageJson['dependencies']['@angular/forms']).toEqual(angularVersion);
-    expect(packageJson['dependencies']['@angular/platform-browser']).toEqual(angularVersion);
-    expect(packageJson['dependencies']['@angular/platform-browser-dynamic']).toEqual(angularVersion);
-    expect(packageJson['dependencies']['@angular/router']).toEqual(angularVersion);
-    expect(packageJson['dependencies']['rxjs']).toEqual(rxjsVersion);
-    expect(packageJson['dependencies']['zone.js']).toEqual(zonejsVersion);
-    expect(packageJson['dependencies']['@nativescript/angular']).toEqual(nsAngularVersion);
+    expect(packageJson['dependencies']['@angular/animations']).toEqual(versions['@angular/animations']);
+    expect(packageJson['dependencies']['@angular/common']).toEqual(versions['@angular/common']);
+    expect(packageJson['dependencies']['@angular/compiler']).toEqual(versions['@angular/compiler']);
+    expect(packageJson['dependencies']['@angular/core']).toEqual(versions['@angular/core']);
+    expect(packageJson['dependencies']['@angular/forms']).toEqual(versions['@angular/forms']);
+    expect(packageJson['dependencies']['@angular/platform-browser']).toEqual(versions['@angular/platform-browser']);
+    expect(packageJson['dependencies']['@angular/router']).toEqual(versions['@angular/router']);
+    expect(packageJson['dependencies']['rxjs']).toEqual(versions['rxjs']);
+    expect(packageJson['dependencies']['@nativescript/angular']).toEqual(versions['@nativescript/angular']);
+    // zoneless: no zone.js; platform-browser-dynamic is deprecated
+    expect(packageJson['dependencies']['zone.js']).toBeFalsy();
+    expect(packageJson['dependencies']['@angular/platform-browser-dynamic']).toBeFalsy();
   });
 
   it('should not add angular dependencies when framework is not angular', async () => {

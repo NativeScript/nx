@@ -19,6 +19,7 @@
     "format:write": "nx format:write",
     "format:check": "nx format:check",
     "update": "nx migrate latest",
+    "update-versions": "ts-node -P tools/tsconfig.json tools/update-versions.ts",
     "dep-graph": "nx dep-graph",
     "help": "nx help",
     "doctoc": "doctoc packages/nx/README.md",
