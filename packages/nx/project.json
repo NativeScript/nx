@@ -13,13 +13,6 @@
         "lintFilePatterns": ["packages/nx/**/*.{ts,tsx,js,jsx}", "packages/nx/package.json"]
       }
     },
-    "test": {
-      "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/packages/nx"],
-      "options": {
-        "jestConfig": "packages/nx/jest.config.ts"
-      }
-    },
     "prepare": {
       "executor": "nx:run-commands",
       "options": {

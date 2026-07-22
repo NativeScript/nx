@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 import { ExecutorSchema } from '../../utils/types';
 
 const options: Partial<ExecutorSchema> = {
@@ -12,7 +13,7 @@ describe('Executor: build', () => {
   });
 });
 
-xdescribe('Command Runner Builder', () => {
+describe.skip('Command Runner Builder', () => {
   // const context = {
   //   logger: {
   //     info: (args) => {

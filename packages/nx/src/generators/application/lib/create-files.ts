@@ -1,5 +1,5 @@
 import { generateFiles, joinPathFragments, Tree } from '@nx/devkit';
-import { ApplicationSchema, NormalizedSchema } from '../schema';
+import { NormalizedSchema } from '../schema';
 import { getDefaultTemplateOptions, getFrontendFramework } from '../../../utils';
 import {
   angularVersion,
@@ -15,7 +15,6 @@ import {
   typescriptVersion,
   zonejsVersion,
 } from '../../../utils/versions';
-import { useFlatConfig } from '@nx/eslint/internal';
 
 export function createFiles(tree: Tree, options: NormalizedSchema, extra = '') {
   const framework = options.framework || getFrontendFramework() || 'angular';
