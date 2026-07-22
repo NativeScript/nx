@@ -1,6 +1,6 @@
 import { Tree, updateJson } from '@nx/devkit';
 import { initGenerator } from '@nx/js';
-import { nsCoreVersion, nsTypesVersion } from '../../utils/versions';
+import { versions } from '../../utils/versions';
 import { Schema } from './schema';
 
 export async function init(tree: Tree, options: Schema) {
@@ -12,13 +12,13 @@ export async function init(tree: Tree, options: Schema) {
       json.dependencies = {};
     }
     if (!json.dependencies['@nativescript/core']) {
-      json.dependencies['@nativescript/core'] = nsCoreVersion;
+      json.dependencies['@nativescript/core'] = versions['@nativescript/core'];
     }
     if (!json.devDependencies) {
       json.devDependencies = {};
     }
     if (!json.devDependencies['@nativescript/types']) {
-      json.devDependencies['@nativescript/types'] = nsTypesVersion;
+      json.devDependencies['@nativescript/types'] = versions['@nativescript/types'];
     }
 
     return json;

@@ -2,10 +2,9 @@ import { Tree, addProjectConfiguration, runTasksInSerial, GeneratorCallback, for
 import { initGenerator as jsInitGenerator } from '@nx/js';
 import { getAppNamingConvention, missingArgument, preRun, updatePluginDependencies, updatePluginSettings } from '../../utils';
 import { appResources } from '../app-resources/app-resources';
-import { assertNotUsingTsSolutionSetup } from '@nx/js/src/utils/typescript/ts-solution-setup';
+import { assertNotUsingTsSolutionSetup } from '@nx/js/internal';
 import { normalizeOptions } from './lib/normalize-options';
-import { addBuildTargetDefaults } from '@nx/devkit/src/generators/target-defaults-utils';
-import { logShowProjectCommand } from '@nx/devkit/src/utils/log-show-project-command';
+import { addBuildTargetDefaults, logShowProjectCommand } from '@nx/devkit/internal';
 import { ApplicationSchema } from './schema';
 import { createFiles } from './lib/create-files';
 import { getProjectConfiguration } from './lib/project-json';
@@ -28,7 +27,7 @@ export async function applicationGenerator(tree: Tree, schema: ApplicationSchema
     await jsInitGenerator(tree, {
       ...options,
       skipFormat: true,
-    })
+    }),
   );
 
   addBuildTargetDefaults(tree, options.buildExecutor);

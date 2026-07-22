@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, it } from 'vitest';
 import { readJson, readProjectConfiguration, Tree, updateJson } from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import { libraryGenerator } from './library';
@@ -55,7 +56,7 @@ describe('lib', () => {
 
       const tsconfigJson = readJson(tree, '/tsconfig.base.json');
 
-      expect(tsconfigJson.compilerOptions.paths[`@proj/nativescript-my-lib`]).toEqual([`libs/nativescript-my-lib/src/index.ts`]);
+      expect(tsconfigJson.compilerOptions.paths[`@proj/nativescript-my-lib`]).toEqual([`./libs/nativescript-my-lib/src/index.ts`]);
     });
 
     it('should update root tsconfig.base.json paths w/ --groupByName=true', async () => {
@@ -64,7 +65,7 @@ describe('lib', () => {
 
       const tsconfigJson = readJson(tree, '/tsconfig.base.json');
 
-      expect(tsconfigJson.compilerOptions.paths[`@proj/my-lib-nativescript`]).toEqual([`libs/my-lib-nativescript/src/index.ts`]);
+      expect(tsconfigJson.compilerOptions.paths[`@proj/my-lib-nativescript`]).toEqual([`./libs/my-lib-nativescript/src/index.ts`]);
     });
 
     it('should update root tsconfig.base.json paths (when no existing path mappings)', async () => {
@@ -78,7 +79,7 @@ describe('lib', () => {
 
       const tsconfigJson = readJson(tree, '/tsconfig.base.json');
 
-      expect(tsconfigJson.compilerOptions.paths[`@proj/nativescript-my-lib`]).toEqual([`libs/nativescript-my-lib/src/index.ts`]);
+      expect(tsconfigJson.compilerOptions.paths[`@proj/nativescript-my-lib`]).toEqual([`./libs/nativescript-my-lib/src/index.ts`]);
     });
   });
 });

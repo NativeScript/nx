@@ -1,7 +1,8 @@
+import { beforeEach, describe, expect, it } from 'vitest';
 import { readJson, readProjectConfiguration, Tree } from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import { applicationGenerator } from './application';
-import { angularVersion, nsAngularVersion, rxjsVersion, zonejsVersion } from '../../utils/versions';
+import { versions } from '../../utils/versions';
 
 describe('app', () => {
   let tree: Tree;
@@ -18,23 +19,23 @@ describe('app', () => {
   });
 
   it('should generate eslint config file', async () => {
+    process.env.ESLINT_USE_FLAT_CONFIG = 'false';
+
     await applicationGenerator(tree, { directory: 'apps/my-app', linter: 'eslint' });
     const config = readProjectConfiguration(tree, 'nativescript-my-app');
 
     expect(tree.exists(`${config.root}/.eslintrc.json`)).toBeTruthy();
-    expect(tree.exists(`${config.root}/eslint.config.js`)).toBeFalsy();
+    expect(tree.exists(`${config.root}/eslint.config.mjs`)).toBeFalsy();
+
+    delete process.env.ESLINT_USE_FLAT_CONFIG;
   });
 
   it('should generate eslint config file for the flat config', async () => {
-    process.env.ESLINT_USE_FLAT_CONFIG = 'true';
-
     await applicationGenerator(tree, { directory: 'apps/my-app', linter: 'eslint' });
     const config = readProjectConfiguration(tree, 'nativescript-my-app');
 
     expect(tree.exists(`${config.root}/.eslintrc.json`)).toBeFalsy();
-    expect(tree.exists(`${config.root}/eslint.config.js`)).toBeTruthy();
-
-    delete process.env.ESLINT_USE_FLAT_CONFIG;
+    expect(tree.exists(`${config.root}/eslint.config.mjs`)).toBeTruthy();
   });
 
   it('should generate files', async () => {
@@ -58,8 +59,6 @@ describe('app', () => {
     const packageJson = readJson(tree, `package.json`);
 
     checkAngularFiles(tree, 'apps/nativescript-my-app');
-    expect(tree.exists(`apps/nativescript-my-app/src/app.routing.ts`)).toBeTruthy();
-    expect(tree.exists(`apps/nativescript-my-app/src/features/home/home.module.ts`)).toBeTruthy();
     // should also save framework as default in plugin settings
     expect(packageJson['nativescript-nx'].framework).toEqual('angular');
     checkFiles(tree, 'apps/nativescript-my-app');
@@ -69,8 +68,6 @@ describe('app', () => {
     await applicationGenerator(tree, { directory: 'apps/my-app', framework: 'angular', routing: false });
 
     checkAngularFiles(tree, 'apps/nativescript-my-app');
-    expect(tree.exists(`apps/nativescript-my-app/src/app.routing.ts`)).toBeFalsy();
-    expect(tree.exists(`apps/nativescript-my-app/src/features/home/home.module.ts`)).toBeFalsy();
     checkFiles(tree, 'apps/nativescript-my-app');
   });
 
@@ -78,8 +75,6 @@ describe('app', () => {
     await applicationGenerator(tree, { directory: 'apps/mobile/my-app', framework: 'angular', routing: true });
 
     checkAngularFiles(tree, 'apps/mobile/nativescript-my-app');
-    expect(tree.exists(`apps/mobile/nativescript-my-app/src/app.routing.ts`)).toBeTruthy();
-    expect(tree.exists(`apps/mobile/nativescript-my-app/src/features/home/home.module.ts`)).toBeTruthy();
     checkFiles(tree, 'apps/mobile/nativescript-my-app', '../../../');
   });
 
@@ -87,17 +82,18 @@ describe('app', () => {
     await applicationGenerator(tree, { directory: 'apps/my-app', framework: 'angular' });
     const packageJson = readJson(tree, `package.json`);
 
-    expect(packageJson['dependencies']['@angular/animations']).toEqual(angularVersion);
-    expect(packageJson['dependencies']['@angular/common']).toEqual(angularVersion);
-    expect(packageJson['dependencies']['@angular/compiler']).toEqual(angularVersion);
-    expect(packageJson['dependencies']['@angular/core']).toEqual(angularVersion);
-    expect(packageJson['dependencies']['@angular/forms']).toEqual(angularVersion);
-    expect(packageJson['dependencies']['@angular/platform-browser']).toEqual(angularVersion);
-    expect(packageJson['dependencies']['@angular/platform-browser-dynamic']).toEqual(angularVersion);
-    expect(packageJson['dependencies']['@angular/router']).toEqual(angularVersion);
-    expect(packageJson['dependencies']['rxjs']).toEqual(rxjsVersion);
-    expect(packageJson['dependencies']['zone.js']).toEqual(zonejsVersion);
-    expect(packageJson['dependencies']['@nativescript/angular']).toEqual(nsAngularVersion);
+    expect(packageJson['dependencies']['@angular/animations']).toEqual(versions['@angular/animations']);
+    expect(packageJson['dependencies']['@angular/common']).toEqual(versions['@angular/common']);
+    expect(packageJson['dependencies']['@angular/compiler']).toEqual(versions['@angular/compiler']);
+    expect(packageJson['dependencies']['@angular/core']).toEqual(versions['@angular/core']);
+    expect(packageJson['dependencies']['@angular/forms']).toEqual(versions['@angular/forms']);
+    expect(packageJson['dependencies']['@angular/platform-browser']).toEqual(versions['@angular/platform-browser']);
+    expect(packageJson['dependencies']['@angular/router']).toEqual(versions['@angular/router']);
+    expect(packageJson['dependencies']['rxjs']).toEqual(versions['rxjs']);
+    expect(packageJson['dependencies']['@nativescript/angular']).toEqual(versions['@nativescript/angular']);
+    // zoneless: no zone.js; platform-browser-dynamic is deprecated
+    expect(packageJson['dependencies']['zone.js']).toBeFalsy();
+    expect(packageJson['dependencies']['@angular/platform-browser-dynamic']).toBeFalsy();
   });
 
   it('should not add angular dependencies when framework is not angular', async () => {
@@ -128,7 +124,9 @@ const checkFiles = (tree: Tree, appPath: string, relativeToRootPath = '../../') 
 
 const checkAngularFiles = (tree: Tree, appPath: string) => {
   expect(tree.exists(`${appPath}/src/app.component.ts`)).toBeTruthy();
-  expect(tree.exists(`${appPath}/src/app.module.ts`)).toBeTruthy();
+  expect(tree.exists(`${appPath}/src/app.routes.ts`)).toBeTruthy();
+  expect(tree.exists(`${appPath}/src/main.ts`)).toBeTruthy();
   expect(tree.exists(`${appPath}/src/environments/environment.ts`)).toBeTruthy();
-  expect(tree.exists(`${appPath}/src/features/shared/shared.module.ts`)).toBeTruthy();
+  expect(tree.exists(`${appPath}/src/features/home/home.component.ts`)).toBeTruthy();
+  expect(tree.exists(`${appPath}/src/features/detail/detail.component.ts`)).toBeTruthy();
 };

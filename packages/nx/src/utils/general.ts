@@ -1,6 +1,6 @@
 import { Tree, readJson, normalizePath } from '@nx/devkit';
-import * as nxStringUtils from '@nx/devkit/src/utils/string-utils';
-import { getNpmScope } from '@nx/js/src/utils/package-json/get-npm-scope';
+import * as nxStringUtils from '@nx/devkit/internal';
+import { getNpmScope } from '@nx/js/internal';
 import { basename } from 'node:path/posix';
 import { CommonSchema } from './helpers';
 

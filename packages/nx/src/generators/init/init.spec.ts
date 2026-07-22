@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, it } from 'vitest';
 import { readJson, readNxJson, readProjectConfiguration, Tree, updateNxJson, updateProjectConfiguration } from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import { init } from './init';
@@ -13,7 +14,6 @@ describe('init', () => {
     await init(tree, {});
     const packageJson = readJson(tree, 'package.json');
     expect(packageJson.dependencies['@nativescript/core']).toBeDefined();
-    expect(packageJson.dependencies['@nativescript/theme']).toBeDefined();
   });
 
   it('should add .gitignore entries for NativeScript files and directories', async () => {

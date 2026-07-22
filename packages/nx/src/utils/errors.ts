@@ -1,4 +1,4 @@
-import * as nxStringUtils from '@nx/devkit/src/utils/string-utils';
+import * as nxStringUtils from '@nx/devkit/internal';
 import { supportedFrameworks } from './general';
 
 export function missingArgument(argName: string, description = '', example = '') {
@@ -7,7 +7,7 @@ export function missingArgument(argName: string, description = '', example = '')
 
 export function unsupportedFrameworkError(framework: string) {
   return `${framework} is currently not a supported framework. Supported at the moment: ${supportedFrameworks.map((f) =>
-    nxStringUtils.capitalize(f)
+    nxStringUtils.capitalize(f),
   )}. Please request support for this framework if you'd like and/or submit a PR which we would greatly appreciate.`;
 }
 

@@ -1,12 +1,10 @@
-import { Linter } from '@nx/workspace/src/utils/lint';
-import { LinterType } from '@nx/eslint';
 import { UnitTestRunner } from '../../utils';
 
 export interface LibrarySchema {
   directory: string;
   name?: string;
   groupByName?: boolean;
-  linter?: Linter | LinterType;
+  linter?: 'eslint' | 'none';
   unitTestRunner?: UnitTestRunner;
   tags?: string;
   skipFormat?: boolean;
