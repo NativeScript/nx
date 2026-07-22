@@ -45,3 +45,11 @@ Thumbs.db
 .env
 .cursor/rules/nx-rules.mdc
 .github/instructions/nx.instructions.md
+
+.nx/migrate-runs
+
+.claude/worktrees
+
+.nx/polygraph
+
+.nx/self-healing

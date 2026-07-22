@@ -1,4 +1,4 @@
-import { Tree, updateJson, normalizePath } from '@nx/devkit';
+import { Tree, updateJson, normalizePath, addDependenciesToPackageJson } from '@nx/devkit';
 import {
   FrameworkTypes,
   getGroupByName,
@@ -22,7 +22,6 @@ import {
   ajvVersion,
   nsTailwindVersion,
 } from './versions';
-import { addDependenciesToPackageJson } from '@nx/devkit/src/utils/package-json';
 import { PackageJson } from 'nx/src/utils/package-json';
 import { CompilerOptions } from 'typescript';
 import { LibrarySchema } from '../generators/library/schema';
@@ -106,7 +105,7 @@ export function updatePluginDependencies(tree: Tree, options: CommonSchema) {
       '@nativescript/webpack': nsWebpackVersion,
       '@nativescript/types': nsTypesVersion,
       ...frameworkDevDependencies,
-    }
+    },
   );
 }
 
@@ -160,13 +159,13 @@ export function getPlatformName(name: string, platform: PlatformTypes) {
       ? `${nameSanitized}-${platform}`
       : nameSanitized
     : !nameSanitized.startsWith(`-${platform}`)
-    ? `${platform}-${nameSanitized}`
-    : nameSanitized;
+      ? `${platform}-${nameSanitized}`
+      : nameSanitized;
 }
 
 export function getAppNamingConvention(
   options: LibrarySchema,
-  platform: PlatformTypes
+  platform: PlatformTypes,
 ): {
   name?: string;
   directory: string;

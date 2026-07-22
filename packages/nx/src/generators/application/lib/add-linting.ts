@@ -1,7 +1,7 @@
 import { joinPathFragments, Tree, ensurePackage, runTasksInSerial, NX_VERSION, updateJson } from '@nx/devkit';
 import { NormalizedSchema } from '../schema';
-import { useFlatConfig } from '@nx/eslint/src/utils/flat-config';
-import { findEslintFile } from '@nx/eslint/src/generators/utils/eslint-file';
+import { useFlatConfig } from '@nx/eslint/internal';
+import { findEslintFile } from '@nx/eslint/internal';
 
 export async function addLinting(host: Tree, options: NormalizedSchema) {
   if (options.linter !== 'eslint') {
@@ -21,12 +21,12 @@ export async function addLinting(host: Tree, options: NormalizedSchema) {
   });
 
   const eslintFile = findEslintFile(host, options.projectRoot);
-  const eslintFilePath = joinPathFragments(options.projectRoot, eslintFile);
   if (useFlatConfig(host)) {
     /**
      * TODO: augment flat config once the plugins are ready with the flat
      */
-  } else {
+  } else if (eslintFile) {
+    const eslintFilePath = joinPathFragments(options.projectRoot, eslintFile);
     updateJson(host, eslintFilePath, (json) => {
       const ignorePatterns = [...(json.ignorePatterns ?? ['!**/*']), 'references.d.ts', 'node_modules/**/*', 'hooks/**/*', 'platforms/**/*'];
       const extendsVal = [...(json.extends ?? [])];

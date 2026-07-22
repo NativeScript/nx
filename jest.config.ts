@@ -1,3 +1,5 @@
-const { getJestProjects } = require('@nx/jest');
+const { getJestProjectsAsync } = require('@nx/jest');
 
-export default { projects: [...getJestProjects(), '<rootDir>/e2e/nx-e2e'] };
+module.exports = async () => ({
+  projects: await getJestProjectsAsync(),
+});

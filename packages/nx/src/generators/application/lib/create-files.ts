@@ -15,7 +15,7 @@ import {
   typescriptVersion,
   zonejsVersion,
 } from '../../../utils/versions';
-import { useFlatConfig } from '@nx/eslint/src/utils/flat-config';
+import { useFlatConfig } from '@nx/eslint/internal';
 
 export function createFiles(tree: Tree, options: NormalizedSchema, extra = '') {
   const framework = options.framework || getFrontendFramework() || 'angular';
@@ -37,6 +37,6 @@ export function createFiles(tree: Tree, options: NormalizedSchema, extra = '') {
     nsIOSRuntimeVersion,
     nsAndroidRuntimeVersion,
     nsTailwindVersion,
-    tailwindVersion
+    tailwindVersion,
   });
 }

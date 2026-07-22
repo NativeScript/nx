@@ -1,6 +1,6 @@
 import { LibrarySchema, NormalizedSchema } from '../schema';
 import { joinPathFragments, offsetFromRoot, Tree } from '@nx/devkit';
-import { determineProjectNameAndRootOptions, ensureRootProjectName } from '@nx/devkit/src/generators/project-name-and-root-utils';
+import { determineProjectNameAndRootOptions, ensureRootProjectName } from '@nx/devkit/internal';
 import { getBaseName } from '../../../utils';
 
 export async function normalizeOptions(host: Tree, options: LibrarySchema): Promise<NormalizedSchema> {

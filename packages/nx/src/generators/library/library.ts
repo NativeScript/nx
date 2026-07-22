@@ -1,7 +1,7 @@
 import { formatFiles, GeneratorCallback, joinPathFragments, runTasksInSerial, Tree, updateJson } from '@nx/devkit';
 import { getAppNamingConvention, missingArgument, preRun, TsConfigJson } from '../../utils';
 import { libraryGenerator as jsLibraryGenerator } from '@nx/js';
-import { assertNotUsingTsSolutionSetup } from '@nx/js/src/utils/typescript/ts-solution-setup';
+import { assertNotUsingTsSolutionSetup } from '@nx/js/internal';
 import { normalizeOptions } from './lib/normalize-options';
 import { LibrarySchema, NormalizedSchema } from './schema';
 import { createFiles } from './lib/create-files';
