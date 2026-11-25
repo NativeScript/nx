@@ -11,6 +11,55 @@ import { COMMANDS } from './commands';
 import { ExecutorSchema } from './types';
 import { quoteString } from './helpers';
 
+function isInteractive(): boolean {
+  return !!process.stdin.isTTY;
+}
+
+export async function selectPlatform(options: ExecutorSchema): Promise<Platform> {
+  if (options.platform) return options.platform;
+
+  if (options.silent) {
+    console.warn('No platform was specified. Defaulting to iOS.');
+    return 'ios';
+  }
+
+  if (!isInteractive()) {
+    throw new Error('No platform was specified. Pass --platform=ios|android|visionos, or --silent to default to iOS.');
+  }
+
+  const platformChoices: Platform[] = ['ios', 'android', 'visionos'];
+  const { platform } = await prompt<{ platform: Platform }>({
+    type: 'select',
+    name: 'platform',
+    message: 'Which platform do you want to target?',
+    choices: platformChoices,
+  });
+  return platform;
+}
+
+export async function selectConfiguration(
+  targetConfigurations: Record<string, unknown> | undefined,
+  configurationName: string | undefined,
+): Promise<string | undefined> {
+  if (!configurationName && targetConfigurations && Object.keys(targetConfigurations).length) {
+    const selectedConfig = isInteractive()
+      ? (
+          await prompt<{ configurationName: string }>({
+            type: 'select',
+            name: 'configurationName',
+            message: 'No configuration was provided. Did you mean to select one of these configurations?',
+            choices: ['No', ...Object.keys(targetConfigurations)],
+          })
+        ).configurationName
+      : 'No';
+    if (selectedConfig == 'No') {
+      console.warn(`Continuing with no configuration. Specify with --configuration=prod, -c=prod, or :prod`);
+    }
+    return selectedConfig !== 'No' ? selectedConfig : undefined;
+  }
+  return configurationName;
+}
+
 export function commonExecutor(options: ExecutorSchema, context: ExecutorContext): Promise<{ success: boolean }> {
   // global vars
   const isWindows = process.platform === 'win32';
@@ -80,40 +129,6 @@ export function commonExecutor(options: ExecutorSchema, context: ExecutorContext
       reject(err);
     }
   });
-
-  async function selectPlatform(options: ExecutorSchema): Promise<Platform> {
-    if (options.platform) return options.platform;
-
-    if (options.silent) {
-      console.warn('No platform was specified. Defaulting to iOS.');
-      return 'ios';
-    }
-
-    const platformChoices: Platform[] = ['ios', 'android', 'visionos'];
-    const { platform } = await prompt<{ platform: Platform }>({
-      type: 'select',
-      name: 'platform',
-      message: 'Which platform do you want to target?',
-      choices: platformChoices,
-    });
-    return platform;
-  }
-
-  async function selectConfiguration(targetConfigurations: any, configurationName: string) {
-    if (!configurationName && targetConfigurations && Object.keys(targetConfigurations).length) {
-      const { configurationName: selectedConfig } = await prompt<{ configurationName: string }>({
-        type: 'select',
-        name: 'configurationName',
-        message: 'No configuration was provided. Did you mean to select one of these configurations?',
-        choices: ['No', ...Object.keys(targetConfigurations)],
-      });
-      if (selectedConfig == 'No') {
-        console.warn(`Continuing with no configuration. Specify with --configuration=prod, -c=prod, or :prod`);
-      }
-      return selectedConfig !== 'No' ? selectedConfig : undefined;
-    }
-    return configurationName;
-  }
 
   function prepareNsOptions(options: ExecutorSchema, projectCwd: string) {
     const nsOptions: string[] = [];
