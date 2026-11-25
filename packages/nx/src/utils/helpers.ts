@@ -81,7 +81,7 @@ export function updatePluginDependencies(tree: Tree, options: CommonSchema) {
         '@angular/router',
         'rxjs',
       ]);
-      frameworkDevDependencies = pickVersions(['@angular-devkit/build-angular', '@angular/compiler-cli', '@nativescript/tailwind', '@ngtools/webpack', 'ajv', 'tailwindcss']);
+      frameworkDevDependencies = pickVersions(['@angular-devkit/build-angular', '@angular/compiler-cli', '@ngtools/webpack', 'ajv']);
       break;
   }
   return addDependenciesToPackageJson(
@@ -93,6 +93,9 @@ export function updatePluginDependencies(tree: Tree, options: CommonSchema) {
     {
       '@nativescript/webpack': versions['@nativescript/webpack'],
       '@nativescript/types': versions['@nativescript/types'],
+      // every app template ships tailwind.config.js and an app.css that uses it
+      '@nativescript/tailwind': versions['@nativescript/tailwind'],
+      tailwindcss: versions['tailwindcss'],
       ...frameworkDevDependencies,
     },
   );

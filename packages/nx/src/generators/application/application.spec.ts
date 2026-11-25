@@ -101,6 +101,14 @@ describe('app', () => {
     expect(packageJson['dependencies']['@angular/platform-browser-dynamic']).toBeFalsy();
   });
 
+  it.each(['vanilla', 'angular'] as const)('should add tailwind dev dependencies for %s', async (framework) => {
+    await applicationGenerator(tree, { directory: 'apps/my-app', framework });
+    const packageJson = readJson(tree, `package.json`);
+
+    expect(packageJson['devDependencies']['@nativescript/tailwind']).toEqual(versions['@nativescript/tailwind']);
+    expect(packageJson['devDependencies']['tailwindcss']).toEqual(versions['tailwindcss']);
+  });
+
   it('should not add angular dependencies when framework is not angular', async () => {
     await applicationGenerator(tree, { directory: 'apps/my-app', framework: void 0 });
     const packageJson = readJson(tree, `package.json`);
