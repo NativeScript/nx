@@ -32,8 +32,8 @@ export const versions = {
   rxjs: '~7.8.0',
 
   // Tooling
-  '@nativescript/tailwind': '^2.1.0',
-  tailwindcss: '~3.4.0',
+  '@nativescript/tailwind': '^4.1.0',
+  tailwindcss: '^4.3.0',
   typescript: '~6.0.0',
   ajv: '~8.20.0',
 } as const;

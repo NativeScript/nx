@@ -93,7 +93,7 @@ export function updatePluginDependencies(tree: Tree, options: CommonSchema) {
     {
       '@nativescript/webpack': versions['@nativescript/webpack'],
       '@nativescript/types': versions['@nativescript/types'],
-      // every app template ships tailwind.config.js and an app.css that uses it
+      // every app template's app.css imports tailwindcss
       '@nativescript/tailwind': versions['@nativescript/tailwind'],
       tailwindcss: versions['tailwindcss'],
       ...frameworkDevDependencies,
