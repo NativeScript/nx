@@ -4,5 +4,5 @@
     "outDir": "<%= projectRootOffset %>dist/out-tsc",
     "types": []
   },
-  "files": ["./references.d.ts", "./src/main.ts"]
+  "files": ["./references.d.ts", "./src/app.ts"]
 }

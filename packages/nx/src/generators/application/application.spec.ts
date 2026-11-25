@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { readJson, readProjectConfiguration, Tree } from '@nx/devkit';
+import { joinPathFragments, readJson, readProjectConfiguration, Tree } from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import { applicationGenerator } from './application';
 import { versions } from '../../utils/versions';
@@ -125,6 +125,11 @@ const checkFiles = (tree: Tree, appPath: string, relativeToRootPath = '../../') 
 
   const tsconfig = readJson(tree, `${appPath}/tsconfig.json`);
   expect(tsconfig.extends).toEqual(`${relativeToRootPath}tsconfig.base.json`);
+
+  const tsconfigApp = readJson(tree, `${appPath}/tsconfig.app.json`);
+  for (const file of tsconfigApp.files) {
+    expect(tree.exists(joinPathFragments(appPath, file)), file).toBeTruthy();
+  }
 };
 
 const checkAngularFiles = (tree: Tree, appPath: string) => {
