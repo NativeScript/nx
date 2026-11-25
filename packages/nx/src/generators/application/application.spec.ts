@@ -36,6 +36,11 @@ describe('app', () => {
 
     expect(tree.exists(`${config.root}/.eslintrc.json`)).toBeFalsy();
     expect(tree.exists(`${config.root}/eslint.config.mjs`)).toBeTruthy();
+    expect(config.targets.lint).toBeUndefined();
+    const eslintConfig = tree.read(`${config.root}/eslint.config.mjs`, 'utf-8');
+    for (const ignored of ['**/platforms', '**/hooks', '**/references.d.ts']) {
+      expect(eslintConfig).toContain(`'${ignored}'`);
+    }
   });
 
   it('should generate files', async () => {
