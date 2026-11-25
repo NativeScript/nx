@@ -29,6 +29,7 @@ describe('lib', () => {
       expect(tsconfig.include).toEqual(['**/*.ts']);
       expect(projectConfig.targets.lint).toBeUndefined();
       expect(tree.exists(`libs/nativescript-my-lib/eslint.config.mjs`)).toBeTruthy();
+      expect(tree.read(`libs/nativescript-my-lib/eslint.config.mjs`, 'utf-8')).toContain(`'**/references.d.ts'`);
       expect(readJson(tree, 'nx.json').plugins).toContainEqual(expect.objectContaining({ plugin: '@nx/eslint/plugin' }));
     });
 
