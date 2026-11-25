@@ -109,6 +109,26 @@ describe('app', () => {
     expect(packageJson['devDependencies']['tailwindcss']).toEqual(versions['tailwindcss']);
   });
 
+  it.each(['vanilla', 'angular'] as const)('should set up tailwind 4 for %s', async (framework) => {
+    await applicationGenerator(tree, { directory: 'apps/my-app', framework });
+    const appPath = 'apps/nativescript-my-app';
+
+    expect(versions['tailwindcss']).toMatch(/^\^4\./);
+    expect(versions['@nativescript/tailwind']).toMatch(/^\^4\./);
+    const appPackageJson = readJson(tree, `${appPath}/package.json`);
+    expect(appPackageJson['devDependencies']['@nativescript/tailwind']).toEqual(versions['@nativescript/tailwind']);
+
+    const appCss = tree.read(`${appPath}/src/app.css`, 'utf-8');
+    expect(appCss).toMatch(/^@import 'tailwindcss\/theme\.css' layer\(theme\);$/m);
+    expect(appCss).toMatch(/^@import 'tailwindcss\/utilities\.css' layer\(utilities\);$/m);
+    // Preflight's browser resets would restyle every NativeScript view
+    expect(appCss).not.toMatch(/@import 'tailwindcss(\/preflight\.css)?'/);
+    expect(appCss).toContain('@custom-variant dark (&:where(.ns-dark, .ns-dark *));');
+    expect(appCss).not.toContain('@tailwind');
+    expect(tree.exists(`${appPath}/tailwind.config.js`)).toBeFalsy();
+    expect(tree.read(`${appPath}/.gitignore`, 'utf-8')).not.toContain('tailwind.config.js');
+  });
+
   it('should not add angular dependencies when framework is not angular', async () => {
     await applicationGenerator(tree, { directory: 'apps/my-app', framework: void 0 });
     const packageJson = readJson(tree, `package.json`);

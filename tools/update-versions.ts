@@ -37,8 +37,8 @@ const POLICIES: Record<string, Policy> = {
   '@angular-devkit/build-angular': 'angular',
   '@ngtools/webpack': 'angular',
   rxjs: 'hold', // follows Angular's peer range
-  '@nativescript/tailwind': 'hold', // moves together with tailwindcss
-  tailwindcss: 'hold', // must stay on a major supported by @nativescript/tailwind
+  '@nativescript/tailwind': 'hold', // its major fixes the tailwindcss major (4.x requires tailwindcss 4); the caret range still takes minors
+  tailwindcss: 'hold', // must stay on the major @nativescript/tailwind supports; the caret range still takes minors
   typescript: 'hold', // bounded by the Angular compiler's supported range
   ajv: 'latest',
 };
