@@ -15,7 +15,7 @@ describe('lib', () => {
 
   describe('not nested', () => {
     it('should create library', async () => {
-      const schema: LibrarySchema = { directory: 'libs/my-lib', unitTestRunner: 'none' };
+      const schema: LibrarySchema = { directory: 'libs/my-lib', unitTestRunner: 'none', linter: 'eslint' };
       await libraryGenerator(tree, schema);
 
       const projectConfig = readProjectConfiguration(tree, 'nativescript-my-lib');
@@ -27,13 +27,13 @@ describe('lib', () => {
       expect(tree.exists(`libs/nativescript-my-lib/references.d.ts`)).toBeTruthy();
       expect(tsconfig.files).toEqual(['./references.d.ts']);
       expect(tsconfig.include).toEqual(['**/*.ts']);
-      expect(projectConfig.targets.lint).toEqual({
-        executor: '@nx/eslint:lint',
-      });
+      expect(projectConfig.targets.lint).toBeUndefined();
+      expect(tree.exists(`libs/nativescript-my-lib/eslint.config.mjs`)).toBeTruthy();
+      expect(readJson(tree, 'nx.json').plugins).toContainEqual(expect.objectContaining({ plugin: '@nx/eslint/plugin' }));
     });
 
     it('should create library w/ --groupByName=true', async () => {
-      const schema: LibrarySchema = { directory: 'libs/my-lib', unitTestRunner: 'none', groupByName: true };
+      const schema: LibrarySchema = { directory: 'libs/my-lib', unitTestRunner: 'none', linter: 'eslint', groupByName: true };
       await libraryGenerator(tree, schema);
 
       const projectConfig = readProjectConfiguration(tree, 'my-lib-nativescript');
@@ -45,9 +45,9 @@ describe('lib', () => {
       expect(tree.exists(`libs/my-lib-nativescript/references.d.ts`)).toBeTruthy();
       expect(tsconfig.files).toEqual(['./references.d.ts']);
       expect(tsconfig.include).toEqual(['**/*.ts']);
-      expect(projectConfig.targets.lint).toEqual({
-        executor: '@nx/eslint:lint',
-      });
+      expect(projectConfig.targets.lint).toBeUndefined();
+      expect(tree.exists(`libs/my-lib-nativescript/eslint.config.mjs`)).toBeTruthy();
+      expect(readJson(tree, 'nx.json').plugins).toContainEqual(expect.objectContaining({ plugin: '@nx/eslint/plugin' }));
     });
 
     it('should update root tsconfig.base.json paths', async () => {
