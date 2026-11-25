@@ -4,7 +4,7 @@
   "description": "NativeScript Plugin for Nx",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nativescript/nx.git"
+    "url": "git+https://github.com/NativeScript/nx.git"
   },
   "keywords": [
     "Nx",
@@ -30,7 +30,7 @@
   ],
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/nativescript/nx/issues"
+    "url": "https://github.com/NativeScript/nx/issues"
   },
   "homepage": "https://nativescript.org/nx",
   "nx-migrations": {
