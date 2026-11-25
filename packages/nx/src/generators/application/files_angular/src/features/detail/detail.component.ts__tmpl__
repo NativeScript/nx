@@ -12,7 +12,7 @@ import { ItemService, Item } from '../../core/services/item.service';
 export class DetailComponent implements OnInit {
     itemService = inject(ItemService);
     route = inject(ActivatedRoute);
-    item = signal<Item>(null);
+    item = signal<Item | undefined>(undefined);
 
     ngOnInit(): void {
         const id = +this.route.snapshot.params.id;
