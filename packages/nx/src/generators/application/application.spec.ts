@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { readJson, readProjectConfiguration, Tree } from '@nx/devkit';
+import { joinPathFragments, readJson, readProjectConfiguration, Tree } from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import { applicationGenerator } from './application';
 import { versions } from '../../utils/versions';
@@ -36,6 +36,11 @@ describe('app', () => {
 
     expect(tree.exists(`${config.root}/.eslintrc.json`)).toBeFalsy();
     expect(tree.exists(`${config.root}/eslint.config.mjs`)).toBeTruthy();
+    expect(config.targets.lint).toBeUndefined();
+    const eslintConfig = tree.read(`${config.root}/eslint.config.mjs`, 'utf-8');
+    for (const ignored of ['**/platforms', '**/hooks', '**/references.d.ts']) {
+      expect(eslintConfig).toContain(`'${ignored}'`);
+    }
   });
 
   it('should generate files', async () => {
@@ -96,6 +101,14 @@ describe('app', () => {
     expect(packageJson['dependencies']['@angular/platform-browser-dynamic']).toBeFalsy();
   });
 
+  it.each(['vanilla', 'angular'] as const)('should add tailwind dev dependencies for %s', async (framework) => {
+    await applicationGenerator(tree, { directory: 'apps/my-app', framework });
+    const packageJson = readJson(tree, `package.json`);
+
+    expect(packageJson['devDependencies']['@nativescript/tailwind']).toEqual(versions['@nativescript/tailwind']);
+    expect(packageJson['devDependencies']['tailwindcss']).toEqual(versions['tailwindcss']);
+  });
+
   it('should not add angular dependencies when framework is not angular', async () => {
     await applicationGenerator(tree, { directory: 'apps/my-app', framework: void 0 });
     const packageJson = readJson(tree, `package.json`);
@@ -120,6 +133,11 @@ const checkFiles = (tree: Tree, appPath: string, relativeToRootPath = '../../') 
 
   const tsconfig = readJson(tree, `${appPath}/tsconfig.json`);
   expect(tsconfig.extends).toEqual(`${relativeToRootPath}tsconfig.base.json`);
+
+  const tsconfigApp = readJson(tree, `${appPath}/tsconfig.app.json`);
+  for (const file of tsconfigApp.files) {
+    expect(tree.exists(joinPathFragments(appPath, file)), file).toBeTruthy();
+  }
 };
 
 const checkAngularFiles = (tree: Tree, appPath: string) => {

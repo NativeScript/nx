@@ -38,6 +38,13 @@ export async function libraryGenerator(tree: Tree, schema: LibrarySchema & Parti
   createFiles(tree, options);
   updateTsConfig(tree, options);
 
+  if (options.linter === 'eslint') {
+    // jsLibraryGenerator has installed @nx/eslint by this point
+    const { addIgnoresToLintConfig } = require('@nx/eslint/internal') as typeof import('@nx/eslint/internal');
+    // references.d.ts holds triple-slash references, which @typescript-eslint/triple-slash-reference rejects
+    addIgnoresToLintConfig(tree, options.projectRoot, ['**/references.d.ts']);
+  }
+
   if (!options.skipFormat) {
     await formatFiles(tree);
   }

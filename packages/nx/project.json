@@ -6,13 +6,6 @@
   "tags": [],
   "generators": {},
   "targets": {
-    "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["packages/nx/**/*.{ts,tsx,js,jsx}", "packages/nx/package.json"]
-      }
-    },
     "prepare": {
       "executor": "nx:run-commands",
       "options": {

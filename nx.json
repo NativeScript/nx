@@ -13,10 +13,6 @@
       "options": {
         "packageRoot": "dist/{projectRoot}"
       }
-    },
-    "@nx/eslint:lint": {
-      "cache": true,
-      "inputs": ["default", "^default", "{workspaceRoot}/eslint.config.mjs", "{workspaceRoot}/tools/eslint-rules/**/*"]
     }
   },
   "namedInputs": {
@@ -38,10 +34,20 @@
       "options": {
         "testTargetName": "test"
       }
+    },
+    {
+      "plugin": "@nx/eslint/plugin",
+      "options": {
+        "targetName": "lint"
+      },
+      "exclude": ["packages/nx/src/generators/*/files*/**"]
     }
   ],
   "defaultBase": "main",
   "analytics": false,
+  "affected": {
+    "legacy": true
+  },
   "release": {
     "projects": ["nx"],
     "changelog": {

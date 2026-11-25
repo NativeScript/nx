@@ -36,7 +36,7 @@ export class ItemService {
     { id: 25, name: 'Masip', role: 'Goalkeeper' }
   ]);
 
-  getItem(id: number): Item {
+  getItem(id: number): Item | undefined {
     return this.items().find((item) => item.id === id)
   }
 }

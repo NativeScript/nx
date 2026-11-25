@@ -10,11 +10,11 @@
  */
 export const versions = {
   // NativeScript
-  '@nativescript/core': '~9.0.0',
-  '@nativescript/types': '~9.0.0',
+  '@nativescript/core': '~9.1.0',
+  '@nativescript/types': '~9.1.0',
   '@nativescript/webpack': '~5.0.0',
-  '@nativescript/ios': '~9.0.0',
-  '@nativescript/android': '~9.0.0',
+  '@nativescript/ios': '~9.1.0',
+  '@nativescript/android': '~9.1.0',
 
   // Angular
   '@nativescript/angular': '^22.0.0',
