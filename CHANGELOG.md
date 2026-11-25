@@ -1,3 +1,17 @@
+## 24.0.1 (2026-11-25)
+
+### 🚀 Features
+
+- generate apps with Tailwind CSS 4 ([#92](https://github.com/NativeScript/nx/pull/92))
+
+### 🩹 Fixes
+
+- **executors:** let CLI options override project.json options ([#91](https://github.com/NativeScript/nx/pull/91))
+
+### ❤️ Thank You
+
+- Nathan Walker
+
 # 24.0.0 (2026-11-25)
 
 ### 🚀 Features
