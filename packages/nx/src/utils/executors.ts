@@ -1,10 +1,11 @@
-import { ExecutorContext } from '@nx/devkit';
+import { ExecutorContext, TargetConfiguration } from '@nx/devkit';
 import childProcess from 'child_process';
 import { prompt } from 'enquirer';
 import { XMLBuilder, XMLParser } from 'fast-xml-parser';
 import { readFileSync, writeFileSync } from 'fs-extra';
 import { resolve as nodeResolve } from 'path';
 import { build, parse } from 'plist';
+import { isDeepStrictEqual } from 'util';
 import { Platform } from '../schemas/base.schema';
 import { mergeDeep } from '../schemas/deep-merge';
 import { COMMANDS } from './commands';
@@ -60,6 +61,35 @@ export async function selectConfiguration(
   return configurationName;
 }
 
+/**
+ * Nx resolves executor options as schema defaults < target options < configuration < CLI with a
+ * shallow merge, so a nested object such as `android` or `ios` replaces the one below it wholesale.
+ * This rebuilds the same precedence with a deep merge.
+ *
+ * Nx does not tell the executor which options came from the CLI, so a key counts as a CLI override
+ * when its value differs from what `nxTarget` and `nxConfigurationName` (the target and configuration
+ * Nx resolved from) produce on their own. A key that neither of those sets is ambiguous between a CLI
+ * flag and a schema default; it only loses to a configuration Nx did not apply (one chosen at the prompt).
+ */
+function mergeTargetOptions(
+  options: ExecutorSchema,
+  nxTarget: TargetConfiguration | undefined,
+  nxConfigurationName: string | undefined,
+  target: TargetConfiguration,
+  configurationName: string | undefined,
+): ExecutorSchema {
+  const nxResolved = { ...nxTarget?.options, ...(nxConfigurationName ? nxTarget?.configurations?.[nxConfigurationName] : undefined) };
+  const configuration = (configurationName && target.configurations?.[configurationName]) || {};
+
+  const cliOverrides: Partial<ExecutorSchema> = {};
+  for (const key of Object.keys(options)) {
+    const fromCli = key in nxResolved ? !isDeepStrictEqual(options[key], nxResolved[key]) : !(key in configuration);
+    if (fromCli) cliOverrides[key] = options[key];
+  }
+
+  return mergeDeep({}, options, target.options, configuration, cliOverrides);
+}
+
 export function commonExecutor(options: ExecutorSchema, context: ExecutorContext): Promise<{ success: boolean }> {
   // global vars
   const isWindows = process.platform === 'win32';
@@ -100,12 +130,10 @@ export function commonExecutor(options: ExecutorSchema, context: ExecutorContext
       const targetPlatformOptions = targetOptions[options.platform];
       // const targetDescription = JSON.parse(process.argv.find((arg) => arg.indexOf('targetDescription') !== -1));
 
-      // fix for nx overwriting android and ios sub properties
-      mergeDeep(options, targetOptions);
-
       const configurationName = await selectConfiguration(target.configurations, context.configurationName);
-      // fix for nx overwriting android and ios sub properties
-      if (configurationName) mergeDeep(options, target.configurations[configurationName]);
+      // Nx resolved `options` from the invoked target, which need not be the one named after the command.
+      const nxTarget = (context.targetName && projectConfig.targets[context.targetName]) || target;
+      Object.assign(options, mergeTargetOptions(options, nxTarget, context.configurationName, target, configurationName));
 
       const nsOptions = prepareNsOptions(options, projectCwd);
       const additionalArgs: string[] = []; // Assuming any extra flags are handled here
