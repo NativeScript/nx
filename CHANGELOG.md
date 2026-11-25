@@ -1,3 +1,19 @@
+# 24.0.0 (2026-11-25)
+
+### 🚀 Features
+
+- migrate to nx 23 ([#86](https://github.com/NativeScript/nx/pull/86))
+- migrate to Nx 24 ([#90](https://github.com/NativeScript/nx/pull/90))
+
+### 🩹 Fixes
+
+- match the repository URL case for npm provenance ([#94](https://github.com/NativeScript/nx/pull/94))
+
+### ❤️ Thank You
+
+- Eduardo Speroni @edusperoni
+- Nathan Walker
+
 # [22.0.0](https://github.com/NativeScript/nx/compare/21.0.0...22.0.0) (2025-11-11)
 
 
